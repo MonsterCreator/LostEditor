@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://drwneiyribceq"]
+
+[ext_resource type="Script" uid="uid://d34a0q2s4lo1o" path="res://TestScene.cs" id="1_uhqqe"]
+[ext_resource type="PackedScene" uid="uid://gwn70k1drbjm" path="res://ObjectController.tscn" id="2_ia1lp"]
+[ext_resource type="Texture2D" uid="uid://brr7f7bh01dqw" path="res://icon.svg" id="3_sasra"]
+
+[node name="TestScene" type="Node2D" node_paths=PackedStringArray("debugLabel")]
+script = ExtResource("1_uhqqe")
+debugLabel = NodePath("Label")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-3, 5)
+offset = Vector2(-12.395, 0)
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(397, 188)
+texture = ExtResource("3_sasra")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -556.0
+offset_top = -308.0
+offset_right = -370.0
+offset_bottom = -231.0
+
+[node name="ObjectController2" parent="." instance=ExtResource("2_ia1lp")]
+
+[node name="ObjectController3" parent="." instance=ExtResource("2_ia1lp")]

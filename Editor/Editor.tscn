@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://3585eax1ogj0"]
+
+[ext_resource type="Script" uid="uid://bgj2n4apy8m6c" path="res://Editor/EditorTestCode.cs" id="1_rh0xm"]
+
+[node name="Editor" type="Node2D"]
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Camera2D2" type="Camera2D" parent="."]
+anchor_mode = 0
+enabled = false
+
+[node name="Polygon2D" type="Polygon2D" parent="Camera2D2"]
+position = Vector2(432, 144)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="Camera2D" type="Camera2D" parent="Camera2D2"]
+anchor_mode = 0
+zoom = Vector2(0.6, 0.6)
+
+[node name="Node2D" type="Node2D" parent="Camera2D2/Camera2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera2D2/Camera2D"]
+scale = Vector2(1.665, 1.665)
+transform = Transform2D(1.665, 0, 0, 1.665, 0, 0)
+follow_viewport_enabled = true
+script = ExtResource("1_rh0xm")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/Camera2D/CanvasLayer"]
+custom_minimum_size = Vector2(0, 400)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="Panel" type="Panel" parent="Camera2D2/Camera2D/CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.58
+
+[node name="Panel2" type="Panel" parent="Camera2D2/Camera2D/CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
