@@ -1,12 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://drwneiyribceq"]
+[gd_scene load_steps=6 format=3 uid="uid://drwneiyribceq"]
 
 [ext_resource type="Script" uid="uid://d34a0q2s4lo1o" path="res://TestScene.cs" id="1_uhqqe"]
-[ext_resource type="PackedScene" uid="uid://gwn70k1drbjm" path="res://ObjectController.tscn" id="2_ia1lp"]
+[ext_resource type="Script" uid="uid://dk3jyh023ve3h" path="res://ObjectManager.cs" id="3_coq8p"]
 [ext_resource type="Texture2D" uid="uid://brr7f7bh01dqw" path="res://icon.svg" id="3_sasra"]
+[ext_resource type="PackedScene" uid="uid://df0nbsr13xps7" path="res://Editor/Timeline.tscn" id="4_2nij2"]
+[ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="4_7cbxl"]
 
-[node name="TestScene" type="Node2D" node_paths=PackedStringArray("debugLabel")]
+[node name="TestScene" type="Node2D" node_paths=PackedStringArray("debugLabel", "debugLabel2", "pol1", "pol2")]
 script = ExtResource("1_uhqqe")
 debugLabel = NodePath("Label")
+debugLabel2 = NodePath("Label2")
+pol1 = NodePath("Polygon2D")
+pol2 = NodePath("Polygon2D2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-3, 5)
@@ -22,6 +27,30 @@ offset_top = -308.0
 offset_right = -370.0
 offset_bottom = -231.0
 
-[node name="ObjectController2" parent="." instance=ExtResource("2_ia1lp")]
+[node name="Label2" type="Label" parent="."]
+offset_left = -562.0
+offset_top = -169.0
+offset_right = -376.0
+offset_bottom = -92.0
 
-[node name="ObjectController3" parent="." instance=ExtResource("2_ia1lp")]
+[node name="ObjectManager" type="Node2D" parent="." node_paths=PackedStringArray("timeline", "testScene", "polygonObject", "collisionPlygonObject")]
+script = ExtResource("3_coq8p")
+timeline = NodePath("../Timeline")
+gameObject = ExtResource("4_7cbxl")
+testScene = NodePath("..")
+polygonObject = NodePath("../Polygon2D")
+collisionPlygonObject = NodePath("../CollisionPolygon2D")
+
+[node name="Timeline" parent="." instance=ExtResource("4_2nij2")]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+position = Vector2(-1, -18)
+rotation = 1.0472
+polygon = PackedVector2Array(43.6148, -17.5429, -5.75831, -16.0263, -12.402, 27.4807, 32.0429, 18.5)
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-31, -45, 40, -51, 48, 44, -34, 39)
+
+[node name="Polygon2D2" type="Polygon2D" parent="."]
+position = Vector2(-263, -30)

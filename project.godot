@@ -10,10 +10,14 @@ config_version=5
 
 [application]
 
-config/name="TestPotencialProject"
+config/name="LostEditor"
 run/main_scene="uid://drwneiyribceq"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[debug]
+
+settings/stdout/print_fps=true
 
 [display]
 
