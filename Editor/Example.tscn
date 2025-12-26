@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://dwciwhwbh36ad"]
+
+[ext_resource type="Texture2D" uid="uid://brr7f7bh01dqw" path="res://icon.svg" id="1_pnbpx"]
+
+[node name="Example" type="Node2D"]
+position = Vector2(-5, 0)
+
+[node name="Icon" type="Sprite2D" parent="."]
+modulate = Color(1, 0.4664, 0.551731, 1)
+position = Vector2(1, -5)
+texture = ExtResource("1_pnbpx")
+
+[node name="Icon3" type="Sprite2D" parent="."]
+modulate = Color(1, 0.4664, 0.551731, 1)
+z_index = -1
+position = Vector2(-2, 6)
+scale = Vector2(7.86328, 6.51172)
+texture = ExtResource("1_pnbpx")
+
+[node name="Icon2" type="Sprite2D" parent="."]
+modulate = Color(0.838096, 0.623892, 0, 1)
+position = Vector2(339, 59)
+texture = ExtResource("1_pnbpx")
