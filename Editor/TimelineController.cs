@@ -4,7 +4,9 @@ using System;
 public partial class TimelineController : Node
 {
     public float currentTime;
+    public float timelineSpeed = 1;
     [Export] public float maxTime;
+    
 
     public override void _Ready()
     {
@@ -13,7 +15,7 @@ public partial class TimelineController : Node
 
     public override void _PhysicsProcess(double delta)
     {
-        currentTime += (float)delta;
+        currentTime += (float)delta * timelineSpeed;
     }
 
 }

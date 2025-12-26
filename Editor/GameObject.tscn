@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://csj5axmonm7hg"]
 
-[ext_resource type="Script" uid="uid://cw4qulk8jbbwl" path="res://Editor/GameObject.cs" id="1_h1gcm"]
+[ext_resource type="Script" uid="uid://cw4qulk8jbbwl" path="res://CoreScripts/GameObject.cs" id="1_h1gcm"]
 
 [node name="GameObject" type="Node2D" node_paths=PackedStringArray("shapeObj", "collisionShapeObj")]
 script = ExtResource("1_h1gcm")
@@ -8,6 +8,7 @@ shapeObj = NodePath("Polygon2D")
 collisionShapeObj = NodePath("Area2D/CollisionPolygon2D")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-7, -13, 18, -14, 15, 16, -14, 13)
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_mask = 2
