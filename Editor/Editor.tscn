@@ -1,25 +1,47 @@
-[gd_scene load_steps=8 format=3 uid="uid://3585eax1ogj0"]
+[gd_scene load_steps=19 format=3 uid="uid://3585eax1ogj0"]
 
 [ext_resource type="Script" uid="uid://dvmq3t8c6aq1g" path="res://Editor/Editor.cs" id="1_mauyw"]
-[ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="2_lsqqn"]
-[ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="2_q4kyq"]
+[ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="2_ka1pi"]
+[ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="3_0tek8"]
 [ext_resource type="PackedScene" uid="uid://bowtxal4adyiq" path="res://ObjectManager.tscn" id="3_lsqqn"]
 [ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/ScrollContainerHorController.cs" id="3_q4kyq"]
 [ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/ScrollContainerVerController.cs" id="4_lsqqn"]
+[ext_resource type="Texture2D" uid="uid://c4k5ex51n3lwm" path="res://NormalObjectIcon16.png" id="5_ef05v"]
+[ext_resource type="Script" uid="uid://bq74v7pliwtdk" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
+[ext_resource type="Texture2D" uid="uid://1ocaihg8pm43" path="res://DecorationObjectIcon16.png" id="6_fk0vg"]
 [ext_resource type="Script" uid="uid://de7abj7l7kerg" path="res://Editor/FpsCounter.cs" id="7_8ntjk"]
+[ext_resource type="Texture2D" uid="uid://1i5701y42jcf" path="res://EmptyObjectIcon16.png" id="7_fk0vg"]
+[ext_resource type="Texture2D" uid="uid://dbscp8072vh1o" path="res://search_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.png" id="8_veos7"]
+[ext_resource type="Texture2D" uid="uid://b1b4bmuq1egbt" path="res://HammerIcon32.png" id="9_j21il"]
+[ext_resource type="Texture2D" uid="uid://bi01scnddx0xv" path="res://TimelineMarker.png" id="12_3oj1v"]
+[ext_resource type="Script" uid="uid://dkyjyvubuw7pb" path="res://Editor/SliderController.cs" id="13_ka1pi"]
 
-[node name="Editor" type="Node2D" node_paths=PackedStringArray("ObjManager", "HorScroll", "Rows", "ViewportObj", "GlobalTimeTextEdit", "TimelineContainer", "TimelineSlider")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j21il"]
+bg_color = Color(0, 0, 0, 1)
+border_width_top = 25
+border_color = Color(0.12452059, 0.13688698, 0.1654377, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3oj1v"]
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ka1pi"]
+draw_center = false
+
+[node name="Editor" type="Node2D" node_paths=PackedStringArray("ObjManager", "HorScroll", "Rows", "ViewportObj", "Inspector", "EditorRef", "GlobalTimeTextEdit", "TimelineContainer", "TimelineSlider")]
 script = ExtResource("1_mauyw")
 ObjManager = NodePath("ObjectManager")
 HorScroll = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer")
-Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control10")]
+Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9")]
 ViewportObj = NodePath("Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport/Node")
+Inspector = NodePath("Camera2D2/CanvasLayer/VSplitContainer")
+EditorRef = NodePath(".")
 GlobalTimeTextEdit = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/TextTimeGlobal")
 TimelineContainer = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer")
 TimelineSlider = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker/HSlider")
-GameObjectScene = ExtResource("2_lsqqn")
-TimelineBlockScene = ExtResource("2_q4kyq")
-timelineMaxTime = 2000.0
+GameObjectScene = ExtResource("2_ka1pi")
+TimelineBlockScene = ExtResource("3_0tek8")
+
+[node name="Node2D" type="Node2D" parent="."]
 
 [node name="ObjectManager" parent="." node_paths=PackedStringArray("polygonObject", "collisionPlygonObject") instance=ExtResource("3_lsqqn")]
 polygonObject = NodePath("Polygon2D")
@@ -36,17 +58,30 @@ rotation = 1.0472
 polygon = PackedVector2Array(43.6148, -17.5429, -5.75831, -16.0263, -12.402, 27.4807, 32.0429, 18.5)
 
 [node name="Camera2D2" type="Camera2D" parent="."]
+anchor_mode = 0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera2D2"]
 
-[node name="VSplitContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer"]
+[node name="VSplitContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer" node_paths=PackedStringArray("NameInput", "TypeDropdown", "RenderDepth", "StartTimeInput", "SetStartToCurrentBtn", "EndTimeInput", "SetEndToCurrentBtn", "OriginX", "OriginY", "EditorRef")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 3.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("5_j21il")
+NameInput = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer/InputObjectName")
+TypeDropdown = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer/OptionButton")
+RenderDepth = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer/TextEdit")
+StartTimeInput = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2/InputStartTime")
+SetStartToCurrentBtn = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2/Button")
+EndTimeInput = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer/InputEndTime")
+SetEndToCurrentBtn = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer/Button")
+OriginX = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer/Label3")
+OriginY = NodePath("HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2/Label2")
+EditorRef = NodePath("../../..")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
 layout_mode = 2
@@ -67,9 +102,286 @@ zoom = Vector2(0.5, 0.5)
 
 [node name="Node" type="Node" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport"]
 
-[node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+current_tab = 0
+
+[node name="Inspector" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="MarginContainer2" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="LeftHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ObjectName" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+text = "Object name"
+
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Object type"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName"]
+layout_mode = 2
+
+[node name="InputObjectName" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+placeholder_text = "Input object name"
+
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 1
+item_count = 3
+popup/item_0/text = "Normal"
+popup/item_0/icon = ExtResource("5_ef05v")
+popup/item_0/id = 0
+popup/item_1/text = "Decoration"
+popup/item_1/icon = ExtResource("6_fk0vg")
+popup/item_1/id = 1
+popup/item_2/text = "Empty"
+popup/item_2/icon = ExtResource("7_fk0vg")
+popup/item_2/id = 2
+
+[node name="SetTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime"]
+layout_mode = 2
+text = "Start time"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="InputStartTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+placeholder_text = "Input start time"
+
+[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Set to current"
+
+[node name="EndTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+layout_mode = 2
+text = "End time"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InputEndTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+placeholder_text = "Input end time"
+
+[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Set to current"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+layout_mode = 2
+
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+selected = 1
+item_count = 4
+popup/item_0/text = "Last keyframe"
+popup/item_0/id = 0
+popup/item_1/text = "Last keyframe offset"
+popup/item_1/id = 1
+popup/item_2/text = "Fixed time"
+popup/item_2/id = 2
+popup/item_3/text = "Global time"
+popup/item_3/id = 3
+
+[node name="TextEdit" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Input time"
+
+[node name="ParentObject" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject"]
+layout_mode = 2
+text = "Parent object"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject"]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+
+[node name="TextureButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("8_veos7")
+
+[node name="Panel2" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+color = Color(0.32433465, 0.43982217, 0.64049304, 1)
+
+[node name="TextureButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("9_j21il")
+
+[node name="ParentObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.13
+text = "No parent object"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+layout_mode = 2
+text = "Object origin"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+text = "Origin X"
+horizontal_alignment = 1
+
+[node name="Label3" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Input origin X"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+text = "Origin Y"
+horizontal_alignment = 1
+
+[node name="Label2" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Input origin Y"
+
+[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ObjectRenderDepth" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
+layout_mode = 2
+text = "Object render depth"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="TextEdit" type="SpinBox" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+alignment = 1
+
+[node name="ObjectMesh" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf"]
+layout_mode = 2
+
+[node name="ObjectType" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh"]
+layout_mode = 2
+text = "Object mesh"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 4
+popup/item_0/text = "Square base"
+popup/item_0/id = 0
+popup/item_1/text = "Circle base"
+popup/item_1/id = 1
+popup/item_2/text = "Triangle base"
+popup/item_2/id = 2
+popup/item_3/text = "Hexagon base"
+popup/item_3/id = 3
+
+[node name="OptionButton2" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Custom"
+
+[node name="Animation" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
 clip_contents = true
@@ -127,20 +439,44 @@ custom_minimum_size = Vector2(991.28, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="Marker" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker"]
+[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker" node_paths=PackedStringArray("line")]
 z_index = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -1.0
+offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/center_grabber = 1
+theme_override_icons/grabber = ExtResource("12_3oj1v")
+theme_override_icons/grabber_highlight = ExtResource("12_3oj1v")
+theme_override_icons/grabber_disabled = ExtResource("12_3oj1v")
+theme_override_icons/tick = ExtResource("12_3oj1v")
+theme_override_styles/slider = SubResource("StyleBoxFlat_j21il")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_3oj1v")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_ka1pi")
 step = 0.0
+value = 9.355
+ticks_position = 1
+script = ExtResource("13_ka1pi")
+line = NodePath("ColorRect")
+
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker/HSlider"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = -2.0
+offset_top = 1.0
+offset_right = -0.335001
+offset_bottom = 401.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("_parentScroll", "_editor")]
 clip_contents = false
@@ -156,6 +492,7 @@ _editor = NodePath("../../../../../../..")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)

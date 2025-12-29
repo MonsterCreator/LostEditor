@@ -18,6 +18,8 @@ public partial class Editor : Node2D
     [Export] public ScrollContainer HorScroll;
     [Export] public Control[] Rows;
     [Export] public Node ViewportObj;
+    [Export] public InspectorPanel Inspector;
+    [Export] public Editor EditorRef;
     
     [ExportGroup("UI Links")]
     [Export] public TextEdit GlobalTimeTextEdit;
@@ -46,8 +48,11 @@ public partial class Editor : Node2D
     private bool _isPlay = false;
     private const float RowThreshold = 30f;
     #endregion
-
+    
+    public ObjectController Controller;
+    
     public override void _Ready() => UpdateTimelineSize();
+    
 
     public override void _PhysicsProcess(double delta)
     {
@@ -56,6 +61,8 @@ public partial class Editor : Node2D
 
         GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
         TimelineSlider.Value = timelineTime;
+        var scriptSlider = TimelineSlider as SliderController;
+        scriptSlider.line.Position = new Vector2(timelineTime * PixelsPerSecond,0);
         
         if (Input.IsActionJustPressed("Space")) _isPlay = !_isPlay;
     }
@@ -69,12 +76,23 @@ public partial class Editor : Node2D
 
     private bool HandleDeletion(InputEvent @event)
     {
-        if ((@event.IsActionPressed("ui_text_backspace") || Input.IsKeyPressed(Key.Delete)) && _selection.SelectedBlocks.Count > 0)
+        // Проверяем, является ли событие нажатием клавиши и именно клавиши Delete
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Delete)
         {
-            var toDelete = new List<TimelineBlock>(_selection.SelectedBlocks);
-            toDelete.ForEach(DeleteBlock);
-            GetViewport().SetInputAsHandled();
-            return true;
+            if (_selection.SelectedBlocks.Count > 0)
+            {
+                // Создаем копию списка, чтобы избежать ошибок при изменении коллекции во время перебора
+                var toDelete = new List<TimelineBlock>(_selection.SelectedBlocks);
+            
+                foreach (var block in toDelete)
+                {
+                    DeleteBlock(block);
+                }
+
+                // Помечаем событие как обработанное
+                GetViewport().SetInputAsHandled();
+                return true;
+            }
         }
         return false;
     }
@@ -93,6 +111,8 @@ public partial class Editor : Node2D
             FinalizeClick();
         }
     }
+    
+    
     #endregion
 
     #region Core Logic
@@ -138,6 +158,17 @@ public partial class Editor : Node2D
         _hasMoved = false;
         _lastClickedBlock = block;
         _selection.HandleSelection(block, isCtrl);
+    
+        // Передаем первый выделенный объект в инспектор
+        if (_selection.SelectedBlocks.Count > 0)
+        {
+            Inspector.Controller.Inspect(_selection.SelectedBlocks[0]);
+        }
+        else
+        {
+            Inspector.Controller.Inspect(null);
+        }
+
         UpdateAllBlocks();
     }
 
@@ -319,3 +350,4 @@ public static class TimeUtils
         return Mathf.Clamp(time, 0, maxTime - duration);
     }
 }
+
