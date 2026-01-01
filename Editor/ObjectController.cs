@@ -26,8 +26,8 @@ public class ObjectController
 
         // Кнопка "Set to current" для старта
         _view.SetStartToCurrentBtn.Pressed += () => {
-            ApplyStartTime(_editor.timelineTime.ToString());
-            _view.StartTimeInput.Text = _editor.timelineTime.ToString("F3");
+            ApplyStartTime(_editor.TimeCtrl.CurrentTime.ToString());
+            _view.StartTimeInput.Text = _editor.TimeCtrl.CurrentTime.ToString("F3");
         };
     }
 
@@ -71,7 +71,7 @@ public class ObjectController
         _currentTarget.Data.endTime = newStart + duration;
 
         // Обновляем визуальную часть на таймлайне
-        _currentTarget.UpdateVisual(_editor.PixelsPerSecond);
+        _currentTarget.UpdateVisual(_editor.TimeCtrl.PixelsPerSecond);
         _view.EndTimeInput.Text = _currentTarget.Data.endTime.ToString("F3");
     }
 }

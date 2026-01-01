@@ -1,13 +1,18 @@
-[gd_scene load_steps=19 format=3 uid="uid://3585eax1ogj0"]
+[gd_scene load_steps=24 format=3 uid="uid://3585eax1ogj0"]
 
 [ext_resource type="Script" uid="uid://dvmq3t8c6aq1g" path="res://Editor/Editor.cs" id="1_mauyw"]
-[ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="2_ka1pi"]
-[ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="3_0tek8"]
+[ext_resource type="Script" uid="uid://cu63gej7dlbk1" path="res://Editor/TimelineController.cs" id="2_qodls"]
+[ext_resource type="Script" uid="uid://cxd8d665timrk" path="res://Editor/SelectionSystem.cs" id="3_3tug0"]
 [ext_resource type="PackedScene" uid="uid://bowtxal4adyiq" path="res://ObjectManager.tscn" id="3_lsqqn"]
 [ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/ScrollContainerHorController.cs" id="3_q4kyq"]
+[ext_resource type="Script" uid="uid://ddk151oa7f7la" path="res://Editor/TrackManager.cs" id="4_1b133"]
 [ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/ScrollContainerVerController.cs" id="4_lsqqn"]
+[ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="5_3tug0"]
 [ext_resource type="Texture2D" uid="uid://c4k5ex51n3lwm" path="res://NormalObjectIcon16.png" id="5_ef05v"]
 [ext_resource type="Script" uid="uid://bq74v7pliwtdk" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
+[ext_resource type="Script" uid="uid://i01qspmxqxx8" path="res://Editor/InputHandler.cs" id="5_y1sti"]
+[ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="6_1b133"]
+[ext_resource type="Script" uid="uid://cqbog3ccemquh" path="res://Editor/EditorUI.cs" id="6_55vf2"]
 [ext_resource type="Texture2D" uid="uid://1ocaihg8pm43" path="res://DecorationObjectIcon16.png" id="6_fk0vg"]
 [ext_resource type="Script" uid="uid://de7abj7l7kerg" path="res://Editor/FpsCounter.cs" id="7_8ntjk"]
 [ext_resource type="Texture2D" uid="uid://1i5701y42jcf" path="res://EmptyObjectIcon16.png" id="7_fk0vg"]
@@ -27,21 +32,49 @@ draw_center = false
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ka1pi"]
 draw_center = false
 
-[node name="Editor" type="Node2D" node_paths=PackedStringArray("ObjManager", "HorScroll", "Rows", "ViewportObj", "Inspector", "EditorRef", "GlobalTimeTextEdit", "TimelineContainer", "TimelineSlider")]
+[node name="Editor" type="Node2D" node_paths=PackedStringArray("TimeCtrl", "Tracks", "Selection", "InputSys", "UI", "CreateObjectBtn")]
 script = ExtResource("1_mauyw")
-ObjManager = NodePath("ObjectManager")
-HorScroll = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer")
-Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9")]
-ViewportObj = NodePath("Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport/Node")
-Inspector = NodePath("Camera2D2/CanvasLayer/VSplitContainer")
-EditorRef = NodePath(".")
-GlobalTimeTextEdit = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/TextTimeGlobal")
-TimelineContainer = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer")
-TimelineSlider = NodePath("Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker/HSlider")
-GameObjectScene = ExtResource("2_ka1pi")
-TimelineBlockScene = ExtResource("3_0tek8")
+TimeCtrl = NodePath("TimelineController")
+Tracks = NodePath("TrackManager")
+Selection = NodePath("SelectionSystem")
+InputSys = NodePath("InputHandler")
+UI = NodePath("EditorUI")
+CreateObjectBtn = NodePath("Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer/CreateObjectButton")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="TimelineController" type="Node" parent="." node_paths=PackedStringArray("DebugLabel")]
+script = ExtResource("2_qodls")
+MaxTime = 100.0
+DebugLabel = NodePath("../Camera2D2/CanvasLayer/FpsCounter/Label2")
+
+[node name="SelectionSystem" type="Node" parent="." node_paths=PackedStringArray("Inspector", "editor")]
+script = ExtResource("3_3tug0")
+Inspector = NodePath("../Camera2D2/CanvasLayer/VSplitContainer")
+editor = NodePath("..")
+
+[node name="TrackManager" type="Node" parent="." node_paths=PackedStringArray("Rows", "ObjManager", "ViewportObj")]
+script = ExtResource("4_1b133")
+Rows = [NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5")]
+ObjManager = NodePath("../ObjectManager")
+ViewportObj = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport/Node")
+GameObjectScene = ExtResource("5_3tug0")
+TimelineBlockScene = ExtResource("6_1b133")
+
+[node name="InputHandler" type="Node" parent="." node_paths=PackedStringArray("TimeCtrl", "Selection", "Tracks")]
+script = ExtResource("5_y1sti")
+TimeCtrl = NodePath("../TimelineController")
+Selection = NodePath("../SelectionSystem")
+Tracks = NodePath("../TrackManager")
+
+[node name="EditorUI" type="Node" parent="." node_paths=PackedStringArray("TimelineSlider", "TimeText", "HorScroll", "TimelineContainer", "Editor", "TimeCtrl")]
+script = ExtResource("6_55vf2")
+TimelineSlider = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/Marker/HSlider")
+TimeText = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer/TextTimeGlobal")
+HorScroll = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer")
+TimelineContainer = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer")
+Editor = NodePath("..")
+TimeCtrl = NodePath("../TimelineController")
+
+[node name="TimeUtils" type="Node" parent="."]
 
 [node name="ObjectManager" parent="." node_paths=PackedStringArray("polygonObject", "collisionPlygonObject") instance=ExtResource("3_lsqqn")]
 polygonObject = NodePath("Polygon2D")
@@ -383,30 +416,30 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
+[node name="UnderPanel" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel"]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer"]
 modulate = Color(0.17641911, 0.17641908, 0.17641908, 1)
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="TextTimeGlobal" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="TextTimeGlobal" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/search_result_color = Color(0.17641911, 0.17641908, 0.17641908, 1)
@@ -414,7 +447,7 @@ theme_override_colors/caret_background_color = Color(0, 0, 0, 1)
 text = "time global"
 editable = false
 
-[node name="TextTimeObject" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="TextTimeObject" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/search_result_color = Color(0.17641911, 0.17641908, 0.17641908, 1)
@@ -422,30 +455,31 @@ theme_override_colors/caret_background_color = Color(0, 0, 0, 1)
 text = "time local object"
 editable = false
 
-[node name="CreateObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="CreateObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Object
 "
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
 script = ExtResource("3_q4kyq")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer"]
-custom_minimum_size = Vector2(991.28, 0)
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer"]
+custom_minimum_size = Vector2(1000.825, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Marker" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer"]
+[node name="Marker" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker" node_paths=PackedStringArray("line")]
+[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/Marker" node_paths=PackedStringArray("line")]
 z_index = 2
 layout_mode = 1
 anchors_preset = 15
@@ -468,17 +502,23 @@ step = 0.0
 value = 9.355
 ticks_position = 1
 script = ExtResource("13_ka1pi")
-line = NodePath("ColorRect")
+line = NodePath("Control")
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker/HSlider"]
+[node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/Marker/HSlider"]
+anchors_preset = 0
+offset_right = 1.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="SliderLine" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/Marker/HSlider/Control"]
 layout_mode = 1
 anchors_preset = -1
-offset_left = -2.0
+offset_left = -1.0
 offset_top = 1.0
-offset_right = -0.335001
+offset_right = 1.0
 offset_bottom = 401.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("_parentScroll", "_editor")]
+[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("_parentScroll", "_editor")]
 clip_contents = false
 layout_mode = 2
 size_flags_vertical = 3
@@ -488,18 +528,18 @@ script = ExtResource("4_lsqqn")
 _parentScroll = NodePath("../..")
 _editor = NodePath("../../../../../../..")
 
-[node name="timeLine" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer"]
+[node name="timeLine" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -509,12 +549,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control2" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control2" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -524,12 +564,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control3" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control3" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -539,12 +579,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control4" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control4" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -554,12 +594,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control5" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control5" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -569,12 +609,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control6" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control6" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -584,12 +624,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control7" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control7" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -599,12 +639,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control8" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control8" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -614,12 +654,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control9" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control9" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -629,12 +669,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control10" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control10" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control10"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control10"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -644,12 +684,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control11" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control11" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control11"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control11"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -659,12 +699,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control12" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control12" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control12"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control12"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -674,12 +714,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control13" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control13" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control13"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control13"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -689,12 +729,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control14" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control14" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control14"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control14"]
 modulate = Color(0.13949153, 0.17890513, 0.20795369, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -718,8 +758,15 @@ layout_mode = 0
 offset_right = 97.0
 offset_bottom = 57.0
 
-[connection signal="pressed" from="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/CreateObjectButton" to="." method="CreateObjectButtonPressed"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer" to="." method="OnTimelineGuiInput"]
-[connection signal="value_changed" from="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/Marker/HSlider" to="." method="OnTimeLineSliderChangedValue"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/VBoxContainer/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/FpsCounter"]
+layout_mode = 0
+offset_top = 66.0
+offset_right = 97.0
+offset_bottom = 123.0
+text = "100"
+
+[connection signal="pressed" from="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/PanelContainer/MarginContainer/HBoxContainer/CreateObjectButton" to="." method="CreateObjectButtonPressed"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer" to="." method="OnTimelineGuiInput"]
+[connection signal="value_changed" from="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/Marker/HSlider" to="." method="OnTimeLineSliderChangedValue"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/UnderPanel/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using LostEditor;
 
 public partial class ScrollContainerHorController : ScrollContainer
 {
