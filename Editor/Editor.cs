@@ -20,6 +20,7 @@ public partial class Editor : Node2D
     [Export] public Node ViewportObj;
     [Export] public InspectorPanel Inspector;
     [Export] public Editor EditorRef;
+    [Export] public HSlider timelineSlider;
     
     [ExportGroup("UI Links")]
     [Export] public TextEdit GlobalTimeTextEdit;
@@ -61,7 +62,7 @@ public partial class Editor : Node2D
 
         GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
         TimelineSlider.Value = timelineTime;
-        var scriptSlider = TimelineSlider as SliderController;
+        var scriptSlider = TimelineSlider as TimelineSlider;
         scriptSlider.line.Position = new Vector2(timelineTime * PixelsPerSecond,0);
         
         if (Input.IsActionJustPressed("Space")) _isPlay = !_isPlay;
@@ -73,6 +74,8 @@ public partial class Editor : Node2D
         if (HandleDeletion(@event)) return;
         HandleDrag(@event);
     }
+
+    
 
     private bool HandleDeletion(InputEvent @event)
     {
@@ -162,11 +165,11 @@ public partial class Editor : Node2D
         // Передаем первый выделенный объект в инспектор
         if (_selection.SelectedBlocks.Count > 0)
         {
-            Inspector.Controller.Inspect(_selection.SelectedBlocks[0]);
+            Inspector.Inspect(_selection.SelectedBlocks[0]);
         }
         else
         {
-            Inspector.Controller.Inspect(null);
+            Inspector.Inspect(null);
         }
 
         UpdateAllBlocks();
