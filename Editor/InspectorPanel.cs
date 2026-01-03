@@ -2,6 +2,8 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+namespace LostEditor;
+
 public partial class InspectorPanel : HBoxContainer
 {
 

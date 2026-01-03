@@ -4,8 +4,9 @@ using System;
 
 
 using System.Linq;
-using LostEditor;
 
+
+namespace LostEditor;
 
 public partial class Editor : Node2D
 {

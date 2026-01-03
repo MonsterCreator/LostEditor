@@ -6,15 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://bowtxal4adyiq" path="res://ObjectManager.tscn" id="3_lsqqn"]
 [ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/TimelineScripts/ScrollContainerHorController.cs" id="3_q4kyq"]
 [ext_resource type="Script" uid="uid://cu63gej7dlbk1" path="res://Editor/TimelineScripts/TimelineController.cs" id="4_8oxxl"]
-[ext_resource type="Script" path="res://Editor/InputHandler.cs" id="4_fk0vg"]
+[ext_resource type="Script" uid="uid://i01qspmxqxx8" path="res://Editor/InputHandler.cs" id="4_fk0vg"]
 [ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/TimelineScripts/ScrollContainerVerController.cs" id="4_lsqqn"]
 [ext_resource type="Script" uid="uid://ccvrc4nblhh3c" path="res://Editor/TimelineScripts/TimelineObjectController.cs" id="5_3oj1v"]
-[ext_resource type="Script" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
-[ext_resource type="Script" path="res://Editor/DebugEditorManager.cs" id="6_veos7"]
+[ext_resource type="Script" uid="uid://gsd8mjtulqkj" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
+[ext_resource type="Script" uid="uid://dtsq6ioms78ix" path="res://Editor/DebugEditorManager.cs" id="6_veos7"]
 [ext_resource type="Script" uid="uid://de7abj7l7kerg" path="res://Editor/FpsCounter.cs" id="7_8ntjk"]
 [ext_resource type="Script" uid="uid://ddumpt47hc0un" path="res://Editor/TimelineScripts/TimelineSlider.cs" id="7_ef05v"]
-[ext_resource type="Script" path="res://Editor/SelectionManager.cs" id="8_3oj1v"]
-[ext_resource type="Script" path="res://Editor/WorkPanel.cs" id="11_1b133"]
+[ext_resource type="Script" uid="uid://docaef5axwthm" path="res://Editor/SelectionManager.cs" id="8_3oj1v"]
+[ext_resource type="Script" uid="uid://dtf0hgib8f3i8" path="res://Editor/WorkPanel.cs" id="11_1b133"]
 [ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="11_ka1pi"]
 [ext_resource type="Texture2D" uid="uid://d05f6w36eflc5" path="res://Editor/EditorSprites/search_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.png" id="12_bidrp"]
 [ext_resource type="Texture2D" uid="uid://krrygfmcyknn" path="res://Editor/EditorSprites/NormalObjectIcon16.png" id="12_s0arw"]
@@ -29,7 +29,7 @@ debugEditorManager = NodePath("DebugEditorManager")
 timelineController = NodePath("TimeLineController")
 timeLineObjectControl = NodePath("TimelineObjectController")
 HorScroll = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer")
-Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5")]
+Rows = []
 ViewportObj = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport/Node")
 Inspector = NodePath("Camera2D2/CanvasLayer/VSplitContainer")
 EditorRef = NodePath(".")
@@ -48,7 +48,7 @@ editor = NodePath("..")
 [node name="TimelineObjectController" type="Node" parent="." node_paths=PackedStringArray("editor", "Rows")]
 script = ExtResource("5_3oj1v")
 editor = NodePath("..")
-Rows = [NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7")]
+Rows = [NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5")]
 
 [node name="InputHandler" type="Node" parent="." node_paths=PackedStringArray("editor", "viewportPanel", "timeLinePanel", "inspectorPanel")]
 script = ExtResource("4_fk0vg")
@@ -59,7 +59,7 @@ inspectorPanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/W
 
 [node name="DebugEditorManager" type="Node" parent="." node_paths=PackedStringArray("debugLables")]
 script = ExtResource("6_veos7")
-debugLables = [NodePath("CanvasLayer/Control/VBoxContainer/Label"), NodePath("CanvasLayer/Control/VBoxContainer/Label2"), NodePath("CanvasLayer/Control/VBoxContainer/Label3"), NodePath("CanvasLayer/Control/VBoxContainer/Label4"), NodePath("CanvasLayer/Control/VBoxContainer/Label5"), NodePath("CanvasLayer/Control/VBoxContainer/Label6")]
+debugLables = [NodePath("CanvasLayer/Control/VBoxContainer/Label"), NodePath("CanvasLayer/Control/VBoxContainer/Label2"), NodePath("CanvasLayer/Control/VBoxContainer/Label3"), NodePath("CanvasLayer/Control/VBoxContainer/Label4"), NodePath("CanvasLayer/Control/VBoxContainer/Label5")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="DebugEditorManager"]
 physics_interpolation_mode = 2

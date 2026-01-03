@@ -1,5 +1,6 @@
 using Godot;
 using System;
+namespace LostEditor;
 
 public partial class InputHandler : Node
 {

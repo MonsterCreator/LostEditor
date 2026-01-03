@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
+namespace LostEditor;
+
 public partial class SelectionManager : Node
 {
 	[Export] public Editor editor;
