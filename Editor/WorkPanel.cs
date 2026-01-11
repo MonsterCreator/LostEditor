@@ -1,6 +1,7 @@
 using Godot;
 using System;
 
+namespace LostEditor;
 [Tool]
 public partial class WorkPanel : Control
 {
@@ -38,6 +39,8 @@ public partial class WorkPanel : Control
 
 	private void ChangePanelDisplay()
 	{
+		if (!IsInsideTree()) return;
+
 		switch (_panelNum)
 		{
 			case 0:
