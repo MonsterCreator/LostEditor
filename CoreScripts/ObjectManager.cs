@@ -34,7 +34,7 @@ namespace LostEditor
             }
         }
         
-
+        
         public void KeyframePosGenerator(int nums, ref List<KeyframePosX> xK, ref List<KeyframePosY> yK)
         {
             // Linear keyframe for initial position
@@ -136,9 +136,9 @@ namespace LostEditor
             {
                 ObjectStateUpdate(obj);
                 PositionObjectUpdate(obj);
-                SizeObjectUpdate(obj);      // Новая обработка размера
-                RotationObjectUpdate(obj);  // Новая обработка вращения
-                ColorObjectUpdate(obj);     // Новая обработка цвета
+                SizeObjectUpdate(obj);
+                RotationObjectUpdate(obj);
+                ColorObjectUpdate(obj);
             }
         }
 

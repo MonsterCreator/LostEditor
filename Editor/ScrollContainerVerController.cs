@@ -28,7 +28,7 @@ public partial class ScrollContainerVerController : ScrollContainer
 				if (Input.IsKeyPressed(Key.Shift))
 				{
 					float factor = mouseEvent.ButtonIndex == MouseButton.WheelUp ? 1.1f : 0.9f;
-					_editor?.ApplyZoom(factor);
+					_editor.timelineController?.ApplyZoom(factor);
 					AcceptEvent();
 					return;
 				}

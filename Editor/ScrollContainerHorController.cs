@@ -5,6 +5,7 @@ public partial class ScrollContainerHorController : ScrollContainer
 {
 	[Export] public float ScrollSpeed = 30f;
 
+	public bool isMouseHover = false;
 	public override void _Ready()
 	{
 		// Отключаем стандартную обработку фокуса, чтобы он не прыгал
@@ -15,5 +16,15 @@ public partial class ScrollContainerHorController : ScrollContainer
 	public void ScrollManually(float delta)
 	{
 		ScrollHorizontal += (int)(delta * ScrollSpeed);
+	}
+
+	private void MouseEntered()
+	{
+		isMouseHover = true;
+	}
+
+	private void MouseExited()
+	{
+		isMouseHover = false;
 	}
 }

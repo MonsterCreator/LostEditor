@@ -2,6 +2,27 @@
 
 [ext_resource type="Script" uid="uid://dscyvg5j0y5us" path="res://Editor/TimelineBlock.cs" id="1_g74yk"]
 
-[node name="TimelineBlock" type="ColorRect"]
-custom_minimum_size = Vector2(0, 30)
+[node name="TimelineBlock" type="ColorRect" node_paths=PackedStringArray("button")]
+clip_contents = true
+custom_minimum_size = Vector2(35.555, 30)
 script = ExtResource("1_g74yk")
+button = NodePath("Button")
+
+[node name="Button" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "null"
+
+[connection signal="button_down" from="Button" to="." method="ButtonDown"]
+[connection signal="button_up" from="Button" to="." method="ButtonUp"]
+[connection signal="pressed" from="Button" to="." method="ButtonPressed"]
