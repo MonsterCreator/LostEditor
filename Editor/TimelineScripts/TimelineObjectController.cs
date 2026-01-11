@@ -59,7 +59,10 @@ public partial class TimelineObjectController : Node
 
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
-            if(editor.timeLineObjectControl.GetBlockUnderMouse() == null && hasMoved) editor.selection.DeselectAll();
+            if(editor.timeLineObjectControl.GetBlockUnderMouse() == null && !hasMoved && editor.scrollContainerHor.isMouseHover)
+            {
+                editor.selection.DeselectAll();
+            }
             
             if (IsDragging) FinalizeDrag();
         }

@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://dvg0tx15kyd0b"]
+
+[node name="CircleDefaultObject" type="Polygon2D"]
+polygon = PackedVector2Array(100, 100, -100, 100, -100, -100, 100, -100)

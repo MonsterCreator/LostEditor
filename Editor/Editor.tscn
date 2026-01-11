@@ -1,20 +1,26 @@
-[gd_scene load_steps=16 format=3 uid="uid://3585eax1ogj0"]
+[gd_scene load_steps=22 format=3 uid="uid://3585eax1ogj0"]
 
 [ext_resource type="Script" uid="uid://dvmq3t8c6aq1g" path="res://Editor/Editor.cs" id="1_mauyw"]
 [ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="2_ka1pi"]
 [ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="3_0tek8"]
 [ext_resource type="PackedScene" uid="uid://bowtxal4adyiq" path="res://ObjectManager.tscn" id="3_lsqqn"]
-[ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/ScrollContainerHorController.cs" id="3_q4kyq"]
-[ext_resource type="Script" uid="uid://cu63gej7dlbk1" path="res://Editor/TimelineController.cs" id="4_8oxxl"]
+[ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/TimelineScripts/ScrollContainerHorController.cs" id="3_q4kyq"]
+[ext_resource type="Script" uid="uid://cu63gej7dlbk1" path="res://Editor/TimelineScripts/TimelineController.cs" id="4_8oxxl"]
 [ext_resource type="Script" uid="uid://i01qspmxqxx8" path="res://Editor/InputHandler.cs" id="4_fk0vg"]
-[ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/ScrollContainerVerController.cs" id="4_lsqqn"]
-[ext_resource type="Script" uid="uid://ccvrc4nblhh3c" path="res://Editor/TimelineObjectController.cs" id="5_3oj1v"]
+[ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/TimelineScripts/ScrollContainerVerController.cs" id="4_lsqqn"]
+[ext_resource type="Script" uid="uid://ccvrc4nblhh3c" path="res://Editor/TimelineScripts/TimelineObjectController.cs" id="5_3oj1v"]
 [ext_resource type="Script" uid="uid://gsd8mjtulqkj" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
 [ext_resource type="Script" uid="uid://dtsq6ioms78ix" path="res://Editor/DebugEditorManager.cs" id="6_veos7"]
 [ext_resource type="Script" uid="uid://de7abj7l7kerg" path="res://Editor/FpsCounter.cs" id="7_8ntjk"]
-[ext_resource type="Script" uid="uid://ddumpt47hc0un" path="res://Editor/TimelineSlider.cs" id="7_ef05v"]
+[ext_resource type="Script" uid="uid://ddumpt47hc0un" path="res://Editor/TimelineScripts/TimelineSlider.cs" id="7_ef05v"]
 [ext_resource type="Script" uid="uid://docaef5axwthm" path="res://Editor/SelectionManager.cs" id="8_3oj1v"]
+[ext_resource type="Script" uid="uid://dtf0hgib8f3i8" path="res://Editor/WorkPanel.cs" id="11_1b133"]
 [ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="11_ka1pi"]
+[ext_resource type="Texture2D" uid="uid://d05f6w36eflc5" path="res://Editor/EditorSprites/search_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.png" id="12_bidrp"]
+[ext_resource type="Texture2D" uid="uid://krrygfmcyknn" path="res://Editor/EditorSprites/NormalObjectIcon16.png" id="12_s0arw"]
+[ext_resource type="Texture2D" uid="uid://cf54x6p141v2u" path="res://Editor/EditorSprites/DecorationObject16x16.png" id="13_3tug0"]
+[ext_resource type="Texture2D" uid="uid://dbpo3l01ne0sv" path="res://Editor/EditorSprites/HammerIcon32.png" id="13_s0arw"]
+[ext_resource type="Texture2D" uid="uid://cvm5m317tsibm" path="res://Editor/EditorSprites/EmptyObjectIcon16.png" id="14_1b133"]
 
 [node name="Editor" type="Node2D" node_paths=PackedStringArray("objectManager", "debugEditorManager", "timelineController", "timeLineObjectControl", "HorScroll", "Rows", "ViewportObj", "Inspector", "EditorRef", "timelineSlider", "selection", "scrollContainerHor", "GlobalTimeTextEdit", "TimelineContainer")]
 script = ExtResource("1_mauyw")
@@ -22,16 +28,16 @@ objectManager = NodePath("ObjectManager")
 debugEditorManager = NodePath("DebugEditorManager")
 timelineController = NodePath("TimeLineController")
 timeLineObjectControl = NodePath("TimelineObjectController")
-HorScroll = NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer")
-Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5")]
-ViewportObj = NodePath("Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport/Node")
+HorScroll = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer")
+Rows = [NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5")]
+ViewportObj = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport/Node")
 Inspector = NodePath("Camera2D2/CanvasLayer/VSplitContainer")
 EditorRef = NodePath(".")
-timelineSlider = NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/Marker/HSlider")
+timelineSlider = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/Marker/HSlider")
 selection = NodePath("SelectionManager")
-scrollContainerHor = NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer")
-GlobalTimeTextEdit = NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer/TextTimeGlobal")
-TimelineContainer = NodePath("Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer")
+scrollContainerHor = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer")
+GlobalTimeTextEdit = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer/TextTimeGlobal")
+TimelineContainer = NodePath("Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer")
 GameObjectScene = ExtResource("2_ka1pi")
 TimelineBlockScene = ExtResource("3_0tek8")
 
@@ -42,14 +48,14 @@ editor = NodePath("..")
 [node name="TimelineObjectController" type="Node" parent="." node_paths=PackedStringArray("editor", "Rows")]
 script = ExtResource("5_3oj1v")
 editor = NodePath("..")
-Rows = [NodePath("../Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4")]
+Rows = [NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"), NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7")]
 
 [node name="InputHandler" type="Node" parent="." node_paths=PackedStringArray("editor", "viewportPanel", "timeLinePanel", "inspectorPanel")]
 script = ExtResource("4_fk0vg")
 editor = NodePath("..")
-viewportPanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport")
-timeLinePanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll")
-inspectorPanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector")
+viewportPanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport")
+timeLinePanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3")
+inspectorPanel = NodePath("../Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector")
 
 [node name="DebugEditorManager" type="Node" parent="." node_paths=PackedStringArray("debugLables")]
 script = ExtResource("6_veos7")
@@ -133,32 +139,115 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
+[node name="EditorRaw2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2"]
+layout_mode = 2
+
+[node name="TabPanel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer"]
+self_modulate = Color(0.41215247, 0.41215247, 0.41215247, 1)
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme = ExtResource("11_ka1pi")
+
+[node name="EditorRaw1" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/TabPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -15.5
+offset_right = 120.0
+offset_bottom = 15.5
+grow_vertical = 2
+
+[node name="LevelScene" type="MenuButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/TabPanel/EditorRaw1"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme = ExtResource("11_ka1pi")
+text = "Scene"
+item_count = 3
+popup/item_0/text = "Create new scene"
+popup/item_0/id = 0
+popup/item_1/text = "Open scene"
+popup/item_1/id = 1
+popup/item_2/text = "Save scene"
+popup/item_2/id = 2
+
+[node name="Settings" type="MenuButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/TabPanel/EditorRaw1"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Settings"
+
+[node name="View" type="MenuButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/TabPanel/EditorRaw1"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "View"
+
+[node name="Window" type="MenuButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/TabPanel/EditorRaw1"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Window"
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer"]
+custom_minimum_size = Vector2(768, 432)
 layout_mode = 2
 size_flags_horizontal = 3
+stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer"]
 handle_input_locally = false
-size = Vector2i(766, 430)
+size = Vector2i(768, 432)
 render_target_update_mode = 4
 
-[node name="Camera2D" type="Camera2D" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport"]
+[node name="Camera2D" type="Camera2D" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport"]
 zoom = Vector2(0.5, 0.5)
 
-[node name="Node" type="Node" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/SubViewportContainer/SubViewport"]
+[node name="Node" type="Node" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport"]
 
-[node name="TabContainer" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer"]
+[node name="WorkPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2" node_paths=PackedStringArray("emptyPanel", "singleObjSettingsPanel", "multiObjEditPanel")]
 layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("11_1b133")
+emptyPanel = NodePath("Panel")
+singleObjSettingsPanel = NodePath("SingleObjectSettings")
+multiObjEditPanel = NodePath("MultiObjectEdit")
+
+[node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
+self_modulate = Color(0.40069774, 0.40069774, 0.40069768, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("11_ka1pi")
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "No objects or keyframes selected"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SingleObjectSettings" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
+visible = false
+layout_mode = 0
+offset_left = 4.0
+offset_right = 764.0
+offset_bottom = 466.0
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
 current_tab = 0
+drag_to_rearrange_enabled = true
 
-[node name="Inspector" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer" node_paths=PackedStringArray("NameInput", "StartTimeInput", "EndTimeInput", "SetStartToCurrentBtn")]
+[node name="Inspector" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings" node_paths=PackedStringArray("NameInput", "StartTimeInput", "EndTimeInput", "SetStartToCurrentBtn")]
 layout_mode = 2
 script = ExtResource("5_j21il")
 NameInput = NodePath("MarginContainer2/LeftHalf/ObjectName/HBoxContainer/InputObjectName")
@@ -167,7 +256,7 @@ EndTimeInput = NodePath("MarginContainer2/LeftHalf/EndTime/HBoxContainer/InputEn
 SetStartToCurrentBtn = NodePath("MarginContainer2/LeftHalf/EndTime/HBoxContainer/Button")
 metadata/_tab_index = 0
 
-[node name="MarginContainer2" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector"]
+[node name="MarginContainer2" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 5
@@ -175,32 +264,32 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="LeftHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2"]
+[node name="LeftHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ObjectName" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+[node name="ObjectName" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf"]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.6
 text = "Object name"
 
-[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Object type"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName"]
 layout_mode = 2
 
-[node name="InputObjectName" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
+[node name="InputObjectName" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -208,72 +297,75 @@ size_flags_stretch_ratio = 1.6
 theme = ExtResource("11_ka1pi")
 placeholder_text = "Input object name"
 
-[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
 selected = 1
 item_count = 3
 popup/item_0/text = "Normal"
+popup/item_0/icon = ExtResource("12_s0arw")
 popup/item_0/id = 0
 popup/item_1/text = "Decoration"
+popup/item_1/icon = ExtResource("13_3tug0")
 popup/item_1/id = 1
 popup/item_2/text = "Empty"
+popup/item_2/icon = ExtResource("14_1b133")
 popup/item_2/id = 2
 
-[node name="SetTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+[node name="SetTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/SetTime"]
 layout_mode = 2
 text = "Start time"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/SetTime"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="InputStartTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
+[node name="InputStartTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.6
 theme = ExtResource("11_ka1pi")
 placeholder_text = "Input start time"
 
-[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
+[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/SetTime/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
 text = "Set to current"
 
-[node name="EndTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+[node name="EndTime" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime"]
 layout_mode = 2
 text = "End time"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="InputEndTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
+[node name="InputEndTime" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.6
 theme = ExtResource("11_ka1pi")
 placeholder_text = "Input end time"
 
-[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
+[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Set to current"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime"]
 layout_mode = 2
 
-[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.6
@@ -288,135 +380,146 @@ popup/item_2/id = 2
 popup/item_3/text = "Global time"
 popup/item_3/id = 3
 
-[node name="TextEdit" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
+[node name="TextEdit" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/EndTime/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input time"
 
-[node name="ParentObject" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+[node name="ParentObject" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject"]
 layout_mode = 2
 text = "Parent object"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject"]
 layout_mode = 2
 
-[node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+[node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 
-[node name="TextureButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel"]
+[node name="SearchObjectsButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture_normal = ExtResource("12_bidrp")
+texture_pressed = ExtResource("12_bidrp")
+texture_hover = ExtResource("12_bidrp")
+texture_disabled = ExtResource("12_bidrp")
+texture_focused = ExtResource("12_bidrp")
 
-[node name="Panel2" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+[node name="Panel2" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(0.32433465, 0.43982217, 0.64049304, 1)
 
-[node name="TextureButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel2"]
+[node name="HammerButton" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer/Panel2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture_normal = ExtResource("13_s0arw")
+texture_pressed = ExtResource("13_s0arw")
+texture_hover = ExtResource("13_s0arw")
+texture_disabled = ExtResource("13_s0arw")
+texture_focused = ExtResource("13_s0arw")
 
-[node name="ParentObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
+[node name="ParentObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ParentObject/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 3.13
 theme = ExtResource("11_ka1pi")
 text = "No parent object"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
 layout_mode = 2
 text = "Object origin"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 text = "Origin X"
 horizontal_alignment = 1
 
-[node name="Label3" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
+[node name="Label3" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input origin X"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
+[node name="Label3" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 text = "Origin Y"
 horizontal_alignment = 1
 
-[node name="Label2" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
+[node name="Label2" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input origin Y"
 
-[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector"]
+[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RightHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer"]
+[node name="RightHalf" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ObjectRenderDepth" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf"]
+[node name="ObjectRenderDepth" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
 layout_mode = 2
 text = "Object render depth"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectRenderDepth"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+theme = ExtResource("11_ka1pi")
 
-[node name="TextEdit" type="SpinBox" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
+[node name="TextEdit" type="SpinBox" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectRenderDepth/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 alignment = 1
 
-[node name="ObjectMesh" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf"]
+[node name="ObjectMesh" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf"]
 layout_mode = 2
 
-[node name="ObjectType" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh"]
+[node name="ObjectType" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectMesh"]
 layout_mode = 2
 text = "Object mesh"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectMesh"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
@@ -431,41 +534,56 @@ popup/item_2/id = 2
 popup/item_3/text = "Hexagon base"
 popup/item_3/id = 3
 
-[node name="OptionButton2" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
+[node name="OptionButton2" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer/RightHalf/ObjectMesh/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
 text = "Custom"
 
-[node name="Animation" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/HBoxContainer/TabContainer"]
+[node name="Animation" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="TimeLineFullPanelScroll" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
+[node name="MultiObjectEdit" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("11_ka1pi")
+current_tab = 0
+
+[node name="Button" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/MultiObjectEdit"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="EditorRaw3" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll"]
+[node name="PanelContainer" type="PanelContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3"]
 layout_mode = 2
 
-[node name="BGpanel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer"]
+[node name="BGpanel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 theme = ExtResource("11_ka1pi")
 selected = 0
@@ -475,47 +593,50 @@ popup/item_0/id = 0
 popup/item_1/text = "Events"
 popup/item_1/id = 1
 
-[node name="TextTimeGlobal" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="TextTimeGlobal" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+theme = ExtResource("11_ka1pi")
 theme_override_colors/search_result_color = Color(0.17641911, 0.17641908, 0.17641908, 1)
 theme_override_colors/caret_background_color = Color(0, 0, 0, 1)
 text = "time global"
 editable = false
 
-[node name="TextTimeObject" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="TextTimeObject" type="TextEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+theme = ExtResource("11_ka1pi")
 theme_override_colors/search_result_color = Color(0.17641911, 0.17641908, 0.17641908, 1)
 theme_override_colors/caret_background_color = Color(0, 0, 0, 1)
 text = "time local object"
 editable = false
 
-[node name="CreateObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="CreateObjectButton" type="Button" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme = ExtResource("11_ka1pi")
 text = "Object
 "
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3"]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("11_ka1pi")
 vertical_scroll_mode = 0
 script = ExtResource("3_q4kyq")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer"]
 custom_minimum_size = Vector2(991.28, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Marker" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer"]
+[node name="Marker" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/Marker" node_paths=PackedStringArray("line")]
+[node name="HSlider" type="HSlider" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/Marker" node_paths=PackedStringArray("line")]
 z_index = 2
 layout_mode = 1
 anchors_preset = 15
@@ -534,7 +655,7 @@ ticks_position = 1
 script = ExtResource("7_ef05v")
 line = NodePath("ColorRect")
 
-[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/Marker/HSlider"]
+[node name="ColorRect" type="ColorRect" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/Marker/HSlider"]
 layout_mode = 1
 anchors_preset = -1
 offset_left = -2.0
@@ -542,10 +663,11 @@ offset_top = 1.0
 offset_right = -0.335001
 offset_bottom = 401.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("_parentScroll", "_editor")]
+[node name="ScrollContainer" type="ScrollContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("_parentScroll", "_editor")]
 clip_contents = false
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
@@ -553,18 +675,18 @@ script = ExtResource("4_lsqqn")
 _parentScroll = NodePath("../..")
 _editor = NodePath("../../../../../../..")
 
-[node name="timeLine" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer"]
+[node name="timeLine" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -575,12 +697,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control2" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control2" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control2"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -591,12 +713,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control3" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control3" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control3"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -607,12 +729,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control4" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control4" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control4"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -623,12 +745,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control5" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control5" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control5"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -639,12 +761,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control6" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control6" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control6"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -655,12 +777,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control7" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control7" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control7"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -671,12 +793,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control8" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control8" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control8"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -687,12 +809,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control9" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control9" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control9"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -703,12 +825,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control10" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control10" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control10"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control10"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -719,12 +841,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control11" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control11" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control11"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control11"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -735,12 +857,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control12" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control12" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control12"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control12"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -751,12 +873,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control13" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control13" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control13"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control13"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -767,12 +889,12 @@ grow_vertical = 2
 mouse_filter = 2
 theme = ExtResource("11_ka1pi")
 
-[node name="Control14" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
+[node name="Control14" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control14"]
+[node name="ColorRect" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer/timeLine/Control14"]
 modulate = Color(0.26079437, 0.26546615, 0.2506229, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -789,6 +911,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 130.24
 offset_bottom = 55.78
+mouse_filter = 2
 script = ExtResource("7_8ntjk")
 fpsLabel = NodePath("Label")
 
@@ -802,10 +925,11 @@ layout_mode = 0
 offset_right = 97.0
 offset_bottom = 57.0
 
-[connection signal="pressed" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/PanelContainer/MarginContainer/HBoxContainer/CreateObjectButton" to="." method="CreateObjectButtonPressed"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
-[connection signal="mouse_entered" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer" to="." method="MouseEntered"]
-[connection signal="mouse_exited" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer" to="." method="MouseExited"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer" to="." method="OnTimelineGuiInput"]
-[connection signal="value_changed" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/Marker/HSlider" to="TimeLineController" method="OnTimeLineSliderChangedValue"]
-[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/TimeLineFullPanelScroll/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
+[connection signal="text_submitted" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector/MarginContainer2/LeftHalf/ObjectName/HBoxContainer/InputObjectName" to="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettings/Inspector" method="ObjectNameTextEditSubmitted"]
+[connection signal="pressed" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/PanelContainer/MarginContainer/HBoxContainer/CreateObjectButton" to="." method="CreateObjectButtonPressed"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]
+[connection signal="mouse_entered" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer" method="MouseEntered"]
+[connection signal="mouse_exited" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer" method="MouseExited"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer" to="." method="OnTimelineGuiInput"]
+[connection signal="value_changed" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/Marker/HSlider" to="TimeLineController" method="OnTimeLineSliderChangedValue"]
+[connection signal="gui_input" from="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer" to="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw3/ScrollContainer/VBoxContainer/ScrollContainer" method="_GuiInput"]

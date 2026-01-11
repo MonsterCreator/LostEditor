@@ -21,10 +21,12 @@ public partial class ScrollContainerHorController : ScrollContainer
 	private void MouseEntered()
 	{
 		isMouseHover = true;
+		GD.Print("MouseEntered");
 	}
 
 	private void MouseExited()
 	{
 		isMouseHover = false;
+		GD.Print("MouseExited");
 	}
 }

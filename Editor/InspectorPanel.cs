@@ -11,6 +11,8 @@ public partial class InspectorPanel : HBoxContainer
 	[Export] public LineEdit EndTimeInput;
 	[Export] public Button SetStartToCurrentBtn;
 
+
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -22,6 +24,11 @@ public partial class InspectorPanel : HBoxContainer
 	}
 
 	public void Inspect(TimelineBlock blocks)
+	{
+		
+	}
+
+	public void ObjectNameTextEditSubmitted()
 	{
 		
 	}
