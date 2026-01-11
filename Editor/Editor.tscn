@@ -6,15 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://bowtxal4adyiq" path="res://ObjectManager.tscn" id="3_lsqqn"]
 [ext_resource type="Script" uid="uid://cug8rl37m0lnv" path="res://Editor/TimelineScripts/ScrollContainerHorController.cs" id="3_q4kyq"]
 [ext_resource type="Script" uid="uid://cu63gej7dlbk1" path="res://Editor/TimelineScripts/TimelineController.cs" id="4_8oxxl"]
-[ext_resource type="Script" uid="uid://i01qspmxqxx8" path="res://Editor/InputHandler.cs" id="4_fk0vg"]
+[ext_resource type="Script" path="res://Editor/InputHandler.cs" id="4_fk0vg"]
 [ext_resource type="Script" uid="uid://dqos7a0y1qfls" path="res://Editor/TimelineScripts/ScrollContainerVerController.cs" id="4_lsqqn"]
 [ext_resource type="Script" uid="uid://ccvrc4nblhh3c" path="res://Editor/TimelineScripts/TimelineObjectController.cs" id="5_3oj1v"]
-[ext_resource type="Script" uid="uid://gsd8mjtulqkj" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
-[ext_resource type="Script" uid="uid://dtsq6ioms78ix" path="res://Editor/DebugEditorManager.cs" id="6_veos7"]
+[ext_resource type="Script" path="res://Editor/InspectorPanel.cs" id="5_j21il"]
+[ext_resource type="Script" path="res://Editor/DebugEditorManager.cs" id="6_veos7"]
 [ext_resource type="Script" uid="uid://de7abj7l7kerg" path="res://Editor/FpsCounter.cs" id="7_8ntjk"]
 [ext_resource type="Script" uid="uid://ddumpt47hc0un" path="res://Editor/TimelineScripts/TimelineSlider.cs" id="7_ef05v"]
-[ext_resource type="Script" uid="uid://docaef5axwthm" path="res://Editor/SelectionManager.cs" id="8_3oj1v"]
-[ext_resource type="Script" uid="uid://dtf0hgib8f3i8" path="res://Editor/WorkPanel.cs" id="11_1b133"]
+[ext_resource type="Script" path="res://Editor/SelectionManager.cs" id="8_3oj1v"]
+[ext_resource type="Script" path="res://Editor/WorkPanel.cs" id="11_1b133"]
 [ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="11_ka1pi"]
 [ext_resource type="Texture2D" uid="uid://d05f6w36eflc5" path="res://Editor/EditorSprites/search_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.png" id="12_bidrp"]
 [ext_resource type="Texture2D" uid="uid://krrygfmcyknn" path="res://Editor/EditorSprites/NormalObjectIcon16.png" id="12_s0arw"]
@@ -214,8 +214,10 @@ script = ExtResource("11_1b133")
 emptyPanel = NodePath("Panel")
 singleObjSettingsPanel = NodePath("SingleObjectSettings")
 multiObjEditPanel = NodePath("MultiObjectEdit")
+panelNum = 1
 
 [node name="Panel" type="Panel" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
+visible = false
 self_modulate = Color(0.40069774, 0.40069774, 0.40069768, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -237,7 +239,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SingleObjectSettings" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
-visible = false
 layout_mode = 0
 offset_left = 4.0
 offset_right = 764.0
