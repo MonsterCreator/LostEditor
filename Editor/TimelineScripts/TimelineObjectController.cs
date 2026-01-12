@@ -8,6 +8,17 @@ public partial class TimelineObjectController : Node
     [Export] public Editor editor;
     [Export] public Control[] Rows;
 
+    [Export] public TimelineController timelineController;
+    [Export] public ScrollContainerHorController scrollContainerHor;
+    [Export] public SelectionManager selectionManager;
+    [Export] public DebugEditorManager debugEditorManager;
+    [Export] public Node ViewportObj;
+
+    [ExportGroup("Prefabs")]
+    [Export] public PackedScene GameObjectScene;
+    [Export] public PackedScene TimelineBlockScene;
+    [Export] public ObjectManager objectManager;
+
 
     
     public bool IsDragging = false;
@@ -29,23 +40,24 @@ public partial class TimelineObjectController : Node
     {
         if (Rows == null || Rows.Length == 0) return;
 
-        var newSceneObj = editor.GameObjectScene.Instantiate<GameObject>();
-        float start = editor.timelineController.timelineTime;
+        var newSceneObj = GameObjectScene.Instantiate<GameObject>();
+        float start = timelineController.timelineTime;
         float duration = 5.0f;
         newSceneObj.startTime = start;
         newSceneObj.endTime = start + duration;
 
-        editor.ViewportObj.AddChild(newSceneObj);
-        editor.objectManager.RegisterObject(newSceneObj);
+        ViewportObj.AddChild(newSceneObj);
+        objectManager.RegisterObject(newSceneObj);
 
-        var block = editor.TimelineBlockScene.Instantiate<TimelineBlock>();
+        var block = TimelineBlockScene.Instantiate<TimelineBlock>();
+        block.Setup(newSceneObj,timelineController,this,selectionManager);
         block.Data = newSceneObj;
         block.editor = editor;
         
         Rows[0].AddChild(block);
         activeBlocks.Add(block);
 
-        block.UpdateVisual(editor.timelineController.PixelsPerSecond);
+        block.UpdateVisual(timelineController.PixelsPerSecond);
     }
 
     public override void _Input(InputEvent @event)
@@ -59,9 +71,9 @@ public partial class TimelineObjectController : Node
 
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
-            if(editor.timeLineObjectControl.GetBlockUnderMouse() == null && !hasMoved && editor.scrollContainerHor.isMouseHover)
+            if(GetBlockUnderMouse() == null && !hasMoved && scrollContainerHor.isMouseHover)
             {
-                editor.selection.DeselectAll();
+                selectionManager.DeselectAll();
             }
             
             if (IsDragging) FinalizeDrag();
@@ -98,7 +110,7 @@ public partial class TimelineObjectController : Node
     public void StartDraggingBlock(TimelineBlock block)
     {
         IsDragging = true;
-        editor.debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: True (TimelineBlockController,FinalizeDrag)");
+        debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: True (TimelineBlockController,FinalizeDrag)");
         hasMoved = false;
         _lastClickedBlock = block;
         _mouseYAccumulator = 0f;
@@ -137,21 +149,21 @@ public partial class TimelineObjectController : Node
 
     private void ProcessHorizontalMove(float deltaX)
     {
-        float pps = editor.timelineController.PixelsPerSecond;
+        float pps = timelineController.PixelsPerSecond;
         if (pps <= 0) return; 
 
         float timeDelta = deltaX / pps;
 
         // Проверка границ: если хоть один блок вылетит за пределы, отменяем всё движение
-        foreach (var b in editor.selection.SelectedBlocks)
+        foreach (var b in selectionManager.SelectedBlocks)
         {
             float newStart = b.Data.startTime + timeDelta;
             float newEnd = b.Data.endTime + timeDelta;
-            if (newStart < 0 || newEnd > editor.timelineController.timelineMaxTime) return;
+            if (newStart < 0 || newEnd > timelineController.timelineMaxTime) return;
         }
         
         // Применяем
-        editor.selection.SelectedBlocks.ForEach(b => {
+        selectionManager.SelectedBlocks.ForEach(b => {
             b.Data.startTime += timeDelta;
             b.Data.endTime += timeDelta;
             b.UpdateVisual(pps);
@@ -163,22 +175,22 @@ public partial class TimelineObjectController : Node
         // Если мышь не двигалась, это был просто клик (выделение)
         if (!hasMoved && _lastClickedBlock != null)
         {
-            editor.debugEditorManager.OverrideText(4,"FinalizeDrag Мышь была просто нажата без перемещения.");
+            debugEditorManager.OverrideText(4,"FinalizeDrag Мышь была просто нажата без перемещения.");
             bool isCtrl = Input.IsKeyPressed(Key.Ctrl);
             
             // Если Ctrl не зажат, и мы кликнули по уже выделенному блоку (без движения),
             // то по логике UI это должно сбросить остальные выделения и оставить только этот
-            if (!isCtrl && editor.selection.SelectedBlocks.Count > 1 && editor.selection.SelectedBlocks.Contains(_lastClickedBlock))
+            if (!isCtrl && selectionManager.SelectedBlocks.Count > 1 && selectionManager.SelectedBlocks.Contains(_lastClickedBlock))
             {
-                editor.selection.DeselectAll();
-                editor.selection.HandleSelection(_lastClickedBlock, false);
+                selectionManager.DeselectAll();
+                selectionManager.HandleSelection(_lastClickedBlock, false);
             }
             // Стандартная обработка (Ctrl или клик по невыделенному) уже произошла в StartDraggingBlock,
             // но можно добавить специфичную логику здесь.
         }
 
         IsDragging = false;
-        editor.debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: Flase (TimelineBlockController,FinalizeDrag)");
+        debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: Flase (TimelineBlockController,FinalizeDrag)");
         _lastClickedBlock = null;
         _mouseYAccumulator = 0f;
         UpdateAllBlocks(); // Финальное обновление для выравнивания
@@ -187,7 +199,7 @@ public partial class TimelineObjectController : Node
     private bool MoveGroup(int dir)
     {
         // 1. Проверяем возможность движения для ВСЕЙ группы
-        foreach (var block in editor.selection.SelectedBlocks)
+        foreach (var block in selectionManager.SelectedBlocks)
         {
             Node currentRow = block.GetParent();
             int currentIndex = Array.IndexOf(Rows, currentRow);
@@ -198,7 +210,7 @@ public partial class TimelineObjectController : Node
         }
 
         // 2. Двигаем
-        foreach (var block in editor.selection.SelectedBlocks)
+        foreach (var block in selectionManager.SelectedBlocks)
         {
             Node currentRow = block.GetParent();
             int currentIndex = Array.IndexOf(Rows, currentRow);
@@ -207,7 +219,7 @@ public partial class TimelineObjectController : Node
             Rows[currentIndex + dir].AddChild(block);
             
             // Хак для Godot при смене родителя
-            block.UpdateVisual(editor.timelineController.PixelsPerSecond);
+            block.UpdateVisual(timelineController.PixelsPerSecond);
         }
         return true;
     }
@@ -217,9 +229,9 @@ public partial class TimelineObjectController : Node
     {
         if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Delete)
         {
-            if (editor.selection.SelectedBlocks.Count > 0)
+            if (selectionManager.SelectedBlocks.Count > 0)
             {
-                var toDelete = new List<TimelineBlock>(editor.selection.SelectedBlocks);
+                var toDelete = new List<TimelineBlock>(selectionManager.SelectedBlocks);
                 foreach (var block in toDelete) DeleteBlock(block);
                 GetViewport().SetInputAsHandled();
                 return true;
@@ -253,11 +265,11 @@ public partial class TimelineObjectController : Node
     public void DeleteBlock(TimelineBlock block)
     {
         activeBlocks.Remove(block);
-        editor.selection.SelectedBlocks.Remove(block);
-        editor.objectManager.objects.Remove(block.Data);
+        selectionManager.SelectedBlocks.Remove(block);
+        objectManager.objects.Remove(block.Data);
         block.Data.QueueFree();
         block.QueueFree();
     }
-    public void UpdateAllBlocks() => activeBlocks.ForEach(b => b.UpdateVisual(editor.timelineController.PixelsPerSecond));
-    public void HandleBlockSelection(TimelineBlock block, bool isCtrl) => editor.selection.HandleSelection(block, isCtrl);
+    public void UpdateAllBlocks() => activeBlocks.ForEach(b => b.UpdateVisual(timelineController.PixelsPerSecond));
+    public void HandleBlockSelection(TimelineBlock block, bool isCtrl) => selectionManager.HandleSelection(block, isCtrl);
 }

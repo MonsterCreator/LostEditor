@@ -7,7 +7,9 @@ namespace LostEditor;
 
 public partial class SelectionManager : Node
 {
-	[Export] public Editor editor;
+	//[Export] public Editor editor;
+    [Export] public DebugEditorManager debugEditorManager;
+    [Export] public InspectorPanel inspector;
 	public List<TimelineBlock> SelectedBlocks { get; private set; } = new();
 
 	private int operationIndex = 0;
@@ -35,12 +37,14 @@ public partial class SelectionManager : Node
 	{
 		if (SelectedBlocks != null) DeselectAll();
 		SelectedBlocks.Add(block);
+        
+        inspector.Inspect(block);
 	}
 
     public void DeselectAll()
     {
 		operationIndex++;
-		editor.debugEditorManager.OverrideText(3,"пытаюсь сбросить выделение");
+		debugEditorManager.OverrideText(3,"пытаюсь сбросить выделение");
         foreach (var block in SelectedBlocks)
 		{
 			block.DeselectBlock();

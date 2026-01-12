@@ -1,10 +1,45 @@
 using Godot;
 using LostEditor; // Чтобы видеть GameObject
 
-public partial class TimelineBlock : ColorRect
+public partial class TimelineBlock : Panel
 {
     [Export] public Button button;
     public GameObject Data;
+
+    private TimelineObjectController _timelineObjController;
+    private TimelineController _timelineController;
+    private SelectionManager _selectionManager;
+
+    [Export] private Color defaultColor;
+    [Export] private Color selectedColor;
+
+    public void Setup
+    (
+        GameObject data, 
+        TimelineController tlc, 
+        TimelineObjectController tloc, 
+        SelectionManager sm
+    )
+    {
+        // Отписываемся от старого, если был (чтобы избежать утечек памяти)
+        if (Data != null) Data.OnDataChanged -= OnDataUpdate;
+        Data = data;
+        _timelineObjController = tloc;
+        _timelineController = tlc;
+        _selectionManager = sm;
+
+        // Подписываемся на изменения
+        Data.OnDataChanged += OnDataUpdate;
+    }
+
+
+    private void OnDataUpdate()
+    {
+        // ВАЖНО: Тут нужно знать текущий pps (pixels per second).
+        // Обычно pps хранится в EditorManager или TimelineController (синглтон или ссылка).
+        UpdateVisual(_timelineController.PixelsPerSecond); 
+    }
+
     public bool IsSelected = false;
     
     // Для перемещения
@@ -52,28 +87,28 @@ public partial class TimelineBlock : ColorRect
     {
         if (editor == null || Data == null) return;
 
-        if(!editor.timeLineObjectControl.hasMoved)
+        if(!_timelineObjController.hasMoved)
         {
             if(Input.IsKeyPressed(Key.Ctrl))
             {
-                editor.timeLineObjectControl.HandleBlockSelection(this,true);
+                _timelineObjController.HandleBlockSelection(this,true);
             }
-            else if(editor.timeLineObjectControl.GetBlockUnderMouse() != null)
+            else if(_timelineObjController.GetBlockUnderMouse() != null)
             {
                 //editor.timeLineObjectControl.HandleBlockSelection(this,false);
-                editor.selection.SelectBlock(this);
+                _selectionManager.SelectBlock(this);
                 IsSelected = true;
             }
             else
             {
-                editor.selection.DeselectAll();
+                _selectionManager.DeselectAll();
             }
             GD.Print("BUTTON PRESSED");
         }
-        else editor.timeLineObjectControl.hasMoved = false;
+        else _timelineObjController.hasMoved = false;
         
 
-        UpdateVisual(editor.timelineController.PixelsPerSecond);
+        UpdateVisual(_timelineController.PixelsPerSecond);
         
     }
 
@@ -83,7 +118,7 @@ public partial class TimelineBlock : ColorRect
     {
         // Сообщаем контроллеру, что начали тащить ЭТОТ блок
         // Контроллер сам выставит IsDragging = true и обработает выделение
-        editor.timeLineObjectControl.StartDraggingBlock(this);
+        _timelineObjController.StartDraggingBlock(this);
     }
 
     private void ButtonUp() // Сигнал button_up
@@ -96,7 +131,7 @@ public partial class TimelineBlock : ColorRect
     public void DeselectBlock()
     {
         IsSelected = false;
-        UpdateVisual(editor.timelineController.PixelsPerSecond);
+        UpdateVisual(_timelineController.PixelsPerSecond);
     }
     public void UpdateVisual(float pps)
     {
@@ -109,7 +144,7 @@ public partial class TimelineBlock : ColorRect
         Size = new Vector2(width, Size.Y);
 
         // Визуальное выделение (например, белая рамка или изменение цвета)
-        Color = IsSelected ? new Color(0.8f, 0.8f, 1.0f) : new Color(0.4f, 0.4f, 0.4f);
+        SelfModulate = IsSelected ? selectedColor : defaultColor;
     }
 
     

@@ -1711,6 +1711,7 @@ corner_detail = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i4v7x"]
 bg_color = Color(0.37161803, 0.3787323, 0.52818435, 1)
+border_color = Color(0.35156286, 0.35156295, 0.35156265, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lpxqo"]
 bg_color = Color(0.122346915, 0.15398401, 0.19661266, 1)
@@ -1762,3 +1763,4 @@ Panel/styles/panel = SubResource("StyleBoxFlat_i4v7x")
 ScrollContainer/styles/panel = SubResource("StyleBoxFlat_lpxqo")
 TabContainer/styles/panel = SubResource("StyleBoxFlat_rrp76")
 TabContainer/styles/tabbar_background = SubResource("StyleBoxFlat_mnqm7")
+VBoxContainer/constants/separation = 4

@@ -4,7 +4,7 @@ using System;
 namespace LostEditor;
 public partial class InputHandler : Node
 {
-	[Export] public Editor editor;
+	//[Export] public Editor editor;
 
 
 	[Export] public Viewport viewportPanel;

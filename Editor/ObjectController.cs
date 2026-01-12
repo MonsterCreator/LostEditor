@@ -5,14 +5,15 @@ namespace LostEditor;
 
 public class ObjectController
 {
+    [Export] public TimelineController timelineController;
     private InspectorPanel _view;
     private TimelineBlock _currentTarget;
-    private Editor _editor;
+    //private Editor _editor;
 
     public ObjectController(InspectorPanel view, Editor editor)
     {
         _view = view;
-        _editor = editor;
+        //_editor = editor;
         ConnectSignals();
     }
 
@@ -28,8 +29,8 @@ public class ObjectController
 
         // Кнопка "Set to current" для старта
         _view.SetStartToCurrentBtn.Pressed += () => {
-            ApplyStartTime(_editor.timelineController.timelineTime.ToString());
-            _view.StartTimeInput.Text = _editor.timelineController.timelineTime.ToString("F3");
+            ApplyStartTime(timelineController.timelineTime.ToString());
+            _view.StartTimeInput.Text = timelineController.timelineTime.ToString("F3");
         };
     }
 
@@ -73,7 +74,7 @@ public class ObjectController
         _currentTarget.Data.endTime = newStart + duration;
 
         // Обновляем визуальную часть на таймлайне
-        _currentTarget.UpdateVisual(_editor.timelineController.PixelsPerSecond);
+        _currentTarget.UpdateVisual(timelineController.PixelsPerSecond);
         _view.EndTimeInput.Text = _currentTarget.Data.endTime.ToString("F3");
     }
 }

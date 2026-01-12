@@ -7,7 +7,7 @@ public partial class ScrollContainerVerController : ScrollContainer
 	
 	[Export] public float ScrollSpeed = 30f;
 	[Export] public ScrollContainerHorController _parentScroll;
-	[Export] public Editor _editor;
+	[Export] public TimelineController timelineController;
 
 
 	public override void _Ready()
@@ -29,7 +29,7 @@ public partial class ScrollContainerVerController : ScrollContainer
 				if (Input.IsKeyPressed(Key.Shift))
 				{
 					float factor = mouseEvent.ButtonIndex == MouseButton.WheelUp ? 1.1f : 0.9f;
-					_editor.timelineController?.ApplyZoom(factor);
+					timelineController?.ApplyZoom(factor);
 					AcceptEvent();
 					return;
 				}
