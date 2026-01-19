@@ -11,8 +11,10 @@ namespace LostEditor
         public List<GameObject> objects = new List<GameObject>();
         
 
+        [Export] public TimelineController timelineController;
         [Export] public Polygon2D polygonObject;
         [Export] public CollisionPolygon2D collisionPlygonObject;
+        [Export] public DebugEditorManager debugEditorManager;
 
 
 
@@ -35,35 +37,63 @@ namespace LostEditor
         }
         
         
-        public void KeyframePosGenerator(int nums, ref List<KeyframePosX> xK, ref List<KeyframePosY> yK)
+        public void KeyframePosGenerator(int nums, ref List<Keyframe<float>> xK, ref List<Keyframe<float>> yK)
         {
-            // Linear keyframe for initial position
-            xK.Add(new KeyframePosX(0f, EasingType.Linear, 0f));
-            yK.Add(new KeyframePosY(0f, EasingType.Linear, 0f));
+            // Начальные кадры
+            xK.Add(new Keyframe<float>() { Time = 0f, EasingType = EasingType.Linear, Value = 0f, kType = KeyframeType.PositionX });
+            yK.Add(new Keyframe<float>() { Time = 0f, EasingType = EasingType.Linear, Value = 0f, kType = KeyframeType.PositionY });
 
             float ttt = 0.1f;
             Random rnd = new();
             var easeT = Enum.GetValues(typeof(EasingType));
 
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 4; i++)
             {
                 EasingType easeT2 = (EasingType)easeT.GetValue(i);
                 for (int j = 0; j < nums; j++)
                 {
                     float x = rnd.Next(-200, 200);
                     float y = rnd.Next(-200, 200);
-                    xK.Add(new KeyframePosX(ttt, easeT2, x));
-                    yK.Add(new KeyframePosY(ttt, easeT2, y));
+                    
+                    xK.Add(new Keyframe<float>() 
+                    { 
+                        Time = ttt, 
+                        EasingType = easeT2, 
+                        Value = x, 
+                        kType = KeyframeType.PositionX 
+                    });
+                    
+                    yK.Add(new Keyframe<float>() 
+                    { 
+                        Time = ttt, 
+                        EasingType = easeT2, 
+                        Value = y, 
+                        kType = KeyframeType.PositionY 
+                    });
+                    
                     ttt += 0.5f;
                 }
             }
         }
+        
 
         // Генератор размерных кейфреймов
-        public void KeyframeSizeGenerator(int nums, ref List<KeyframeSizeX> xK, ref List<KeyframeSizeY> yK)
+        /*
+        public void KeyframeSizeGenerator(int nums, ref List<Keyframe<float>> xK, ref List<Keyframe<float>> yK)
+        
         {
-            xK.Add(new KeyframeSizeX(0f, EasingType.Linear, 1f));
-            yK.Add(new KeyframeSizeY(0f, EasingType.Linear, 1f));
+            xK.Add(new Keyframe<float>()
+            {
+                Time = 0f,
+                EasingType = EasingType.Linear,
+                Value = 1f
+            });
+            yK.Add(new Keyframe<float>()
+            {
+                Time = 0f,
+                EasingType = EasingType.Linear,
+                Value = 1f
+            });
 
             float ttt = 0.1f;
             Random rnd = new Random();
@@ -76,14 +106,26 @@ namespace LostEditor
                 {
                     float x = rnd.Next(1, 5); // Размер от 1 до 5
                     float y = rnd.Next(1, 5);
-                    xK.Add(new KeyframeSizeX(ttt, easeT2, x));
-                    yK.Add(new KeyframeSizeY(ttt, easeT2, y));
+                    xK.Add(new Keyframe<float>()
+                    {
+                        Time = ttt,
+                        EasingType = easeT2,
+                        Value = x
+                    });
+                    yK.Add(new Keyframe<float>()
+                    {
+                        Time = ttt,
+                        EasingType = easeT2,
+                        Value = y
+                    });
                     ttt += 0.5f;
                 }
             }
         }
+        */
 
         // Генератор кейфреймов вращения
+        /*
         public void KeyframeRotationGenerator(int nums, ref List<KeyframeRotation> rotationK)
         {
             rotationK.Add(new KeyframeRotation(0f, EasingType.Linear, 0f));
@@ -103,7 +145,9 @@ namespace LostEditor
                 }
             }
         }
+        */
 
+        /*
         // Генератор кейфреймов цвета
         public void KeyframeColorGenerator(int nums, ref List<KeyframeColor> colorK)
         {
@@ -129,29 +173,41 @@ namespace LostEditor
                 }
             }
         }
+        */
 
         public override void _PhysicsProcess(double delta)
         {
             foreach (GameObject obj in objects)
             {
-                ObjectStateUpdate(obj);
-                PositionObjectUpdate(obj);
-                SizeObjectUpdate(obj);
-                RotationObjectUpdate(obj);
-                ColorObjectUpdate(obj);
+                // Вычисляем локальное время ОДИН РАЗ для этого объекта
+                float localTime = time - obj.startTime;
+                debugEditorManager.OverrideText(2,$"Object local time: {localTime}");
+                // Если объект еще не начался или уже закончился, 
+                // ObjectStateUpdate его скроет, но для расчетов используем localTime
+                ObjectStateUpdate(obj); 
+
+                // Передаем localTime во все методы обновления
+                PositionObjectUpdate(obj, localTime);
+                //SizeObjectUpdate(obj, localTime);
+                //RotationObjectUpdate(obj, localTime);
+                //ColorObjectUpdate(obj, localTime);
             }
         }
 
         public void ObjectStateUpdate(GameObject gameObject)
         {
-            // Проверяем, должен ли объект быть видимым в текущий момент времени
-            bool shouldBeVisible = time >= gameObject.startTime && time < gameObject.endTime;
+            // startTime — когда объект начался (глобально)
+            // cachedEndTime — сколько он длится (локально)
+            
+            float globalStart = gameObject.startTime;
+            float globalEnd = gameObject.startTime + gameObject.cachedEndTime;
 
-            // Если текущее состояние не совпадает с требуемым — меняем его
+            // Объект виден, если текущее время больше старта, но меньше конца
+            bool shouldBeVisible = time >= globalStart && time < globalEnd;
+
             if (gameObject.Visible != shouldBeVisible)
             {
                 gameObject.Visible = shouldBeVisible;
-                GD.Print(shouldBeVisible ? "объект появился!!" : "объект скрыт!!");
             }
         }
 
@@ -159,22 +215,23 @@ namespace LostEditor
 
 
 
-        public void PositionObjectUpdate(GameObject gameObject)
+        public void PositionObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframePosX.Count == 0 || gameObject.keyframePosY.Count == 0) return;
 
-            int index = BinarySearchForTime(gameObject.keyframePosX, time);
+            int index = BinarySearchForTime(gameObject.keyframePosX, localTime);
+            debugEditorManager.OverrideText(3,$"Pos keyfarme inex: {index}");
 
             if (index < 0)
             {
-                gameObject.Position = new Vector2(gameObject.keyframePosX[0].X, gameObject.keyframePosY[0].Y); // ✅ ИСПРАВЛЕНО!
+                gameObject.Position = new Vector2(gameObject.keyframePosX[0].Value, gameObject.keyframePosY[0].Value); // ✅ ИСПРАВЛЕНО!
                 return;
             }
 
             if (index >= gameObject.keyframePosX.Count - 1)
             {
-                gameObject.Position = new Vector2(gameObject.keyframePosX[gameObject.keyframePosX.Count - 1].X,
-                gameObject.keyframePosY[gameObject.keyframePosY.Count - 1].Y); // ✅ ИСПРАВЛЕНО!
+                gameObject.Position = new Vector2(gameObject.keyframePosX[gameObject.keyframePosX.Count - 1].Value,
+                gameObject.keyframePosY[gameObject.keyframePosY.Count - 1].Value); // ✅ ИСПРАВЛЕНО!
                 return;
             }
 
@@ -183,16 +240,18 @@ namespace LostEditor
             var leftY = gameObject.keyframePosY[index];
             var rightY = gameObject.keyframePosY[index + 1];
 
-            float t = (time - leftX.Time) / (rightX.Time - leftX.Time);
+            // ИСПРАВЛЕНО: используем localTime вместо time
+            float t = (localTime - leftX.Time) / (rightX.Time - leftX.Time); 
+            
             float easedT = EasingFunctions.Ease(t, leftX.EasingType);
-
-            float interpolatedX = EasingFunctions.Lerp(leftX.X, rightX.X, easedT);
-            float interpolatedY = EasingFunctions.Lerp(leftY.Y, rightY.Y, easedT);
+            float interpolatedX = EasingFunctions.Lerp(leftX.Value, rightX.Value, easedT);
+            float interpolatedY = EasingFunctions.Lerp(leftY.Value, rightY.Value, easedT);
             gameObject.Position = new Vector2(interpolatedX, interpolatedY);
         }
 
         // Обновление размера объекта
-        public void SizeObjectUpdate(GameObject gameObject)
+        /*
+        public void SizeObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframeSizeX.Count == 0 || gameObject.keyframeSizeY.Count == 0) return;
 
@@ -229,9 +288,11 @@ namespace LostEditor
             float interpolatedY = EasingFunctions.Lerp(leftY.Y, rightY.Y, easedT);
             gameObject.shapeObj.Scale = new Vector2(interpolatedX, interpolatedY);
         }
+        */
 
         // Обновление вращения объекта
-        public void RotationObjectUpdate(GameObject gameObject)
+        /*
+        public void RotationObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframeRotation.Count == 0) return;
 
@@ -258,9 +319,11 @@ namespace LostEditor
             float interpolatedRotation = EasingFunctions.Lerp(left.Rotation, right.Rotation, easedT);
             gameObject.shapeObj.Rotation = interpolatedRotation;
         }
+        */
 
         // Обновление цвета объекта
-        public void ColorObjectUpdate(GameObject gameObject)
+        /*
+        public void ColorObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframeColor.Count == 0) return;
 
@@ -292,8 +355,9 @@ namespace LostEditor
             );
             gameObject.shapeObj.Color = interpolatedColor;
         }
+        */
 
-        private int BinarySearchForTime<T>(List<T> list, float t) where T : Keyframe
+        private int BinarySearchForTime<T>(List<T> list, float t) where T : IKeyframe
         {
             int left = 0;
             int right = list.Count - 1;

@@ -38,7 +38,7 @@ public partial class SelectionManager : Node
 		if (SelectedBlocks != null) DeselectAll();
 		SelectedBlocks.Add(block);
         
-        inspector.Inspect(block);
+        inspector.Inspect(block.Data);
 	}
 
     public void DeselectAll()

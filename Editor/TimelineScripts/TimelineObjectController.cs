@@ -41,23 +41,87 @@ public partial class TimelineObjectController : Node
         if (Rows == null || Rows.Length == 0) return;
 
         var newSceneObj = GameObjectScene.Instantiate<GameObject>();
-        float start = timelineController.timelineTime;
-        float duration = 5.0f;
-        newSceneObj.startTime = start;
-        newSceneObj.endTime = start + duration;
+        LoadDefaultObjectData(newSceneObj);
+
+        
+        
+
+        // Кэшируем время окончания на основе созданных ключей
+        
 
         ViewportObj.AddChild(newSceneObj);
         objectManager.RegisterObject(newSceneObj);
 
         var block = TimelineBlockScene.Instantiate<TimelineBlock>();
-        block.Setup(newSceneObj,timelineController,this,selectionManager);
+        block.Setup(newSceneObj, timelineController, this, selectionManager);
         block.Data = newSceneObj;
         block.editor = editor;
         
         Rows[0].AddChild(block);
         activeBlocks.Add(block);
 
+        newSceneObj.RecalculateEndTime();
         block.UpdateVisual(timelineController.PixelsPerSecond);
+    }
+
+    public TimelineBlock GetSelectedBlock()
+    {
+        if(activeBlocks != null && activeBlocks.Count == 1) return activeBlocks[0];
+        else return null;
+    }
+
+    private void LoadDefaultObjectData(GameObject obj)
+    {
+        float start = timelineController.timelineTime;
+        
+        obj.startTime = start;
+        obj.endTimeMode = EndTimeMode.FixedTime; // Устанавливаем режим по ключам
+        obj.endTime = 3f;
+
+        obj.keyframePosX.Add(new Keyframe<float>()
+        {
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = 0f
+        });
+        obj.keyframePosY.Add(new Keyframe<float>()
+        {
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = 0f
+        });
+
+        float genTime = 2f;
+        // Генерируем ключи
+        for (int i = 0; i < 5; i++)
+        {
+            obj.keyframePosX.Add(new Keyframe<float>()
+        {
+            Time = genTime,
+            EasingType = EasingType.InOutSine,
+            Value = -100f
+        });
+            obj.keyframePosY.Add(new Keyframe<float>()
+        {
+            Time = genTime,
+            EasingType = EasingType.InOutSine,
+            Value = -100f
+        });
+            genTime += 2f;
+            obj.keyframePosX.Add(new Keyframe<float>()
+        {
+            Time = genTime,
+            EasingType = EasingType.InOutSine,
+            Value = 100f
+        });
+            obj.keyframePosY.Add(new Keyframe<float>()
+        {
+            Time = genTime,
+            EasingType = EasingType.InOutSine,
+            Value = 100f
+        });
+            genTime += 2f;
+        }
     }
 
     public override void _Input(InputEvent @event)
@@ -110,7 +174,7 @@ public partial class TimelineObjectController : Node
     public void StartDraggingBlock(TimelineBlock block)
     {
         IsDragging = true;
-        debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: True (TimelineBlockController,FinalizeDrag)");
+        //debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: True (TimelineBlockController,FinalizeDrag)");
         hasMoved = false;
         _lastClickedBlock = block;
         _mouseYAccumulator = 0f;
@@ -151,23 +215,36 @@ public partial class TimelineObjectController : Node
     {
         float pps = timelineController.PixelsPerSecond;
         if (pps <= 0) return; 
-
         float timeDelta = deltaX / pps;
 
-        // Проверка границ: если хоть один блок вылетит за пределы, отменяем всё движение
+        // Проверка границ
         foreach (var b in selectionManager.SelectedBlocks)
         {
             float newStart = b.Data.startTime + timeDelta;
-            float newEnd = b.Data.endTime + timeDelta;
-            if (newStart < 0 || newEnd > timelineController.timelineMaxTime) return;
+            float duration = b.Data.cachedEndTime - b.Data.startTime;
+            float newEnd = newStart + duration;
+
+            if (newStart < 0) return;
+            // Если это GlobalTime, объект не может начаться позже своего глобального конца
+            if (b.Data.endTimeMode == EndTimeMode.GlobalTime && newStart >= b.Data.endTime) return;
         }
         
-        // Применяем
-        selectionManager.SelectedBlocks.ForEach(b => {
+        foreach (var b in selectionManager.SelectedBlocks)
+        {
             b.Data.startTime += timeDelta;
-            b.Data.endTime += timeDelta;
+
+            // В FixedTime двигаем конец вместе со стартом
+            /*
+            if (b.Data.endTimeMode == EndTimeMode.FixedTime)
+            {
+                b.Data.endTime += timeDelta;
+            }
+            */
+            // В GlobalTime НЕ трогаем b.Data.endTime, чтобы он остался на 5.0с
+
+            b.Data.RecalculateEndTime();
             b.UpdateVisual(pps);
-        });
+        }
     }
 
     private void FinalizeDrag()
@@ -175,7 +252,7 @@ public partial class TimelineObjectController : Node
         // Если мышь не двигалась, это был просто клик (выделение)
         if (!hasMoved && _lastClickedBlock != null)
         {
-            debugEditorManager.OverrideText(4,"FinalizeDrag Мышь была просто нажата без перемещения.");
+            //debugEditorManager.OverrideText(4,"FinalizeDrag Мышь была просто нажата без перемещения.");
             bool isCtrl = Input.IsKeyPressed(Key.Ctrl);
             
             // Если Ctrl не зажат, и мы кликнули по уже выделенному блоку (без движения),
@@ -227,7 +304,7 @@ public partial class TimelineObjectController : Node
     // Метод обработки удаления (без изменений)
     private bool HandleDeletion(InputEvent @event)
     {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Delete)
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Delete && scrollContainerHor.isMouseHover)
         {
             if (selectionManager.SelectedBlocks.Count > 0)
             {

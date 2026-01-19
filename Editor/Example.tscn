@@ -21,3 +21,8 @@ texture = ExtResource("1_pnbpx")
 modulate = Color(0.838096, 0.623892, 0, 1)
 position = Vector2(339, 59)
 texture = ExtResource("1_pnbpx")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(960, 540)
+offset_right = 40.0
+offset_bottom = 40.0

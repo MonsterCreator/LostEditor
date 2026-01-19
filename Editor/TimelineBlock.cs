@@ -4,6 +4,7 @@ using LostEditor; // Чтобы видеть GameObject
 public partial class TimelineBlock : Panel
 {
     [Export] public Button button;
+    [Export] public Label objectName;
     public GameObject Data;
 
     private TimelineObjectController _timelineObjController;
@@ -95,7 +96,6 @@ public partial class TimelineBlock : Panel
             }
             else if(_timelineObjController.GetBlockUnderMouse() != null)
             {
-                //editor.timeLineObjectControl.HandleBlockSelection(this,false);
                 _selectionManager.SelectBlock(this);
                 IsSelected = true;
             }
@@ -107,7 +107,6 @@ public partial class TimelineBlock : Panel
         }
         else _timelineObjController.hasMoved = false;
         
-
         UpdateVisual(_timelineController.PixelsPerSecond);
         
     }
@@ -137,13 +136,34 @@ public partial class TimelineBlock : Panel
     {
         if (Data == null) return;
         
-        float posX = Data.startTime * pps;
-        float width = (Data.endTime - Data.startTime) * pps;
+        if (objectName != null) objectName.Text = Data.name;
 
+        // 1. Получаем ЧИСТУЮ локальную длительность объекта
+        float duration = Data.cachedEndTime;
+
+        if(Data.endTimeMode == EndTimeMode.GlobalTime) duration = Data.cachedEndTime - Data.startTime;
+        
+        // 2. Обработка исключения для бесконечных объектов
+        if (Data.endTimeMode == EndTimeMode.NoEndTime) 
+        {
+            // Для бесконечных объектов задаем фиксированную визуальную длину (например, 10 сек)
+            duration = 10.0f; 
+        }
+
+        // 3. Расчет позиции и размера
+        // Позиция X зависит от глобального начала
+        float posX = Data.startTime * pps;
+        
+        // Ширина зависит ТОЛЬКО от длительности (duration)
+        float width = duration * pps;
+
+        // Защита: минимум 10 пикселей ширины для кликабельности
+        width = Mathf.Max(width, 10f); 
+
+        // Применяем значения
         Position = new Vector2(posX, Position.Y);
         Size = new Vector2(width, Size.Y);
 
-        // Визуальное выделение (например, белая рамка или изменение цвета)
         SelfModulate = IsSelected ? selectedColor : defaultColor;
     }
 

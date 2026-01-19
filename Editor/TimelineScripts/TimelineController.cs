@@ -8,6 +8,7 @@ public partial class TimelineController : Node
     [Export] public ObjectManager objectManager;
 
     [Export] public LineEdit GlobalTimeTextEdit;
+    [Export] public LineEdit LocalTimeTextEdit;
     [Export] public TimelineSlider timelineSlider;
     [Export] public TimelineObjectController timeLineObjectControl;
     [Export] public VBoxContainer TimelineContainer;
@@ -18,6 +19,8 @@ public partial class TimelineController : Node
     [Export] public float timelineMaxTime = 60f;
     public float timelineTime = 0;
     private bool _isPlay = false;
+
+    public Action<float> OnSliderTimeChanged;
     public float timelineSpeed = 1;
 
     //[Export] public Editor editor;
@@ -57,10 +60,18 @@ public partial class TimelineController : Node
     {
         // Обновляем глобальное время редактора значением из слайдера
         timelineTime = newTime;
-    
+        OnSliderTimeChanged(newTime);
+
+        
         // Опционально: сразу обновляем текст, чтобы не ждать следующего кадра физики
-        if (GlobalTimeTextEdit != null)
-            GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
+        if (GlobalTimeTextEdit != null) GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
+        if(timeLineObjectControl.GetSelectedBlock() != null)
+        {
+            float localTime = timelineTime - timeLineObjectControl.GetSelectedBlock().Data.startTime;
+            if (LocalTimeTextEdit != null) LocalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(localTime);
+        }
+        
+            
     }
 
     public void ApplyZoom(float factor)
