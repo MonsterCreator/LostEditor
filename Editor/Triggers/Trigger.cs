@@ -15,46 +15,62 @@ namespace LostEditor;
 
 
 public partial class Trigger : Node, INotifyPropertyChanged
-
 {
-
     public event PropertyChangedEventHandler PropertyChanged;
 
-
-    // Универсальный метод для установки значений
+    private bool _isAdditive;
+    [Export] public bool IsAdditive { get => _isAdditive; set => SetField(ref _isAdditive, value); }
 
     protected void SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-
     {
-
         if (EqualityComparer<T>.Default.Equals(field, value)) return;
-
         field = value;
-
+        GD.Print($"[Trigger Object] Свойство {propertyName} изменилось на {value}");
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
     }
 
-
     private TriggerType _triggerType;
-
     public TriggerType triggerType { get => _triggerType; set => SetField(ref _triggerType, value); }
 
-
     private float _startTime;
-
     public float startTime { get => _startTime; set => SetField(ref _startTime, value); }
 
-
-    private float _endTime;
-
+    private float _endTime; // В вашем коде это используется как Длительность
     public float endTime { get => _endTime; set => SetField(ref _endTime, value); }
 
-
     private EasingType _easingType;
-
     public EasingType EasingType { get => _easingType; set => SetField(ref _easingType, value); }
 
+    /// <summary>
+    /// Возвращает прогресс триггера от 0.0 до 1.0 с учетом типа сглаживания.
+    /// </summary>
+    public float GetProgress(double currentTime)
+    {
+        // Если длительность (endTime) <= 0, триггер срабатывает мгновенно
+        if (endTime <= 0) return (float)currentTime >= startTime ? 1f : 0f;
+
+        // Рассчитываем линейный прогресс
+        float t = (float)(currentTime - startTime) / endTime;
+        t = Math.Clamp(t, 0f, 1f);
+
+        // Применяем Easing (интерполяцию)
+        return Interpolate(t, EasingType);
+    }
+
+    // Временный метод интерполяции, пока вы не наполните свой класс Easings
+    private float Interpolate(float t, EasingType type)
+    {
+        switch (type)
+        {
+            case EasingType.Instant: return t >= 1.0f ? 1.0f : 0.0f;
+            case EasingType.Linear: return t;
+            case EasingType.InQuad: return t * t;
+            case EasingType.OutQuad: return t * (2 - t);
+            case EasingType.InOutQuad: return t < 0.5f ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            // Добавьте остальные типы из вашего enum по мере необходимости
+            default: return t; 
+        }
+    }
 }
 
 

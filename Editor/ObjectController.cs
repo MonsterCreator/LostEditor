@@ -8,12 +8,10 @@ public class ObjectController
     [Export] public TimelineController timelineController;
     private InspectorPanel _view;
     private TimelineBlock _currentTarget;
-    //private Editor _editor;
 
     public ObjectController(InspectorPanel view, Editor editor)
     {
         _view = view;
-        //_editor = editor;
         ConnectSignals();
     }
 
@@ -52,8 +50,6 @@ public class ObjectController
         _view.NameInput.Text = _currentTarget.Data.Name;
         _view.StartTimeInput.Text = _currentTarget.Data.startTime.ToString("F3");
         _view.EndTimeInput.Text = _currentTarget.Data.endTime.ToString("F3");
-        // Поле офсета пока скрываем по умолчанию
-        // _view.OffsetInput.Visible = false; 
     }
 
     private void ApplyName(string newName)

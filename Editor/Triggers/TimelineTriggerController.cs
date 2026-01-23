@@ -77,7 +77,6 @@ public partial class TimelineTriggerController : Node
     public void CreateTrigger()
 
     {
-
         // Создаем данные
 
         var trigger = new TriggerCameraPosition();
@@ -86,28 +85,19 @@ public partial class TimelineTriggerController : Node
 
         block.Setup(trigger, ref timelineController.PixelsPerSecond);
 
-
-        trigger.CameraPositionX = 56;
-
-        trigger.CameraPositionY = -56;
-
-       
+        trigger.startTime = timelineController.timelineTime;
+        trigger.endTime = 10f; // Длительность
+        trigger.CameraPositionX = 500;
+        trigger.CameraPositionY = 500;
+        trigger.IsAdditive = false;
+        trigger.triggerType = TriggerType.CameraPosition;
+        trigger.EasingType = EasingType.Linear;
 
         // Устанавливаем дефолтное время там, где сейчас курсор таймлайна
-
         trigger.startTime = timelineController.timelineTime;
+        trigger.endTime = 5f; // Дефолтная длительность 5 сек
 
-        trigger.endTime = trigger.startTime + 2.0f; // Дефолтная длительность 2 сек
-
-       
-
-        triggerManager.registerTrigger(trigger);
-
-
-        // Создаем визуал
-
-       
-
+        triggerManager.RegisterTrigger(trigger);
 
         // Добавляем на сцену
 

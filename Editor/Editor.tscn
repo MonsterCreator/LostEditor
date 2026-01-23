@@ -285,7 +285,7 @@ zoom = Vector2(0.5, 0.5)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
-current_tab = 1
+current_tab = 4
 tabs_visible = false
 script = ExtResource("11_1b133")
 
@@ -309,6 +309,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SingleObjectSettingsPanel" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
@@ -730,7 +731,7 @@ size_flags_horizontal = 3
 [node name="KeyframeDataEditTabContainer" type="TabContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2"]
 clip_contents = true
 layout_mode = 2
-current_tab = 6
+current_tab = 1
 tabs_visible = false
 
 [node name="NoKeyframeSelectedPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer"]
@@ -750,7 +751,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PositionXPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer" node_paths=PackedStringArray("timelineKeyframeControl", "ValueLineEdit", "easeTypePanel")]
-visible = false
 layout_mode = 2
 script = ExtResource("24_pmn2f")
 timelineKeyframeControl = NodePath("../../../../../KeyframesPanelMain/TimelineKeyframeControlSystem")
@@ -1447,6 +1447,7 @@ layout_mode = 2
 text = ">"
 
 [node name="ColorPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 6
 
@@ -1939,7 +1940,6 @@ layout_mode = 2
 text = "  Load file  "
 
 [node name="TriggersPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel" node_paths=PackedStringArray("baseDataTriggerPanel", "triggerDataPanels", "cameraPositionTriggerPanel")]
-visible = false
 layout_mode = 2
 script = ExtResource("38_q83ll")
 baseDataTriggerPanel = NodePath("MarginContainer/VBoxContainer/BaseTriggerDataPanel")
@@ -1963,22 +1963,24 @@ theme_override_constants/margin_bottom = 12
 [node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer"]
 clip_contents = true
 layout_mode = 2
+size_flags_stretch_ratio = 1.8
 
-[node name="BaseTriggerDataPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("startTimeLineEdit", "transitionTimeLineEdit")]
+[node name="BaseTriggerDataPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("startTimeLineEdit", "transitionTimeLineEdit", "triggerType", "isAdditiveCheckButton")]
 self_modulate = Color(0.61339027, 0.61339027, 0.61339027, 1)
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 script = ExtResource("38_3es0i")
-startTimeLineEdit = NodePath("MarginContainer/HBoxContainer/InputLineEdit")
-transitionTimeLineEdit = NodePath("MarginContainer/HBoxContainer/InputLineEdit2")
+startTimeLineEdit = NodePath("MarginContainer/HBoxContainer/VBoxContainer/InputLineEdit")
+transitionTimeLineEdit = NodePath("MarginContainer/HBoxContainer/VBoxContainer2/InputLineEdit2")
+triggerType = NodePath("MarginContainer/HBoxContainer/VBoxContainer3/InputLineEdit2")
+isAdditiveCheckButton = NodePath("MarginContainer/HBoxContainer/VBoxContainer4/IsRelativeCheckButton")
 
 [node name="MarginContainer" type="MarginContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_bottom = 70.0
 grow_horizontal = 2
-grow_vertical = 2
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
@@ -1987,12 +1989,16 @@ theme_override_constants/margin_bottom = 6
 [node name="HBoxContainer" type="HBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Start time"
 horizontal_alignment = 1
 
-[node name="InputLineEdit" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+[node name="InputLineEdit" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 script = ExtResource("27_nwuxr")
@@ -2002,16 +2008,67 @@ metadata/_custom_type_script = "uid://bjdi2skqrsww5"
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
 text = "Transition time"
 horizontal_alignment = 1
 
-[node name="InputLineEdit2" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+[node name="InputLineEdit2" type="LineEdit" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer2"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 script = ExtResource("27_nwuxr")
 metadata/_custom_type_script = "uid://bjdi2skqrsww5"
+
+[node name="Control2" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+text = "Trigger type"
+horizontal_alignment = 1
+
+[node name="InputLineEdit2" type="OptionButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_vertical = 3
+selected = 0
+item_count = 5
+popup/item_0/text = "Camera position"
+popup/item_0/id = 0
+popup/item_1/text = "Camera zoom"
+popup/item_1/id = 1
+popup/item_2/text = "Camera rotation"
+popup/item_2/id = 2
+popup/item_3/text = "Camera shake"
+popup/item_3/id = 3
+popup/item_4/text = "Color change"
+popup/item_4/id = 4
+
+[node name="Control3" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer4"]
+layout_mode = 2
+text = "Is relative"
+horizontal_alignment = 1
+
+[node name="IsRelativeCheckButton" type="CheckButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
 
 [node name="Button" type="TextureButton" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -2024,9 +2081,10 @@ size_flags_vertical = 3
 current_tab = 0
 tabs_visible = false
 
-[node name="CameraPositionTriggerPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer" node_paths=PackedStringArray("camPosXLineEdit", "camPosXCheckButton", "camPosYLineEdit", "camPosYCheckButton", "easeTypePanel")]
+[node name="CameraPositionTriggerPanel" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer" node_paths=PackedStringArray("baseDataTriggerPanel", "camPosXLineEdit", "camPosXCheckButton", "camPosYLineEdit", "camPosYCheckButton", "easeTypePanel")]
 layout_mode = 2
 script = ExtResource("38_ghixk")
+baseDataTriggerPanel = NodePath("../../BaseTriggerDataPanel")
 camPosXLineEdit = NodePath("HBoxContainer/VBoxContainer/HBoxContainer/InputLineEdit")
 camPosXCheckButton = NodePath("HBoxContainer/VBoxContainer/HBoxContainer/CheckButton")
 camPosYLineEdit = NodePath("HBoxContainer/VBoxContainer2/HBoxContainer/InputLineEdit")
@@ -2036,10 +2094,11 @@ metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 27.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Control" type="Control" parent="Camera2D2/CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel/VBoxContainer"]
 custom_minimum_size = Vector2(0, 10)

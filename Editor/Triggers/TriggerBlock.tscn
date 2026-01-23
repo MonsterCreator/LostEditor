@@ -7,26 +7,26 @@
 
 [node name="TriggerBlock" type="Panel" node_paths=PackedStringArray("triggerIcon", "DataLeft", "DataRight")]
 custom_minimum_size = Vector2(200, 25)
-offset_right = 100.0
+offset_right = 200.0
 offset_bottom = 25.0
 theme = ExtResource("1_wg8tu")
 script = ExtResource("2_pp3ac")
 triggerIcon = NodePath("TextureRect")
-TriggerIconDataArray = Array[Texture2D]([ExtResource("4_iuekt"), ExtResource("3_iuekt"), null, null, null])
+TriggerIconDataArray = Array[Texture2D]([ExtResource("4_iuekt"), null, null, null, ExtResource("3_iuekt")])
 DataLeft = NodePath("MarginContainer/HBoxContainer/DataLeft")
 DataRight = NodePath("MarginContainer/HBoxContainer/DataRight")
 TriggerTypeColor = PackedColorArray(0.6881359, 0.34812894, 0.4216422, 1, 0.3630419, 0.52109545, 0.31398368, 1, 0.34247157, 0.48023355, 0.64614487, 1, 0, 0, 0, 1)
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 2.0
-offset_right = 25.0
-offset_bottom = 23.0
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 24.0
+offset_bottom = 21.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 2
-texture = ExtResource("3_iuekt")
+texture = ExtResource("4_iuekt")
 expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
