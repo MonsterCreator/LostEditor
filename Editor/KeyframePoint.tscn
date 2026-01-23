@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://caog71oglwuxd"]
 
-[ext_resource type="Script" uid="uid://bkk8ce3n66uuw" path="res://Editor/KeyframePoint.cs" id="1_eeaab"]
+[ext_resource type="Script" uid="uid://bkk8ce3n66uuw" path="res://Editor/KeyframeSystem/KeyframePoint.cs" id="1_eeaab"]
 
 [node name="KeyframePoint" type="Control"]
 layout_mode = 3

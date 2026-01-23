@@ -1,4 +1,5 @@
 using Godot;
+using Godot.NativeInterop;
 using LostEditor; // Чтобы видеть GameObject
 
 public partial class TimelineBlock : Panel
@@ -10,6 +11,8 @@ public partial class TimelineBlock : Panel
     private TimelineObjectController _timelineObjController;
     private TimelineController _timelineController;
     private SelectionManager _selectionManager;
+
+    private float pps => _timelineController.PixelsPerSecond;
 
     [Export] private Color defaultColor;
     [Export] private Color selectedColor;
@@ -38,7 +41,7 @@ public partial class TimelineBlock : Panel
     {
         // ВАЖНО: Тут нужно знать текущий pps (pixels per second).
         // Обычно pps хранится в EditorManager или TimelineController (синглтон или ссылка).
-        UpdateVisual(_timelineController.PixelsPerSecond); 
+
     }
 
     public bool IsSelected = false;
@@ -56,6 +59,9 @@ public partial class TimelineBlock : Panel
     {
         // Включаем фильтр мыши, чтобы блок ловил клики
         MouseFilter = MouseFilterEnum.Stop;
+        Data.OnEndTimeChanged += UpdateVisual;
+        
+        
     }
 
     /*
@@ -103,11 +109,10 @@ public partial class TimelineBlock : Panel
             {
                 _selectionManager.DeselectAll();
             }
-            GD.Print("BUTTON PRESSED");
         }
         else _timelineObjController.hasMoved = false;
         
-        UpdateVisual(_timelineController.PixelsPerSecond);
+        UpdateVisual();
         
     }
 
@@ -130,9 +135,9 @@ public partial class TimelineBlock : Panel
     public void DeselectBlock()
     {
         IsSelected = false;
-        UpdateVisual(_timelineController.PixelsPerSecond);
+        UpdateVisual();
     }
-    public void UpdateVisual(float pps)
+    public void UpdateVisual()
     {
         if (Data == null) return;
         

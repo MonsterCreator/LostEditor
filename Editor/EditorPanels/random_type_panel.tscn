@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://hfuu5apw3xgg"]
+
+[ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="1_mllgo"]
+
+[node name="RandomTypePanel" type="HBoxContainer"]
+size_flags_vertical = 10
+
+[node name="Label" type="Label" parent="."]
+z_index = 1
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Random type"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("1_mllgo")
+selected = 0
+item_count = 4
+popup/item_0/text = "Disabled"
+popup/item_0/id = 0
+popup/item_1/text = "A-B with steps"
+popup/item_1/id = 1
+popup/item_2/text = "A-B only"
+popup/item_2/id = 2
+popup/item_3/text = "Progressive"
+popup/item_3/id = 3

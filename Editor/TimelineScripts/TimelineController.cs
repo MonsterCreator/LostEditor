@@ -1,11 +1,13 @@
 using Godot;
 using System;
-using LostEditor;
+using System.Collections.Generic;
 
-//TimelineController является основой таймлайна. Здесь идёт обработка времени
+namespace LostEditor;
+
 public partial class TimelineController : Node
 {
     [Export] public ObjectManager objectManager;
+    [Export] public AudioStreamPlayer MusicPlayer; // Ссылка на плеер
 
     [Export] public LineEdit GlobalTimeTextEdit;
     [Export] public LineEdit LocalTimeTextEdit;
@@ -15,85 +17,145 @@ public partial class TimelineController : Node
     [Export] public ScrollContainer HorScroll;
 
     [Export] public float PixelsPerSecond = 100f;
-
     [Export] public float timelineMaxTime = 60f;
+    
     public float timelineTime = 0;
     private bool _isPlay = false;
+    public float timelineSpeed = 1; // Примечание: AudioStreamPlayer не меняет скорость легко, обычно это 1.0
 
     public Action<float> OnSliderTimeChanged;
-    public float timelineSpeed = 1;
 
-    //[Export] public Editor editor;
-    [Export] public float maxTime;
-
-    public override void _Ready() => UpdateTimelineSize();
-
-    
-    public override void _PhysicsProcess(double delta)
+    public override void _Ready()
     {
+        UpdateTimelineSize();
+        // Если музыка загружена, можно автоматически выставить длину таймлайна
+        if (MusicPlayer?.Stream != null)
+        {
+            timelineMaxTime = (float)MusicPlayer.Stream.GetLength();
+            UpdateTimelineSize();
+        }
+    }
 
-        if (_isPlay) timelineTime += (float)delta * timelineSpeed;
+    public override void _Process(double delta)
+    {
+        // 1. Обработка ввода
+        if (Input.IsActionJustPressed("Space")) TogglePlay();
+
+        // 2. Обновление времени
+        if (_isPlay)
+        {
+            if (MusicPlayer != null && MusicPlayer.Playing)
+            {
+                // Синхронизация с аудио (самый точный метод)
+                float audioPos = (float)MusicPlayer.GetPlaybackPosition();
+                audioPos += (float)AudioServer.GetTimeSinceLastMix();
+                audioPos -= (float)AudioServer.GetOutputLatency();
+                timelineTime = audioPos;
+            }
+            else if (MusicPlayer == null)
+            {
+                // Фолбэк на обычное время, если музыки нет
+                timelineTime += (float)delta * timelineSpeed;
+            }
+
+            // Остановка по достижению конца
+            if (timelineTime >= timelineMaxTime)
+            {
+                timelineTime = timelineMaxTime;
+                GD.Print("останавливаем проигрывание трека");
+                StopPlayback();
+            }
+        }
+
+        // 3. Обновление всего UI и зависимых объектов
+        RefreshVisuals();
+    }
+
+    // Вынес обновление графики в отдельный метод, чтобы вызывать его и из Process, и при перемотке
+    private void RefreshVisuals()
+    {
         if (objectManager != null) objectManager.time = timelineTime;
 
-        GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
-        timelineSlider.Value = timelineTime;
-        var scriptSlider = timelineSlider;
-        scriptSlider.line.Position = new Vector2(timelineTime * PixelsPerSecond,0);
-        
-        if (Input.IsActionJustPressed("Space")) _isPlay = !_isPlay;
+        if (GlobalTimeTextEdit != null)
+            GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
+
+        if (timelineSlider != null)
+        {
+            timelineSlider.Value = timelineTime;
+            timelineSlider.line.Position = new Vector2(timelineTime * PixelsPerSecond, 0);
+        }
+
+        // Обновление локального времени выделенного блока
+        var selectedBlock = timeLineObjectControl.GetSelectedBlock();
+        if (selectedBlock != null && LocalTimeTextEdit != null)
+        {
+            float localTime = timelineTime - selectedBlock.Data.startTime;
+            LocalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(localTime);
+        }
     }
 
-    public void CreateObjectButtonPressed()
+    public void TogglePlay()
     {
-        timeLineObjectControl.CreateObject();
+        GD.Print("переключение проигрывания");
+        if (_isPlay) StopPlayback();
+        else StartPlayback();
     }
 
-    public void UpdateAllBlocks() => timeLineObjectControl.activeBlocks.ForEach(b => b.UpdateVisual(PixelsPerSecond));
+    private void StartPlayback()
+    {
+        _isPlay = true;
+        if (MusicPlayer != null)
+        {
+            // Запускаем музыку ровно с того места, где стоит ползунок
+            MusicPlayer.Play(timelineTime);
+        }
+    }
 
+    private void StopPlayback()
+    {
+        _isPlay = false;
+        MusicPlayer?.Stop();
+    }
+
+    public void OnTimeLineSliderChangedValue(float newTime)
+    {
+        // Рассчитываем разницу между текущим звуком и новым временем
+        float diff = Math.Abs(timelineTime - newTime);
+
+        timelineTime = newTime;
+
+        // Если музыка играет и разница больше 0.1 сек (пользователь дернул слайдер)
+        // Это предотвратит вызов Play() каждый кадр, который и вызывал треск
+        if (_isPlay && MusicPlayer != null && diff > 0.1f)
+        {
+            MusicPlayer.Play(newTime);
+        }
+
+        OnSliderTimeChanged?.Invoke(newTime);
+        RefreshVisuals();
+    }
+
+    // Остальные ваши методы (ApplyZoom, UpdateTimelineSize и т.д.) остаются без изменений
     public void UpdateTimelineSize()
     {
         TimelineContainer.CustomMinimumSize = new Vector2(timelineMaxTime * PixelsPerSecond, 0);
         timelineSlider.MaxValue = timelineMaxTime;
     }
 
-    public void OnTimeLineSliderChangedValue(float newTime)
-    {
-        // Обновляем глобальное время редактора значением из слайдера
-        timelineTime = newTime;
-        OnSliderTimeChanged(newTime);
-
-        
-        // Опционально: сразу обновляем текст, чтобы не ждать следующего кадра физики
-        if (GlobalTimeTextEdit != null) GlobalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(timelineTime);
-        if(timeLineObjectControl.GetSelectedBlock() != null)
-        {
-            float localTime = timelineTime - timeLineObjectControl.GetSelectedBlock().Data.startTime;
-            if (LocalTimeTextEdit != null) LocalTimeTextEdit.Text = TimeUtils.SecondsToMinutesString(localTime);
-        }
-        
-            
-    }
+    public void UpdateAllBlocks() => timeLineObjectControl.activeBlocks.ForEach(b => b.UpdateVisual());
 
     public void ApplyZoom(float factor)
     {
-        // 1. Сохраняем "центр" зума (текущее время)
         float zoomCenterTime = timelineTime; 
-    
-        // 2. Вычисляем смещение относительно экрана, чтобы таймлайн не "прыгал"
         float screenOffset = (zoomCenterTime * PixelsPerSecond) - HorScroll.ScrollHorizontal;
-
-        // 3. Рассчитываем и ограничиваем новый масштаб
         float newPPS = PixelsPerSecond * factor;
         PixelsPerSecond = Mathf.Clamp(newPPS, 10f, 2000f); 
 
-        // 4. Обновляем размеры контейнера таймлайна
         UpdateTimelineSize();
 
-        // 5. Корректируем скролл для сохранения фокуса на времени
         float newScrollPos = (zoomCenterTime * PixelsPerSecond) - screenOffset;
         HorScroll.ScrollHorizontal = (int)newScrollPos;
 
-        // 6. Обновляем визуальное положение всех блоков
         UpdateAllBlocks();
     }
 }

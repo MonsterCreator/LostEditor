@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://4d0c1vsh1oqd"]
+
+[ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="1_mlwr0"]
+[ext_resource type="Script" uid="uid://de8jeeinmw31i" path="res://Editor/EditorPanels/EaseTypePanel.cs" id="1_upn21"]
+
+[node name="EaseTypePanel" type="HBoxContainer" node_paths=PackedStringArray("_optionButton")]
+size_flags_vertical = 10
+script = ExtResource("1_upn21")
+_optionButton = NodePath("OptionButton")
+
+[node name="Label" type="Label" parent="."]
+z_index = 1
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Ease type"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("1_mlwr0")
+selected = 0
+item_count = 8
+popup/item_0/text = "Linear"
+popup/item_0/id = 0
+popup/item_1/text = "Instant"
+popup/item_1/id = 1
+popup/item_2/text = "InSine"
+popup/item_2/id = 2
+popup/item_3/text = "OutSine"
+popup/item_3/id = 3
+popup/item_4/text = "InOutSine"
+popup/item_4/id = 4
+popup/item_5/text = "InCirc"
+popup/item_5/id = 5
+popup/item_6/text = "OutCirc"
+popup/item_6/id = 6
+popup/item_7/text = "InOutCirc"
+popup/item_7/id = 7
+
+[connection signal="item_selected" from="OptionButton" to="." method="OnEaseTypeSelected"]

@@ -8,7 +8,7 @@ shapeObj = NodePath("Polygon2D")
 collisionShapeObj = NodePath("Area2D/CollisionPolygon2D")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-7, -13, 18, -14, 15, 16, -14, 13)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_mask = 2

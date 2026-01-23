@@ -9,6 +9,7 @@ public partial class TimelineObjectController : Node
     [Export] public Control[] Rows;
 
     [Export] public TimelineController timelineController;
+    [Export] public WorkPanel workPanel;
     [Export] public ScrollContainerHorController scrollContainerHor;
     [Export] public SelectionManager selectionManager;
     [Export] public DebugEditorManager debugEditorManager;
@@ -43,9 +44,6 @@ public partial class TimelineObjectController : Node
         var newSceneObj = GameObjectScene.Instantiate<GameObject>();
         LoadDefaultObjectData(newSceneObj);
 
-        
-        
-
         // Кэшируем время окончания на основе созданных ключей
         
 
@@ -61,7 +59,7 @@ public partial class TimelineObjectController : Node
         activeBlocks.Add(block);
 
         newSceneObj.RecalculateEndTime();
-        block.UpdateVisual(timelineController.PixelsPerSecond);
+        block.UpdateVisual();
     }
 
     public TimelineBlock GetSelectedBlock()
@@ -75,53 +73,45 @@ public partial class TimelineObjectController : Node
         float start = timelineController.timelineTime;
         
         obj.startTime = start;
-        obj.endTimeMode = EndTimeMode.FixedTime; // Устанавливаем режим по ключам
+        obj.endTimeMode = EndTimeMode.FixedTime;
         obj.endTime = 3f;
 
-        obj.keyframePosX.Add(new Keyframe<float>()
+        obj.keyframePositionX.Add(new Keyframe<float>()
         {
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 0f
         });
-        obj.keyframePosY.Add(new Keyframe<float>()
+        obj.keyframePositionY.Add(new Keyframe<float>()
         {
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 0f
         });
 
-        float genTime = 2f;
-        // Генерируем ключи
-        for (int i = 0; i < 5; i++)
+        obj.keyframeScaleX.Add(new Keyframe<float>()
         {
-            obj.keyframePosX.Add(new Keyframe<float>()
-        {
-            Time = genTime,
-            EasingType = EasingType.InOutSine,
-            Value = -100f
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = 10f
         });
-            obj.keyframePosY.Add(new Keyframe<float>()
+
+        obj.keyframeScaleY.Add(new Keyframe<float>()
         {
-            Time = genTime,
-            EasingType = EasingType.InOutSine,
-            Value = -100f
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = 10f
         });
-            genTime += 2f;
-            obj.keyframePosX.Add(new Keyframe<float>()
+
+        obj.keyframeRotation.Add(new Keyframe<float>()
         {
-            Time = genTime,
-            EasingType = EasingType.InOutSine,
-            Value = 100f
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = 0f
         });
-            obj.keyframePosY.Add(new Keyframe<float>()
-        {
-            Time = genTime,
-            EasingType = EasingType.InOutSine,
-            Value = 100f
-        });
-            genTime += 2f;
-        }
+
+
+        
     }
 
     public override void _Input(InputEvent @event)
@@ -138,6 +128,7 @@ public partial class TimelineObjectController : Node
             if(GetBlockUnderMouse() == null && !hasMoved && scrollContainerHor.isMouseHover)
             {
                 selectionManager.DeselectAll();
+                workPanel.OpenPanel(WorkPanelType.NoPanel);
             }
             
             if (IsDragging) FinalizeDrag();
@@ -243,7 +234,7 @@ public partial class TimelineObjectController : Node
             // В GlobalTime НЕ трогаем b.Data.endTime, чтобы он остался на 5.0с
 
             b.Data.RecalculateEndTime();
-            b.UpdateVisual(pps);
+            b.UpdateVisual();
         }
     }
 
@@ -261,13 +252,14 @@ public partial class TimelineObjectController : Node
             {
                 selectionManager.DeselectAll();
                 selectionManager.HandleSelection(_lastClickedBlock, false);
+                
             }
             // Стандартная обработка (Ctrl или клик по невыделенному) уже произошла в StartDraggingBlock,
             // но можно добавить специфичную логику здесь.
         }
+        workPanel.OpenPanel(WorkPanelType.ObjectEdit);
 
         IsDragging = false;
-        debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: Flase (TimelineBlockController,FinalizeDrag)");
         _lastClickedBlock = null;
         _mouseYAccumulator = 0f;
         UpdateAllBlocks(); // Финальное обновление для выравнивания
@@ -296,7 +288,7 @@ public partial class TimelineObjectController : Node
             Rows[currentIndex + dir].AddChild(block);
             
             // Хак для Godot при смене родителя
-            block.UpdateVisual(timelineController.PixelsPerSecond);
+            block.UpdateVisual();
         }
         return true;
     }
@@ -347,6 +339,6 @@ public partial class TimelineObjectController : Node
         block.Data.QueueFree();
         block.QueueFree();
     }
-    public void UpdateAllBlocks() => activeBlocks.ForEach(b => b.UpdateVisual(timelineController.PixelsPerSecond));
+    public void UpdateAllBlocks() => activeBlocks.ForEach(b => b.UpdateVisual());
     public void HandleBlockSelection(TimelineBlock block, bool isCtrl) => selectionManager.HandleSelection(block, isCtrl);
 }

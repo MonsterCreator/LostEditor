@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxheba8ib0k47"]
+
+[ext_resource type="Theme" uid="uid://cn1xvyj8shlg" path="res://UIThemes/TimelineBlockTheme.tres" id="1_wg8tu"]
+[ext_resource type="Script" uid="uid://bk0wxa6hrmbfr" path="res://Editor/Triggers/TriggerBlock.cs" id="2_pp3ac"]
+[ext_resource type="Texture2D" uid="uid://dlu4jd4qw22rm" path="res://Editor/EditorSprites/RGB_64.png" id="3_iuekt"]
+[ext_resource type="Texture2D" uid="uid://ej17j7gcltm4" path="res://Editor/EditorSprites/POS_64.png" id="4_iuekt"]
+
+[node name="TriggerBlock" type="Panel" node_paths=PackedStringArray("triggerIcon", "DataLeft", "DataRight")]
+custom_minimum_size = Vector2(200, 25)
+offset_right = 100.0
+offset_bottom = 25.0
+theme = ExtResource("1_wg8tu")
+script = ExtResource("2_pp3ac")
+triggerIcon = NodePath("TextureRect")
+TriggerIconDataArray = Array[Texture2D]([ExtResource("4_iuekt"), ExtResource("3_iuekt"), null, null, null])
+DataLeft = NodePath("MarginContainer/HBoxContainer/DataLeft")
+DataRight = NodePath("MarginContainer/HBoxContainer/DataRight")
+TriggerTypeColor = PackedColorArray(0.6881359, 0.34812894, 0.4216422, 1, 0.3630419, 0.52109545, 0.31398368, 1, 0.34247157, 0.48023355, 0.64614487, 1, 0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 25.0
+offset_bottom = 23.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+texture = ExtResource("3_iuekt")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_behavior_recursive = 2
+theme_override_constants/margin_left = 30
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DataLeft" type="Control" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/DataLeft"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Content1"
+
+[node name="DataRight" type="Control" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/DataRight"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Content2"
+
+[connection signal="gui_input" from="." to="." method="_GuiInput"]

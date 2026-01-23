@@ -74,7 +74,7 @@ public class ObjectController
         _currentTarget.Data.endTime = newStart + duration;
 
         // Обновляем визуальную часть на таймлайне
-        _currentTarget.UpdateVisual(timelineController.PixelsPerSecond);
+        _currentTarget.UpdateVisual();
         _view.EndTimeInput.Text = _currentTarget.Data.endTime.ToString("F3");
     }
 }

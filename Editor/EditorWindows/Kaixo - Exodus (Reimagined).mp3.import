@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ilwf6gy6jhr8"
+path="res://.godot/imported/Kaixo - Exodus (Reimagined).mp3-66cfebb82ec2fd131497ae93a7e94fa8.mp3str"
+
+[deps]
+
+source_file="res://Editor/EditorWindows/Kaixo - Exodus (Reimagined).mp3"
+dest_files=["res://.godot/imported/Kaixo - Exodus (Reimagined).mp3-66cfebb82ec2fd131497ae93a7e94fa8.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

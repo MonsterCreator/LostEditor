@@ -4,11 +4,16 @@ using System.Collections.Generic;
 
 namespace LostEditor
 {
+    /*
+        ObjectManager - "элемент ядра" системы анимации. 
+        ObjectManager управляет состоянием объектов на сцене и их анимацией и не должен ничего знать о редакторе.
+    */
     public partial class ObjectManager : Node2D
     {
 
         public float time = 0f;
         public List<GameObject> objects = new List<GameObject>();
+        
         
 
         [Export] public TimelineController timelineController;
@@ -34,7 +39,12 @@ namespace LostEditor
             {
                 objects.Add(obj);
             }
+        
         }
+
+        
+
+
         
         
         public void KeyframePosGenerator(int nums, ref List<Keyframe<float>> xK, ref List<Keyframe<float>> yK)
@@ -188,6 +198,9 @@ namespace LostEditor
 
                 // Передаем localTime во все методы обновления
                 PositionObjectUpdate(obj, localTime);
+                ScaleObjectUpdate(obj, localTime);
+                RotationObjectUpdate(obj, localTime);
+                ColorObjectUpdate(obj, localTime);
                 //SizeObjectUpdate(obj, localTime);
                 //RotationObjectUpdate(obj, localTime);
                 //ColorObjectUpdate(obj, localTime);
@@ -217,112 +230,160 @@ namespace LostEditor
 
         public void PositionObjectUpdate(GameObject gameObject, float localTime)
         {
-            if (gameObject.keyframePosX.Count == 0 || gameObject.keyframePosY.Count == 0) return;
+            // Инициализируем текущими значениями (на случай, если списки ключей пусты)
+            float finalX = gameObject.Position.X;
+            float finalY = gameObject.Position.Y;
 
-            int index = BinarySearchForTime(gameObject.keyframePosX, localTime);
-            debugEditorManager.OverrideText(3,$"Pos keyfarme inex: {index}");
-
-            if (index < 0)
+            // --- РАСЧЕТ ОСИ X ---
+            if (gameObject.keyframePositionX.Count > 0)
             {
-                gameObject.Position = new Vector2(gameObject.keyframePosX[0].Value, gameObject.keyframePosY[0].Value); // ✅ ИСПРАВЛЕНО!
-                return;
+                int indexX = BinarySearchForTime(gameObject.keyframePositionX, localTime);
+                
+                if (indexX < 0) 
+                {
+                    finalX = gameObject.keyframePositionX[0].Value;
+                }
+                else if (indexX >= gameObject.keyframePositionX.Count - 1) 
+                {
+                    finalX = gameObject.keyframePositionX[gameObject.keyframePositionX.Count - 1].Value;
+                }
+                else 
+                {
+                    var left = gameObject.keyframePositionX[indexX];
+                    var right = gameObject.keyframePositionX[indexX + 1];
+                    float t = (localTime - left.Time) / (right.Time - left.Time);
+                    float easedT = EasingFunctions.Ease(t, right.EasingType);
+                    finalX = EasingFunctions.Lerp(left.Value, right.Value, easedT);
+                }
             }
 
-            if (index >= gameObject.keyframePosX.Count - 1)
+            // --- РАСЧЕТ ОСИ Y (полностью обособлен от X) ---
+            if (gameObject.keyframePositionY.Count > 0)
             {
-                gameObject.Position = new Vector2(gameObject.keyframePosX[gameObject.keyframePosX.Count - 1].Value,
-                gameObject.keyframePosY[gameObject.keyframePosY.Count - 1].Value); // ✅ ИСПРАВЛЕНО!
-                return;
+                // Используем свой поиск индекса для Y
+                int indexY = BinarySearchForTime(gameObject.keyframePositionY, localTime);
+                
+                if (indexY < 0) 
+                {
+                    finalY = gameObject.keyframePositionY[0].Value;
+                }
+                else if (indexY >= gameObject.keyframePositionY.Count - 1) 
+                {
+                    finalY = gameObject.keyframePositionY[gameObject.keyframePositionY.Count - 1].Value;
+                }
+                else 
+                {
+                    var left = gameObject.keyframePositionY[indexY];
+                    var right = gameObject.keyframePositionY[indexY + 1];
+                    float t = (localTime - left.Time) / (right.Time - left.Time);
+                    float easedT = EasingFunctions.Ease(t, right.EasingType);
+                    finalY = EasingFunctions.Lerp(left.Value, right.Value, easedT);
+                }
             }
 
-            var leftX = gameObject.keyframePosX[index];
-            var rightX = gameObject.keyframePosX[index + 1];
-            var leftY = gameObject.keyframePosY[index];
-            var rightY = gameObject.keyframePosY[index + 1];
-
-            // ИСПРАВЛЕНО: используем localTime вместо time
-            float t = (localTime - leftX.Time) / (rightX.Time - leftX.Time); 
-            
-            float easedT = EasingFunctions.Ease(t, leftX.EasingType);
-            float interpolatedX = EasingFunctions.Lerp(leftX.Value, rightX.Value, easedT);
-            float interpolatedY = EasingFunctions.Lerp(leftY.Value, rightY.Value, easedT);
-            gameObject.Position = new Vector2(interpolatedX, interpolatedY);
+            // Применяем результат (каждая компонента рассчитана по своим ключам)
+            gameObject.Position = new Vector2(finalX, -finalY);
         }
 
         // Обновление размера объекта
-        /*
-        public void SizeObjectUpdate(GameObject gameObject, float localTime)
+        
+        public void ScaleObjectUpdate(GameObject gameObject, float localTime)
         {
-            if (gameObject.keyframeSizeX.Count == 0 || gameObject.keyframeSizeY.Count == 0) return;
+            // Инициализируем текущими значениями (на случай, если списки ключей пусты)
+            float finalScaleX = gameObject.shapeObj.Scale.X;
+            float finalScaleY = gameObject.shapeObj.Scale.Y;
 
-            int indexX = BinarySearchForTime(gameObject.keyframeSizeX, time);
-            int indexY = BinarySearchForTime(gameObject.keyframeSizeY, time);
-
-            if (indexX < 0)
+            // --- РАСЧЕТ МАСШТАБА ПО ОСИ X ---
+            if (gameObject.keyframeScaleX.Count > 0)
             {
-                gameObject.shapeObj.Scale = new Vector2(
-                    gameObject.keyframeSizeX[0].X,
-                    gameObject.keyframeSizeY[0].Y
-                );
-                return;
+                int indexX = BinarySearchForTime(gameObject.keyframeScaleX, localTime);
+
+                if (indexX < 0)
+                {
+                    finalScaleX = gameObject.keyframeScaleX[0].Value;
+                }
+                else if (indexX >= gameObject.keyframeScaleX.Count - 1)
+                {
+                    finalScaleX = gameObject.keyframeScaleX[gameObject.keyframeScaleX.Count - 1].Value;
+                }
+                else
+                {
+                    var left = gameObject.keyframeScaleX[indexX];
+                    var right = gameObject.keyframeScaleX[indexX + 1];
+                    float t = (localTime - left.Time) / (right.Time - left.Time);
+                    float easedT = EasingFunctions.Ease(t, right.EasingType);
+                    finalScaleX = EasingFunctions.Lerp(left.Value, right.Value, easedT);
+                }
             }
 
-            if (indexX >= gameObject.keyframeSizeX.Count - 1)
+            // --- РАСЧЕТ МАСШТАБА ПО ОСИ Y ---
+            if (gameObject.keyframeScaleY.Count > 0)
             {
-                gameObject.shapeObj.Scale = new Vector2(
-                    gameObject.keyframeSizeX[gameObject.keyframeSizeX.Count - 1].X,
-                    gameObject.keyframeSizeY[gameObject.keyframeSizeY.Count - 1].Y
-                );
-                return;
+                int indexY = BinarySearchForTime(gameObject.keyframeScaleY, localTime);
+
+                if (indexY < 0)
+                {
+                    finalScaleY = gameObject.keyframeScaleY[0].Value;
+                }
+                else if (indexY >= gameObject.keyframeScaleY.Count - 1)
+                {
+                    finalScaleY = gameObject.keyframeScaleY[gameObject.keyframeScaleY.Count - 1].Value;
+                }
+                else
+                {
+                    var left = gameObject.keyframeScaleY[indexY];
+                    var right = gameObject.keyframeScaleY[indexY + 1];
+                    float t = (localTime - left.Time) / (right.Time - left.Time);
+                    float easedT = EasingFunctions.Ease(t, right.EasingType);
+                    finalScaleY = EasingFunctions.Lerp(left.Value, right.Value, easedT);
+                }
             }
 
-            var leftX = gameObject.keyframeSizeX[indexX];
-            var rightX = gameObject.keyframeSizeX[indexX + 1];
-            var leftY = gameObject.keyframeSizeY[indexY];
-            var rightY = gameObject.keyframeSizeY[indexY + 1];
-
-            float t = (time - leftX.Time) / (rightX.Time - leftX.Time);
-            float easedT = EasingFunctions.Ease(t, leftX.EasingType);
-
-            float interpolatedX = EasingFunctions.Lerp(leftX.X, rightX.X, easedT);
-            float interpolatedY = EasingFunctions.Lerp(leftY.Y, rightY.Y, easedT);
-            gameObject.shapeObj.Scale = new Vector2(interpolatedX, interpolatedY);
+            // Применяем итоговый вектор масштаба
+            gameObject.shapeObj.Scale = new Vector2(finalScaleX, finalScaleY);
         }
-        */
+        
 
-        // Обновление вращения объекта
-        /*
+
         public void RotationObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframeRotation.Count == 0) return;
 
-            int index = BinarySearchForTime(gameObject.keyframeRotation, time);
+            int index = BinarySearchForTime(gameObject.keyframeRotation, localTime); 
 
             if (index < 0)
             {
-                gameObject.shapeObj.Rotation = gameObject.keyframeRotation[0].Rotation;
+                // Применяем как градусы
+                gameObject.shapeObj.RotationDegrees = gameObject.keyframeRotation[0].Value;
                 return;
             }
 
             if (index >= gameObject.keyframeRotation.Count - 1)
             {
-                gameObject.shapeObj.Rotation = gameObject.keyframeRotation[gameObject.keyframeRotation.Count - 1].Rotation;
+                // Применяем как градусы
+                gameObject.shapeObj.RotationDegrees = gameObject.keyframeRotation[gameObject.keyframeRotation.Count - 1].Value;
                 return;
             }
 
             var left = gameObject.keyframeRotation[index];
             var right = gameObject.keyframeRotation[index + 1];
 
-            float t = (time - left.Time) / (right.Time - left.Time);
-            float easedT = EasingFunctions.Ease(t, left.EasingType);
+            float t = (localTime - left.Time) / (right.Time - left.Time);
+            float easedT = EasingFunctions.Ease(t, right.EasingType);
 
-            float interpolatedRotation = EasingFunctions.Lerp(left.Rotation, right.Rotation, easedT);
-            gameObject.shapeObj.Rotation = interpolatedRotation;
+            // 1. Если вы хотите использовать ваши кастомные Easings, но для ГРАДУСОВ:
+            // Мы используем Mathf.LerpAngle, чтобы вращение всегда шло по кратчайшему пути.
+            // Т.к. LerpAngle работает с радианами, мы конвертируем значения туда и обратно.
+            
+            float startRad = Mathf.DegToRad(left.Value);
+            float endRad = Mathf.DegToRad(right.Value);
+            float interpolatedRad = Mathf.LerpAngle(startRad, endRad, easedT);
+
+            // Применяем итоговый результат в радианах (это надежнее для движка)
+            gameObject.shapeObj.Rotation = interpolatedRad;
         }
-        */
+  
 
-        // Обновление цвета объекта
-        /*
         public void ColorObjectUpdate(GameObject gameObject, float localTime)
         {
             if (gameObject.keyframeColor.Count == 0) return;
@@ -331,13 +392,13 @@ namespace LostEditor
 
             if (index < 0)
             {
-                gameObject.shapeObj.Color = gameObject.keyframeColor[0].Color;
+                gameObject.shapeObj.Color = gameObject.keyframeColor[0].Value;
                 return;
             }
 
             if (index >= gameObject.keyframeColor.Count - 1)
             {
-                gameObject.shapeObj.Color = gameObject.keyframeColor[gameObject.keyframeColor.Count - 1].Color;
+                gameObject.shapeObj.Color = gameObject.keyframeColor[gameObject.keyframeColor.Count - 1].Value;
                 return;
             }
 
@@ -345,17 +406,17 @@ namespace LostEditor
             var right = gameObject.keyframeColor[index + 1];
 
             float t = (time - left.Time) / (right.Time - left.Time);
-            float easedT = EasingFunctions.Ease(t, left.EasingType);
+            float easedT = EasingFunctions.Ease(t, right.EasingType);
 
             Color interpolatedColor = new Color(
-                EasingFunctions.Lerp(left.Color.R, right.Color.R, easedT),
-                EasingFunctions.Lerp(left.Color.G, right.Color.G, easedT),
-                EasingFunctions.Lerp(left.Color.B, right.Color.B, easedT),
-                EasingFunctions.Lerp(left.Color.A, right.Color.A, easedT)
+                EasingFunctions.Lerp(left.Value.R, right.Value.R, easedT),
+                EasingFunctions.Lerp(left.Value.G, right.Value.G, easedT),
+                EasingFunctions.Lerp(left.Value.B, right.Value.B, easedT),
+                EasingFunctions.Lerp(left.Value.A, right.Value.A, easedT)
             );
             gameObject.shapeObj.Color = interpolatedColor;
         }
-        */
+
 
         private int BinarySearchForTime<T>(List<T> list, float t) where T : IKeyframe
         {

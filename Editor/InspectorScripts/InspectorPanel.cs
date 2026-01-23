@@ -128,6 +128,7 @@ public partial class InspectorPanel : HBoxContainer
 		};
 		GD.Print(endTimeMode);
 		obj.endTimeMode = endTimeMode;
+        obj.RecalculateEndTime();
 	}
     // Аналогично для EndTime...
 }
