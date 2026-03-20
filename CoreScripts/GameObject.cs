@@ -9,6 +9,8 @@ namespace LostEditor
         [Export] public Polygon2D shapeObj;
         [Export] public CollisionPolygon2D collisionShapeObj;
 
+        public ObjectColor objectColor = new ObjectColor();
+
         public event Action OnDataChanged;
         public event Action OnEndTimeChanged;
 
@@ -149,7 +151,7 @@ namespace LostEditor
         public List<Keyframe<float>> keyframeScaleX { get; set; } = new();
         public List<Keyframe<float>> keyframeScaleY { get; set; } = new();
         public List<Keyframe<float>> keyframeRotation { get; set; } = new();
-        public List<Keyframe<Color>> keyframeColor { get; set; } = new();
+        public List<Keyframe<ObjectColor>> keyframeColor { get; set; } = new();
     }
     
     public enum EndTimeMode {

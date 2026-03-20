@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LostEditor;
 public partial class KeyframesPanelMain : Control
@@ -13,6 +14,7 @@ public partial class KeyframesPanelMain : Control
 	[Export] HSlider slider;
 	[Export] public Control[] keyframeLines;
 	[Export] public PackedScene keyframePoint;
+	[Export] public LevelColorData levelColorData;
 
 	[Export] public TimelineKeyframeControlSystem timelineKeyframeControl;
 
@@ -81,6 +83,7 @@ public partial class KeyframesPanelMain : Control
 		LoadScaXKeyframes(obj.keyframeScaleX);
 		LoadScaYKeyframes(obj.keyframeScaleY);
 		LoadRotKeyframes(obj.keyframeRotation);
+		LoadColKeyframes(obj.keyframeColor);
 
 	
 	}
@@ -161,9 +164,11 @@ public partial class KeyframesPanelMain : Control
 		}
 	}
 
-	private void LoadColKeyframes(List<Keyframe<Color>> keyframeCol) 
+	private void LoadColKeyframes(List<Keyframe<ObjectColor>> keyframeCol) 
 	{
-		foreach (Keyframe<Color> keyframe in keyframeCol) 
+		if (keyframeCol == null) return;
+
+		foreach (Keyframe<ObjectColor> keyframe in keyframeCol) 
 		{
 			var keyframeP = keyframePoint.Instantiate<KeyframePoint>();
 			keyframeP.KeyframeData = keyframe;
@@ -171,11 +176,12 @@ public partial class KeyframesPanelMain : Control
 			keyframeP.OnKeyframeDataChanged += UpdateKeyframeData;
 			keyframeP.OnKeyframeTimeChanged += UpdateKeyframeTime;
 			keyframeP.Position = new Vector2(keyframe.Time * PixelsPerSecond, 0f);
-			
-			keyframeLines[5].AddChild(keyframeP); // Индекс 0 для X
-			keyframePointsY.Add(keyframeP);       // Список X
+
+			keyframeLines[5].AddChild(keyframeP); // строка для Color
+			keyframeColor.Add(keyframeP);         // правильный список для цветовых точек
 		}
 	}
+
 
 
 
@@ -218,15 +224,38 @@ public partial class KeyframesPanelMain : Control
 	public void UpdateKeyframeData(IKeyframe keyframeData)
 	{
 		int tabIndex = GetKeyframeTypeIndex(keyframeData.kType);
+		GD.Print($"Пытаюсь выбрать панель {keyframeData.kType.ToString()}");
 		animationPanel.KeyframeDataTabContainer.CurrentTab = tabIndex + 1;
-		
-		KeyframeDataPanel panelData = GetPanel(tabIndex);
-		
-		// Обновляем текстовое поле
-		panelData.ValueLineEdit.Text = keyframeData.Value.ToString();
-		
-
-
+	
+		if (keyframeData.kType != KeyframeType.Color)
+		{
+			GetPanel(tabIndex).LoadData(keyframeData);
+		}
+		else
+		{
+			var colorsList = levelColorData.Colors.Values
+				.Select(lc => {
+					var oc = new ObjectColor();
+					oc.ColorId = lc.Id;          // ИСПРАВЛЕНО: реальный ID, не индекс
+					oc.SetBaseLevelColor(lc);
+					return oc;
+				})
+				.ToList();
+	
+			var colorKeyframe = keyframeData as Keyframe<ObjectColor>;
+	
+			// Восстанавливаем baseLevelColor у ObjectColor внутри кейфрейма,
+			// если он был потерян (например после LoadKeyframesToPanel)
+			if (colorKeyframe?.Value != null)
+			{
+				var levelColor = levelColorData.GetColor(colorKeyframe.Value.ColorId);
+				if (levelColor != null)
+					colorKeyframe.Value.SetBaseLevelColor(levelColor);
+			}
+	
+			animationPanel.colorPanel.LoadForKeyframe(colorKeyframe, colorsList);
+		}
+	
 		UpdateKeyframeTime(keyframeData);
 	}
 
@@ -249,23 +278,18 @@ public partial class KeyframesPanelMain : Control
 		}
 	}
 
-	public KeyframeDataPanel GetPanel(int pnaelId)
+	public KeyframeDataPanel GetPanel(int panelId)
 	{
-		
-		switch (pnaelId)
+		switch (panelId)
 		{
-			case 0: return animationPanel.panels[0];
-			case 1: return animationPanel.panels[1];
-			case 2: return animationPanel.panels[2];
-			case 3: return animationPanel.panels[3];
-			case 4: return animationPanel.panels[4];
-			case 5: return animationPanel.panels[5];
-			case 6: return animationPanel.panels[6];
-
-			default: return animationPanel.panels[6];
+			case 0: return animationPanel.panels[0];  // PositionX
+			case 1: return animationPanel.panels[1];  // PositionY
+			case 2: return animationPanel.panels[2];  // ScaleX
+			case 3: return animationPanel.panels[3];  // ScaleY
+			case 4: return animationPanel.panels[4];  // Rotation
+			default: return animationPanel.panels[animationPanel.panels.Length - 1];
 		}
 	}
-
 
 
 	

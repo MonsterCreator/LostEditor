@@ -10,10 +10,8 @@ public partial class AnimationPanel : VBoxContainer
 	[Export] public KeyframeBasePanel keyframeBasePanel;
 	[Export] public TabContainer KeyframeDataTabContainer;
 	[Export] public TimelineKeyframeControlSystem timelineKeyframeControl;
-	[Export] public PositionXPanel posXPanel;
-	[Export] public PositionYPanel posYPanel;
-
 	[Export] public KeyframeDataPanel[] panels;
+	[Export] public ColorPanel colorPanel;
 
     public override void _Ready()
     {

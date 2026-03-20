@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://chw1lwywy1g5v"]
+
+[ext_resource type="Script" uid="uid://cgxckdc7rmr" path="res://Editor/EditorPanels/ColorItemButton.cs" id="1_6c0qe"]
+[ext_resource type="Theme" uid="uid://cw7wplox38234" path="res://UIThemes/ColorItemSelected.tres" id="1_enyqh"]
+[ext_resource type="Theme" uid="uid://dq87c6lvwuxx" path="res://UIThemes/ColorItemNotSelected.tres" id="3_jc4oj"]
+
+[node name="ColorItemButton" type="AspectRatioContainer" unique_id=1535556580 node_paths=PackedStringArray("Button")]
+custom_minimum_size = Vector2(20, 0)
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 8.0
+grow_vertical = 2
+script = ExtResource("1_6c0qe")
+ColorSelectedTheme = ExtResource("1_enyqh")
+ColorNotSelectedTheme = ExtResource("3_jc4oj")
+Button = NodePath("Button")
+
+[node name="Button" type="Button" parent="." unique_id=351476435]
+layout_mode = 2
+theme = ExtResource("3_jc4oj")
+text = "N"
+
+[connection signal="pressed" from="Button" to="." method="OnButtonPressed"]

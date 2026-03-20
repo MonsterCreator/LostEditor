@@ -15,11 +15,14 @@ namespace LostEditor
         public List<GameObject> objects = new List<GameObject>();
         
         
-
+        [Export] public LevelColorData LevelColorData { get; set; }
         [Export] public TimelineController timelineController;
         [Export] public Polygon2D polygonObject;
         [Export] public CollisionPolygon2D collisionPlygonObject;
         [Export] public DebugEditorManager debugEditorManager;
+
+        public List<ObjectColor> levelColors = new();
+
 
 
 
@@ -29,8 +32,11 @@ namespace LostEditor
 
         public override void _Ready()
         {
-            
+
         }
+
+
+
         
         // Этот метод вызывается Editor-ом при создании нового объекта
         public void RegisterObject(GameObject obj) 
@@ -187,6 +193,7 @@ namespace LostEditor
 
         public override void _PhysicsProcess(double delta)
         {
+            
             foreach (GameObject obj in objects)
             {
                 // Вычисляем локальное время ОДИН РАЗ для этого объекта
@@ -209,6 +216,8 @@ namespace LostEditor
 
         public void ObjectStateUpdate(GameObject gameObject)
         {
+            //GD.Print($"OBJ {gameObject.name} mode={gameObject.endTimeMode} start={gameObject.startTime} end={gameObject.endTime} cached={gameObject.cachedEndTime} now={time} pos={gameObject.Position} vis={gameObject.Visible}");
+
             // startTime — когда объект начался (глобально)
             // cachedEndTime — сколько он длится (локально)
             
@@ -386,36 +395,56 @@ namespace LostEditor
 
         public void ColorObjectUpdate(GameObject gameObject, float localTime)
         {
-            if (gameObject.keyframeColor.Count == 0) return;
-
-            int index = BinarySearchForTime(gameObject.keyframeColor, time);
-
+            if (gameObject.keyframeColor.Count == 0)
+                return;
+        
+            // Восстанавливаем baseLevelColor для всех кейфреймов перед расчётом
+            // (дёшево — просто присваивание ссылки, не пересоздание объектов)
+            if (LevelColorData != null)
+            {
+                foreach (var kf in gameObject.keyframeColor)
+                {
+                    kf.Value?.RestoreBaseLevelColor(LevelColorData);
+                }
+            }
+        
+            int index = BinarySearchForTime(gameObject.keyframeColor, localTime);
+        
+            Color finalColor;
+        
             if (index < 0)
             {
-                gameObject.shapeObj.Color = gameObject.keyframeColor[0].Value;
-                return;
+                var first = gameObject.keyframeColor[0].Value;
+                finalColor = first != null ? first.color : Colors.White;
             }
-
-            if (index >= gameObject.keyframeColor.Count - 1)
+            else if (index >= gameObject.keyframeColor.Count - 1)
             {
-                gameObject.shapeObj.Color = gameObject.keyframeColor[gameObject.keyframeColor.Count - 1].Value;
-                return;
+                var last = gameObject.keyframeColor[^1].Value;
+                finalColor = last != null ? last.color : Colors.White;
             }
-
-            var left = gameObject.keyframeColor[index];
-            var right = gameObject.keyframeColor[index + 1];
-
-            float t = (time - left.Time) / (right.Time - left.Time);
-            float easedT = EasingFunctions.Ease(t, right.EasingType);
-
-            Color interpolatedColor = new Color(
-                EasingFunctions.Lerp(left.Value.R, right.Value.R, easedT),
-                EasingFunctions.Lerp(left.Value.G, right.Value.G, easedT),
-                EasingFunctions.Lerp(left.Value.B, right.Value.B, easedT),
-                EasingFunctions.Lerp(left.Value.A, right.Value.A, easedT)
-            );
-            gameObject.shapeObj.Color = interpolatedColor;
+            else
+            {
+                var leftKf  = gameObject.keyframeColor[index];
+                var rightKf = gameObject.keyframeColor[index + 1];
+        
+                var left  = leftKf.Value;
+                var right = rightKf.Value;
+        
+                if (left == null || right == null)
+                {
+                    finalColor = left?.color ?? right?.color ?? Colors.White;
+                }
+                else
+                {
+                    float t = (localTime - leftKf.Time) / (rightKf.Time - leftKf.Time);
+                    float easedT = EasingFunctions.Ease(t, rightKf.EasingType);
+                    finalColor = left.color.Lerp(right.color, easedT);
+                }
+            }
+        
+            gameObject.shapeObj.Color = finalColor;
         }
+
 
 
         private int BinarySearchForTime<T>(List<T> list, float t) where T : IKeyframe

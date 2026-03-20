@@ -8,6 +8,7 @@ public partial class TimelineObjectController : Node
     [Export] public Editor editor;
     [Export] public Control[] Rows;
 
+    [Export] public LevelColorData levelColors;
     [Export] public TimelineController timelineController;
     [Export] public WorkPanel workPanel;
     [Export] public ScrollContainerHorController scrollContainerHor;
@@ -19,6 +20,7 @@ public partial class TimelineObjectController : Node
     [Export] public PackedScene GameObjectScene;
     [Export] public PackedScene TimelineBlockScene;
     [Export] public ObjectManager objectManager;
+    
 
 
     
@@ -78,12 +80,14 @@ public partial class TimelineObjectController : Node
 
         obj.keyframePositionX.Add(new Keyframe<float>()
         {
+            kType = KeyframeType.PositionX,
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 0f
         });
         obj.keyframePositionY.Add(new Keyframe<float>()
         {
+            kType = KeyframeType.PositionY,
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 0f
@@ -91,6 +95,7 @@ public partial class TimelineObjectController : Node
 
         obj.keyframeScaleX.Add(new Keyframe<float>()
         {
+            kType = KeyframeType.ScaleX,
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 10f
@@ -98,6 +103,7 @@ public partial class TimelineObjectController : Node
 
         obj.keyframeScaleY.Add(new Keyframe<float>()
         {
+            kType = KeyframeType.ScaleY,
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 10f
@@ -105,9 +111,21 @@ public partial class TimelineObjectController : Node
 
         obj.keyframeRotation.Add(new Keyframe<float>()
         {
+            kType = KeyframeType.Rotation,
             Time = 0f,
             EasingType = EasingType.Linear,
             Value = 0f
+        });
+
+        LevelColor levelColor = levelColors.Colors[0]; // LevelColor
+        var oc = new ObjectColor();
+        oc.SetBaseLevelColor(levelColor);
+        obj.keyframeColor.Add(new Keyframe<ObjectColor>()
+        {
+            kType = KeyframeType.Color,
+            Time = 0f,
+            EasingType = EasingType.Linear,
+            Value = oc
         });
 
 

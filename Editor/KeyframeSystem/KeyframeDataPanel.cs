@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 namespace LostEditor;
-public partial class KeyframeDataPanel : Control, IDataPanel
+public partial class KeyframeDataPanel : Control
 {
 	[Export] public TimelineKeyframeControlSystem timelineKeyframeControl {get; set;}
 	[Export] public LineEdit ValueLineEdit {get; set;}

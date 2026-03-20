@@ -199,15 +199,24 @@ public partial class TimelineKeyframeControlSystem : Node
 
             case KeyframeType.Color:
                 var prevC = GetPreviousKeyframe(obj.keyframeColor, time);
-                var kfC = new Keyframe<Color> { 
-                    Time = time, kType = type,
-                    Value = prevC != null ? prevC.Value : obj.shapeObj.Modulate,
-                    EasingType = prevC != null ? prevC.EasingType : EasingType.Linear 
-                };
-                obj.keyframeColor.Add(kfC);
-                ResolveOverlapsAndSort(obj.keyframeColor);
-                newKeyframeData = kfC;
-                break;
+                    ObjectColor newColorValue;
+                    if (prevC != null && prevC.Value != null)
+                        newColorValue = prevC.Value.Clone();    // ИСПРАВЛЕНО: копия, не ссылка
+                    else if (obj.objectColor != null)
+                        newColorValue = obj.objectColor.Clone(); // ИСПРАВЛЕНО: копия, не ссылка
+                    else
+                        newColorValue = new ObjectColor();
+                
+                    var kfC = new Keyframe<ObjectColor> { 
+                        Time = time,
+                        kType = type,
+                        Value = newColorValue,
+                        EasingType = prevC != null ? prevC.EasingType : EasingType.Linear
+                    };
+                    obj.keyframeColor.Add(kfC);
+                    ResolveOverlapsAndSort(obj.keyframeColor);
+                    newKeyframeData = kfC;
+                    break;
         }
 
         if (newKeyframeData == null) return;
@@ -292,29 +301,28 @@ public partial class TimelineKeyframeControlSystem : Node
         keyframesPanel.animationPanel.KeyframeDataTabContainer.CurrentTab = 0;
 	}
 
-	private void MoveSelected(float currentMouseX) {
-		float mouseDiffX = currentMouseX - _startDragMouseX;
-		float timeOffset = mouseDiffX / _pixelsPerSecond;
+    private void MoveSelected(float currentMouseX)
+    {
+        float mouseDiffX = currentMouseX - _startDragMouseX;
+        float timeOffset = mouseDiffX / _pixelsPerSecond;
         GD.Print($"cmX: {currentMouseX} sdmX: {_startDragMouseX} mdX: {mouseDiffX} toffset: {timeOffset}");
-
-		foreach (var item in _selectedItems) {
-			if (_startKeyframeTimes.TryGetValue(item, out float startTime)) {
-				float newTime = Math.Max(0, startTime + timeOffset);
-
-				
-				// Обновляем данные
-				if (item.KeyframeData is Keyframe<float> kf) kf.Time = newTime;
-				
-				// Обновляем визуал (точное соответствие PPS)
-				item.Position = new Vector2(newTime * _pixelsPerSecond, item.Position.Y);
-			}
-		}
+    
+        foreach (var item in _selectedItems)
+        {
+            if (_startKeyframeTimes.TryGetValue(item, out float startTime))
+            {
+                float newTime = Math.Max(0, startTime + timeOffset);
+    
+                // ИСПРАВЛЕНО: обновляем через IKeyframe — работает для ЛЮБОГО типа кейфрейма
+                item.KeyframeData.Time = newTime;
+    
+                // Обновляем визуал
+                item.Position = new Vector2(newTime * _pixelsPerSecond, item.Position.Y);
+            }
+        }
+    
         var currentObj = keyframesPanel.GetCurrentObject();
-
-
-
-
-	}
+    }
 
 	private void FinalizeDrag()
     {
@@ -462,7 +470,7 @@ public partial class TimelineKeyframeControlSystem : Node
                     break;
                 case KeyframeType.Color:
                     // Исправлено: удаляем из keyframeColor, а не Rotation
-                    if (data is Keyframe<Color> kfC) currentObj.keyframeColor.Remove(kfC);
+                    if (data is Keyframe<ObjectColor> kfC) currentObj.keyframeColor.Remove(kfC);
                     break;
             }
 

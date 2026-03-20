@@ -9,4 +9,8 @@ public partial class BaseDataTriggerPanel : Control
 	[Export] public InputLineEdit transitionTimeLineEdit;
 	[Export] public OptionButton triggerType;
 	[Export] public CheckButton isAdditiveCheckButton;
+
+	
 }
+
+

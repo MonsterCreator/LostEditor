@@ -1,5 +1,5 @@
  using Godot;
-
+using System.Linq;
 using System;
 
 using System.Collections.Generic;
@@ -46,33 +46,24 @@ public partial class TimelineTriggerController : Node
 
 
     public override void _Ready()
-
     {
-
         triggerSelectionManager.OnNewBlockSelected += LoadTriggerData;
-
+        
+        // ПОДПИСКА НА ЗАПРОС СМЕНЫ ТИПА
+        triggersPanelManager.OnTriggerTypeChangeRequested += OnTypeChangeRequestedFromUI;
     }
 
-
     private void LoadTriggerData(TriggerBlock block)
-
     {
-
         workPanel.OpenPanel(WorkPanelType.TriggerPanel);
 
         triggersPanelManager.LoadTriggerData(block.GetTriggerData());
-
     }
-
 
     public void OnCreateTriggerButtonPressed()
-
     {
-
         CreateTrigger();
-
     }
-
 
     public void CreateTrigger()
 
@@ -83,7 +74,7 @@ public partial class TimelineTriggerController : Node
 
         var block = triggerBlockScene.Instantiate<TriggerBlock>();
 
-        block.Setup(trigger, ref timelineController.PixelsPerSecond);
+        block.Setup(trigger, timelineController);
 
         trigger.startTime = timelineController.timelineTime;
         trigger.endTime = 10f; // Длительность
@@ -138,43 +129,78 @@ public partial class TimelineTriggerController : Node
     // Метод для удаления, вызываемый из SelectionManager
 
     public void DeleteTriggerBlock(TriggerBlock block)
-
     {
-
         if (block == null) return;
 
-
-        // 1. Отписываемся от событий ввода
-
+        // 1. Снимаем выделение и отписываемся от ввода
         if (selectionManager != null) selectionManager.UnsubscribeFromBlock(block);
+        
+        // 2. Блок сам должен отписаться от событий (PPS и т.д.)
+        // Если ты сделал Unsubscribe(timelineController), вызывай его
+        block.Unsubscribe(timelineController);
 
+        // 3. Удаляем визуальный блок из списка
+        triggerBlocks.Remove(block);
 
-        // 2. Удаляем из списка контроллера
-
-        if (triggerBlocks.Contains(block)) triggerBlocks.Remove(block);
-
-
-        // 3. Удаляем данные (Trigger)
-
-        // Нам нужно получить Trigger из Block.
-
-        // Добавьте метод GetTriggerData() в TriggerBlock, как описано ниже.
-
+        // 4. ГЛАВНОЕ: Удаляем данные через менеджер с инвалидацией кеша
         Trigger data = block.GetTriggerData();
-
-        if (triggerManager.triggers.Contains(data))
-
+        if (data != null)
         {
-
-            triggerManager.triggers.Remove(data);
-
+            triggerManager.UnregisterTrigger(data); 
         }
 
-
-        // 4. Удаляем визуальный узел
-
+        // 5. Удаляем узел из сцены
         block.QueueFree();
+    }
 
+    public void ChangeTriggerType(TriggerBlock block, TriggerType newType)
+    {
+        Trigger oldData = block.GetTriggerData();
+        
+        // Защита от дурака: если тип тот же, ничего не делаем
+        if (oldData.triggerType == newType) return;
+
+        GD.Print($"[Controller] Changing trigger type from {oldData.triggerType} to {newType}");
+
+        // 1. Создаем новый экземпляр данных нужного типа
+        Trigger newData = triggerManager.CreateTriggerInstanceByType(newType);
+
+        // 2. Копируем общие параметры (Mapping)
+        newData.startTime = oldData.startTime;
+        newData.endTime = oldData.endTime;
+        newData.IsAdditive = oldData.IsAdditive;
+        newData.EasingType = oldData.EasingType;
+        newData.triggerType = newType; // Важно установить тип явно
+
+        // 3. Работаем с TriggerManager: удаляем старый, регистрируем новый
+        triggerManager.UnregisterTrigger(oldData);
+        triggerManager.RegisterTrigger(newData);
+
+        // 4. Обновляем Блок (Visual)
+        block.SwapTriggerData(newData);
+
+        // 5. Если этот блок сейчас открыт в панели свойств -> нужно перезагрузить панель!
+        // Проверяем через SelectionManager или просто принудительно обновляем, если это текущий выбранный
+        if (selectionManager.SelectedBlocks.Contains(block))
+        {
+            triggersPanelManager.LoadTriggerData(newData);
+        }
+    }
+
+    private void OnTypeChangeRequestedFromUI(Trigger triggerData, TriggerType newType)
+    {
+        // Нам нужно найти Блок, который держит этот triggerData
+        // Это не очень эффективно перебором, но надежно
+        var block = triggerBlocks.FirstOrDefault(b => b.GetTriggerData() == triggerData);
+        
+        if (block != null)
+        {
+            ChangeTriggerType(block, newType);
+        }
+        else
+        {
+            GD.PrintErr("Не найден блок для изменяемого триггера!");
+        }
     }
 
 } 

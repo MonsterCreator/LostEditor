@@ -16,7 +16,17 @@ public partial class TimelineController : Node
     [Export] public VBoxContainer TimelineContainer;
     [Export] public ScrollContainer HorScroll;
 
-    [Export] public float PixelsPerSecond = 100f;
+    public Action<float> OnPPSChanged;
+    private float _pixelsPerSecond;
+    public float PixelsPerSecond
+    {
+        get => _pixelsPerSecond;
+        set
+        {
+            _pixelsPerSecond = value;
+            OnPPSChanged?.Invoke(value);
+        }
+    }
     [Export] public float timelineMaxTime = 60f;
     
     public float timelineTime = 0;
@@ -27,6 +37,7 @@ public partial class TimelineController : Node
 
     public override void _Ready()
     {
+        PixelsPerSecond = 100f;
         UpdateTimelineSize();
         // Если музыка загружена, можно автоматически выставить длину таймлайна
         if (MusicPlayer?.Stream != null)

@@ -102,13 +102,6 @@ public partial class TriggerCameraPosition : Trigger
 // ТРИГГЕР ЗУМА
 public partial class TriggerCameraZoom : Trigger
 {
-    private bool _isCameraZoomActive;
-    public bool IsCameraZoomActive 
-    { 
-        get => _isCameraZoomActive; 
-        set => SetField(ref _isCameraZoomActive, value); 
-    }
-
     private float _cameraZoom;
     public float CameraZoom 
     { 
@@ -120,13 +113,6 @@ public partial class TriggerCameraZoom : Trigger
 // ТРИГГЕР РОТАЦИИ
 public partial class TriggerCameraRotation : Trigger
 {
-    private bool _isCameraRotationActive;
-    public bool IsCameraRotationActive 
-    { 
-        get => _isCameraRotationActive; 
-        set => SetField(ref _isCameraRotationActive, value); 
-    }
-
     private float _cameraRotation;
     public float CameraRotation 
     { 
@@ -195,13 +181,3 @@ public partial class TriggerCameraShake : Trigger
     }
 }
 
-// ТРИГГЕР ИЗМЕНЕНИЯ ЦВЕТА
-public partial class TriggerColorChange : Trigger
-{
-    private List<int> _colorId;
-    public List<int> ColorId 
-    { 
-        get => _colorId; 
-        set => SetField(ref _colorId, value); 
-    }
-}

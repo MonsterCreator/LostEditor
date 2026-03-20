@@ -18,12 +18,12 @@ public partial class ScrollContainerHorController : ScrollContainer
 		ScrollHorizontal += (int)(delta * ScrollSpeed);
 	}
 
-	private void MouseEntered()
+	private void OnMouseEnterd()
 	{
 		isMouseHover = true;
 	}
 
-	private void MouseExited()
+	private void OnMouseExited()
 	{
 		isMouseHover = false;
 	}

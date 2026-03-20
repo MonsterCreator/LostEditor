@@ -42,6 +42,17 @@ public partial class TimelineTriggerSelectionManager : Node
     // ВАЖНО: Обработка движения перенесена в глобальный _Input
     public override void _Input(InputEvent @event)
     {
+        // Обработка удаления
+        if (@event is InputEventKey ek && ek.Pressed && ek.Keycode == Key.Delete)
+        {
+            // Проверяем, есть ли выделенные блоки и находится ли мышь над панелью
+            if (SelectedBlocks.Count > 0 && TimelineTriggerPanel.GetGlobalRect().HasPoint(GetViewport().GetMousePosition()))
+            {
+                DeleteSelectedBlocks();
+                GetViewport().SetInputAsHandled(); // Поглощаем ввод
+            }
+        }
+
         if (!_isDragging) return;
 
         if (@event is InputEventMouseMotion mm)
@@ -62,6 +73,9 @@ public partial class TimelineTriggerSelectionManager : Node
             // Помечаем событие как обработанное, чтобы не дергать другие элементы
             GetViewport().SetInputAsHandled();
         }
+
+    
+        if (!_isDragging) return;
         
         // Завершение перетаскивания при отпускании кнопки в любом месте экрана
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
@@ -217,6 +231,22 @@ public partial class TimelineTriggerSelectionManager : Node
             block.IsSelected = false;
             SelectedBlocks.Remove(block);
         }
+    }
+
+    private void DeleteSelectedBlocks()
+    {
+        // Клонируем список, так как оригинальный будет изменяться при удалении
+        var blocksToDelete = new List<TriggerBlock>(SelectedBlocks);
+        
+        foreach (var block in blocksToDelete)
+        {
+            // Вызываем удаление в основном контроллере
+            triggerController.DeleteTriggerBlock(block);
+        }
+        
+        // Очищаем список выделения (на всякий случай, хотя DeleteTriggerBlock должен это делать)
+        DeselectAll();
+        GD.Print($"Удалено блоков: {blocksToDelete.Count}");
     }
 
     public void DeselectAll()

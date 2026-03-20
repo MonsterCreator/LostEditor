@@ -1,12 +1,12 @@
 using Godot;
 using System;
-using System.Globalization; // ЭТА СТРОКА ОБЯЗАТЕЛЬНА для NumberStyles и CultureInfo
+using System.Globalization;
 
 namespace LostEditor;
-[GlobalClass]
+
+
 public partial class InputLineEdit : LineEdit
 {
-    // Типы данных
     public enum InputDataType
     {
         Integer,
@@ -25,28 +25,28 @@ public partial class InputLineEdit : LineEdit
     [ExportSubgroup("Scrolling")]
     [Export] public bool ScrollEnabled { get; set; } = true;
     [Export] public float ScrollStep { get; set; } = 1.0f;
-    [Export] public float ShiftMultiplier { get; set; } = 10.0f;
-    [Export] public float CtrlMultiplier { get; set; } = 0.1f;
+    [Export] public float ShiftMultiplier { get; set; } = 0.1f;
+    [Export] public float CtrlMultiplier { get; set; } = 10f;
+
+    [ExportSubgroup("Value Limits")]
+    [Export] public bool IsUpLimit { get; set; } = false;
+    [Export] public bool IsDownLimit { get; set; } = false;
+    [Export] public float UpLimit { get; set; } = 0;
+    [Export] public float DownLimit { get; set; } = 0;
 
     #endregion
 
-    // Храним последнее валидное значение для отката при ошибке ввода
     private Variant _lastValidValue;
 
     public override void _Ready()
     {
-        // Подключаем стандартные сигналы
         TextSubmitted += OnTextSubmitted;
         FocusExited += OnFocusExited;
-
-        // Инициализируем начальное значение
         ValidateAndSaveCurrent(Text, false);
     }
 
     public override void _GuiInput(InputEvent @event)
     {
-        // ИСПРАВЛЕНИЕ: Используем Editable вместо !IsReadOnly()
-        // Скроллим только если поле активно (Editable = true)
         if (ScrollEnabled && DataType != InputDataType.String && Editable)
         {
             if (@event is InputEventMouseButton mb && mb.Pressed)
@@ -71,7 +71,6 @@ public partial class InputLineEdit : LineEdit
     private void ApplyScroll(int direction)
     {
         float multiplier = 1.0f;
-
         if (Input.IsKeyPressed(Key.Shift)) multiplier = ShiftMultiplier;
         if (Input.IsKeyPressed(Key.Ctrl)) multiplier = CtrlMultiplier;
 
@@ -80,20 +79,28 @@ public partial class InputLineEdit : LineEdit
         if (DataType == InputDataType.Integer)
         {
             int current = _lastValidValue.AsInt32();
-            int result = current + (int)step;
+            // ИЗМЕНЕНО: Применяем лимиты после сложения
+            int result = (int)ClampToLimits(current + step);
             SetNewValue(result);
         }
         else if (DataType == InputDataType.Float)
         {
             float current = (float)_lastValidValue.AsDouble();
-            float result = current + step;
-            // Округляем до 4 знаков, чтобы избежать проблем с плавающей точкой
+            // ИЗМЕНЕНО: Применяем лимиты после сложения
+            float result = ClampToLimits(current + step);
             result = (float)Math.Round(result, 4);
             SetNewValue(result);
         }
     }
 
-    // --- Логика подтверждения ввода ---
+    // --- Вспомогательный метод для ограничений (ДОБАВЛЕНО) ---
+    private float ClampToLimits(float value)
+    {
+        if (IsDownLimit && value < DownLimit) value = DownLimit;
+        if (IsUpLimit && value > UpLimit) value = UpLimit;
+        return value;
+    }
+
     private void OnTextSubmitted(string newText)
     {
         ValidateAndSaveCurrent(newText, true);
@@ -116,18 +123,18 @@ public partial class InputLineEdit : LineEdit
             case InputDataType.Integer:
                 if (int.TryParse(text, out int intVal))
                 {
-                    newValue = intVal;
+                    // ИЗМЕНЕНО: Ограничиваем введенное число
+                    newValue = (int)ClampToLimits(intVal);
                     isValid = true;
                 }
                 break;
 
             case InputDataType.Float:
-                // Заменяем запятую на точку для универсальности
                 text = text.Replace(",", "."); 
-                // CultureInfo.InvariantCulture требует using System.Globalization;
                 if (float.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out float floatVal))
                 {
-                    newValue = floatVal;
+                    // ИЗМЕНЕНО: Ограничиваем введенное число
+                    newValue = ClampToLimits(floatVal);
                     isValid = true;
                 }
                 break;
@@ -144,7 +151,6 @@ public partial class InputLineEdit : LineEdit
         }
         else
         {
-            // Откат к старому значению, если ввод неверен
             if (DataType == InputDataType.Float)
                 Text = ((float)_lastValidValue.AsDouble()).ToString("0.###", CultureInfo.InvariantCulture);
             else
@@ -166,7 +172,6 @@ public partial class InputLineEdit : LineEdit
         else
             Text = value.ToString();
 
-        // Ставим каретку в конец
         CaretColumn = Text.Length;
 
         if (emitSignal)
@@ -177,10 +182,26 @@ public partial class InputLineEdit : LineEdit
     
     public void SetValueWithoutNotify(Variant value)
     {
+        // ДОБАВЛЕНО: Даже при прямой установке значения из кода, 
+        // стоит учитывать лимиты, если это числа
+        if (DataType == InputDataType.Integer)
+            value = (int)ClampToLimits(value.AsInt32());
+        else if (DataType == InputDataType.Float)
+            value = ClampToLimits((float)value.AsDouble());
+
         _lastValidValue = value;
+        
         if (DataType == InputDataType.Float)
             Text = ((float)value.AsDouble()).ToString("0.###", CultureInfo.InvariantCulture);
         else
             Text = value.ToString();
+    }
+
+    public float GetValueAsFloat()
+    {
+        if (_lastValidValue.VariantType == Variant.Type.Int)
+            return (float)_lastValidValue.AsInt32();
+    
+        return (float)_lastValidValue.AsDouble();
     }
 }

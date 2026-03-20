@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://caog71oglwuxd"]
+[gd_scene format=3 uid="uid://caog71oglwuxd"]
 
 [ext_resource type="Script" uid="uid://bkk8ce3n66uuw" path="res://Editor/KeyframeSystem/KeyframePoint.cs" id="1_eeaab"]
 
-[node name="KeyframePoint" type="Control"]
+[node name="KeyframePoint" type="Control" unique_id=956977749]
 layout_mode = 3
 anchors_preset = 4
 anchor_top = 0.5
@@ -10,12 +10,13 @@ anchor_bottom = 0.5
 grow_vertical = 2
 script = ExtResource("1_eeaab")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=880832510]
 z_index = 3
 layout_mode = 0
-offset_left = -10.0
-offset_right = 4.0
-offset_bottom = 14.0
+offset_left = -9.028508
+offset_top = -0.0025886893
+offset_right = 3.5975904
+offset_bottom = 12.62351
 rotation = -0.78806275
 
 [connection signal="focus_entered" from="ColorRect" to="." method="_OnMouseEntered"]

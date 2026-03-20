@@ -31,10 +31,9 @@ public partial class TriggerBlock : Panel
 
     [Export] public Color[] TriggerTypeColor;
 
-
+    private float _pps = 100;
     protected Trigger _trigger;
 
-    private float _pps;
 
 
 
@@ -89,15 +88,25 @@ public partial class TriggerBlock : Panel
         }
     }
 
-    public void Setup(Trigger trigger, ref float PPS)
+    public void Setup(Trigger trigger, TimelineController controller)
     {
+        controller.OnPPSChanged += OnPPSChanged;
         if (_trigger != null) _trigger.PropertyChanged -= OnTriggerPropertyChanged;
 
         _trigger = trigger;
         _trigger.PropertyChanged += OnTriggerPropertyChanged;
-        _pps = PPS;
+        
+        // Передаем текущий PPS для первой отрисовки
+        UpdateBlockVisual(); 
+    }
+
+    private void OnPPSChanged(float newPPS) 
+    {
+        _pps = newPPS;
+        GD.Print($"PPS IS {newPPS}");
         UpdateBlockVisual();
     }
+
 
     private void OnTriggerPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -133,13 +142,19 @@ public partial class TriggerBlock : Panel
         }
     }
 
+    public void Unsubscribe(TimelineController tController)
+    {
+        tController.OnPPSChanged -= OnPPSChanged;
+        _trigger.PropertyChanged -= OnTriggerPropertyChanged;
+    }
+
     public void OnIconChanged(int iconID)
     {
         triggerIcon.Texture = TriggerIconDataArray[iconID];
     }
 
+    
     protected void ClearData()
-
     {
 
         DataLeft.GetChildren().ToList().ForEach(child => child.QueueFree());
@@ -151,7 +166,6 @@ public partial class TriggerBlock : Panel
 
     public void UpdateBlockVisual()
     {
-
         if (_trigger == null) return;
 
         // Рассчитываем ширину на основе PPS
@@ -193,6 +207,35 @@ public partial class TriggerBlock : Panel
 
     }
 
+    // Добавьте этот метод в класс TriggerBlock
+    public void SwapTriggerData(Trigger newTrigger)
+    {
+        // 1. Отписываемся от старого триггера
+        if (_trigger != null)
+        {
+            _trigger.PropertyChanged -= OnTriggerPropertyChanged;
+        }
+
+        // 2. Меняем ссылку
+        _trigger = newTrigger;
+
+        // 3. Подписываемся на новый
+        if (_trigger != null)
+        {
+            _trigger.PropertyChanged += OnTriggerPropertyChanged;
+        }
+
+        // 4. Обновляем визуал (иконку, цвет)
+        UpdateIcon();
+        UpdateSelectionVisual();
+        UpdateBlockVisual(); // Обновить ширину/позицию
+        
+        // Если у вас есть специфичный контент в блоке (DataRight), его тоже надо обновить
+        // Но так как TriggerBlock - это общий класс, специфику обновлять сложнее. 
+        // Обычно при смене типа просто очищают превью данных.
+        ClearData(); 
+    }
+
 }
 
 
@@ -212,11 +255,3 @@ public partial class TriggerBlockCameraPosition: TriggerBlock
 }
 
 
-public enum TriggerType
-{
-    CameraPosition = 0,
-    CameraZoom = 1,
-    CameraRotation = 2,
-    CameraShake = 3,
-    ColorChange = 4
-} 

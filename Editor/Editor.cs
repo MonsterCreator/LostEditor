@@ -7,63 +7,49 @@ using System.Linq;
 
 
 namespace LostEditor;
-public partial class Editor : Node2D
+public partial class Editor : Control
 {
-    /*
-    #region Exports
-    [ExportGroup("Components")]
-    [Export] public ObjectManager objectManager;
-    [Export] public DebugEditorManager debugEditorManager;
-    [Export] public TimelineController timelineController;
-    [Export] public TimelineObjectController timeLineObjectControl;
-    [Export] public ScrollContainer HorScroll;
-
-    [Export] public Node ViewportObj;
-    [Export] public InspectorPanel Inspector;
-    [Export] public Editor EditorRef;
-    [Export] public TimelineSlider timelineSlider;
-    [Export] public SelectionManager selection;
-    [Export] public ScrollContainerHorController scrollContainerHor;
-    
-    [ExportGroup("UI Links")]
-    [Export] public TextEdit GlobalTimeTextEdit;
-    [Export] public VBoxContainer TimelineContainer;
-
-
-    [ExportGroup("Prefabs")]
-    [Export] public PackedScene GameObjectScene;
-    [Export] public PackedScene TimelineBlockScene;
-
-    [ExportGroup("Settings")]
-    
-    #endregion
-    */
     #region Private Fields
-    
-    
-    
+
     private bool _isDragging = false;
     private bool _hasMoved = false;
     private float _mouseYAccumulator = 0f;
     private TimelineBlock _lastClickedBlock = null;
-    
-    
-    
-    private const float RowThreshold = 30f;
+
     #endregion
     
+    [Export] public SubViewportContainer subviewportContainer;
+    [Export] public SubViewport subviewport;
+    [Export] public Control ViewportPlace;
+    [Export] public CanvasLayer editorCanvas;
+    
+
     public ObjectController Controller;
-    
-    
-    
+    private bool _isPreviewMode = false;
 
-    public override void _PhysicsProcess(double delta)
+
+    public override void _Input(InputEvent @event)
     {
-
-        
+        if (@event is InputEventKey ek && ek.Pressed && ek.Keycode == Key.F10)
+        {
+            if(_isPreviewMode)
+            {
+                GD.Print("Переключаемся на редактор камеру");
+                subviewportContainer.Reparent(ViewportPlace);
+                subviewport.Size = new Vector2I(Convert.ToInt32(1920/1.8),Convert.ToInt32(1080/1.8));
+                editorCanvas.Visible = true;
+                _isPreviewMode = !_isPreviewMode;
+            }
+            else
+            {
+                GD.Print("Переключаемся на вьюпорт камеру");
+                subviewportContainer.Reparent(this);
+                subviewportContainer.Position = new Vector2(0,0);
+                subviewport.Size = new Vector2I(1920,1080);
+                editorCanvas.Visible = false;
+                _isPreviewMode = !_isPreviewMode;
+            }
+        }
     }
-
-
-    
 
 }

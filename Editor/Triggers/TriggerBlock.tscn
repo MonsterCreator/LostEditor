@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://bxheba8ib0k47"]
+[gd_scene load_steps=8 format=3 uid="uid://bxheba8ib0k47"]
 
 [ext_resource type="Theme" uid="uid://cn1xvyj8shlg" path="res://UIThemes/TimelineBlockTheme.tres" id="1_wg8tu"]
 [ext_resource type="Script" uid="uid://bk0wxa6hrmbfr" path="res://Editor/Triggers/TriggerBlock.cs" id="2_pp3ac"]
 [ext_resource type="Texture2D" uid="uid://dlu4jd4qw22rm" path="res://Editor/EditorSprites/RGB_64.png" id="3_iuekt"]
 [ext_resource type="Texture2D" uid="uid://ej17j7gcltm4" path="res://Editor/EditorSprites/POS_64.png" id="4_iuekt"]
+[ext_resource type="Texture2D" uid="uid://1espckgablh7" path="res://Editor/EditorSprites/SCA_64.png" id="4_o4rbp"]
+[ext_resource type="Texture2D" uid="uid://1msiyliig208" path="res://Editor/EditorSprites/ROT_64.png" id="5_xsyp0"]
+[ext_resource type="Texture2D" uid="uid://dy4pyxoohakyi" path="res://Editor/EditorSprites/SHAKE_64.png" id="6_utioi"]
 
 [node name="TriggerBlock" type="Panel" node_paths=PackedStringArray("triggerIcon", "DataLeft", "DataRight")]
 custom_minimum_size = Vector2(200, 25)
@@ -12,10 +15,10 @@ offset_bottom = 25.0
 theme = ExtResource("1_wg8tu")
 script = ExtResource("2_pp3ac")
 triggerIcon = NodePath("TextureRect")
-TriggerIconDataArray = Array[Texture2D]([ExtResource("4_iuekt"), null, null, null, ExtResource("3_iuekt")])
+TriggerIconDataArray = Array[Texture2D]([ExtResource("4_iuekt"), ExtResource("4_o4rbp"), ExtResource("5_xsyp0"), ExtResource("6_utioi"), ExtResource("3_iuekt")])
 DataLeft = NodePath("MarginContainer/HBoxContainer/DataLeft")
 DataRight = NodePath("MarginContainer/HBoxContainer/DataRight")
-TriggerTypeColor = PackedColorArray(0.6881359, 0.34812894, 0.4216422, 1, 0.3630419, 0.52109545, 0.31398368, 1, 0.34247157, 0.48023355, 0.64614487, 1, 0, 0, 0, 1)
+TriggerTypeColor = PackedColorArray(0.6881359, 0.34812894, 0.4216422, 1, 0.6862745, 0.34901962, 0.42352942, 1, 0.6862745, 0.34901962, 0.42352942, 1, 0.6862745, 0.34901962, 0.42352942, 1, 0.54487145, 0.40938067, 0.17696315, 1)
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
