@@ -90,40 +90,21 @@ public partial class TimelineBlock : Panel
     }
     */
 
-    private void ButtonPressed() //signal connected
+    private void ButtonPressed() // сигнал pressed
     {
         if (editor == null || Data == null) return;
-
-        if(!_timelineObjController.hasMoved)
-        {
-            if(Input.IsKeyPressed(Key.Ctrl))
-            {
-                _timelineObjController.HandleBlockSelection(this,true);
-            }
-            else if(_timelineObjController.GetBlockUnderMouse() != null)
-            {
-                _selectionManager.SelectBlock(this);
-                IsSelected = true;
-            }
-            else
-            {
-                _selectionManager.DeselectAll();
-            }
-        }
-        else _timelineObjController.hasMoved = false;
-        
+        // Вся логика выделения в StartDraggingBlock / FinalizeDrag.
+        // Здесь только финальное обновление визуала.
         UpdateVisual();
-        
     }
 
-// В файле TimelineBlock.cs
 
-    private void ButtonDown() // Сигнал button_down
+
+    private void ButtonDown() // сигнал button_down
     {
-        // Сообщаем контроллеру, что начали тащить ЭТОТ блок
-        // Контроллер сам выставит IsDragging = true и обработает выделение
         _timelineObjController.StartDraggingBlock(this);
     }
+
 
     private void ButtonUp() // Сигнал button_up
     {

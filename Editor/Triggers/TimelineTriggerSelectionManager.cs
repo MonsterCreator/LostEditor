@@ -12,26 +12,31 @@ public partial class TimelineTriggerSelectionManager : Node
     [Export] public Control TimelineTriggerPanel;
 
     private float _mouseYAccumulator = 0f;
-    private const float RowThreshold = 30f; 
+    private const float RowThreshold = 30f;
 
     public List<TriggerBlock> SelectedBlocks { get; private set; } = new();
 
-	public Action<TriggerBlock> OnNewBlockSelected;
-	private TriggerBlock _lastSelectedTriggerBlock;
-	public TriggerBlock LastSelectedTriggerBlock
-	{
-		get => _lastSelectedTriggerBlock;
-		set
-		{
-			_lastSelectedTriggerBlock = value;
-			OnNewBlockSelected?.Invoke(_lastSelectedTriggerBlock);
-		}
-	}
+    public Action<TriggerBlock> OnNewBlockSelected;
+    public Action OnAllDeselected; // ← новое: для закрытия панели из контроллера
 
+    private TriggerBlock _lastSelectedTriggerBlock;
+    public TriggerBlock LastSelectedTriggerBlock
+    {
+        get => _lastSelectedTriggerBlock;
+        private set
+        {
+            _lastSelectedTriggerBlock = value;
+            OnNewBlockSelected?.Invoke(_lastSelectedTriggerBlock);
+        }
+    }
+
+    // Drag state
     private bool _isDragging = false;
     private bool _hasMoved = false;
+    private bool _wasCtrlOnDragStart = false; // ← захватываем Ctrl в момент нажатия
+    private TriggerBlock _lastClickedBlock = null;
     private float _dragStartX = 0f;
-    private Dictionary<Trigger, float> _initialDragTimes = new Dictionary<Trigger, float>();
+    private Dictionary<Trigger, float> _initialDragTimes = new();
 
     public override void _Ready()
     {
@@ -39,17 +44,16 @@ public partial class TimelineTriggerSelectionManager : Node
             TimelineTriggerPanel.GuiInput += OnPanelGuiInput;
     }
 
-    // ВАЖНО: Обработка движения перенесена в глобальный _Input
     public override void _Input(InputEvent @event)
     {
-        // Обработка удаления
+        // Удаление
         if (@event is InputEventKey ek && ek.Pressed && ek.Keycode == Key.Delete)
         {
-            // Проверяем, есть ли выделенные блоки и находится ли мышь над панелью
-            if (SelectedBlocks.Count > 0 && TimelineTriggerPanel.GetGlobalRect().HasPoint(GetViewport().GetMousePosition()))
+            if (SelectedBlocks.Count > 0 &&
+                TimelineTriggerPanel.GetGlobalRect().HasPoint(GetViewport().GetMousePosition()))
             {
                 DeleteSelectedBlocks();
-                GetViewport().SetInputAsHandled(); // Поглощаем ввод
+                GetViewport().SetInputAsHandled();
             }
         }
 
@@ -58,52 +62,38 @@ public partial class TimelineTriggerSelectionManager : Node
         if (@event is InputEventMouseMotion mm)
         {
             _hasMoved = true;
-            
             if (Input.IsKeyPressed(Key.Shift))
-            {
-                // Вертикальное движение (используем относительное смещение кадра)
                 ProcessVerticalMove(mm.Relative.Y);
-            }
             else
-            {
-                // Горизонтальное движение
                 ProcessHorizontalMove();
-            }
-            
-            // Помечаем событие как обработанное, чтобы не дергать другие элементы
             GetViewport().SetInputAsHandled();
         }
 
-    
-        if (!_isDragging) return;
-        
-        // Завершение перетаскивания при отпускании кнопки в любом месте экрана
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
-            OnGlobalReleased();
+            FinalizeDrag();
         }
     }
 
+    // Клик по фону панели (пустое место) — сбрасываем выделение
     private void OnPanelGuiInput(InputEvent @event)
     {
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && mb.Pressed)
         {
-            if (!Input.IsKeyPressed(Key.Ctrl) && !Input.IsKeyPressed(Key.Shift))
+            if (!_isDragging && !Input.IsKeyPressed(Key.Ctrl) && !Input.IsKeyPressed(Key.Shift))
             {
                 DeselectAll();
             }
         }
     }
 
-    // Теперь блоки только инициируют начало драга
     public void SubscribeToBlock(TriggerBlock block)
     {
-        block.OnInputEvent += (b, @event) => 
+        block.OnInputEvent += (b, @event) =>
         {
             if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && mb.Pressed)
             {
-                OnBlockClicked(b);
-                // Захватываем ввод, чтобы панель под блоком не получила клик
+                StartDragging(b);
                 GetViewport().SetInputAsHandled();
             }
         };
@@ -114,24 +104,30 @@ public partial class TimelineTriggerSelectionManager : Node
         if (SelectedBlocks.Contains(block)) Deselect(block);
     }
 
-    private void OnBlockClicked(TriggerBlock block)
+    // Точка входа — аналог StartDraggingBlock у объектов
+    private void StartDragging(TriggerBlock block)
     {
         _isDragging = true;
         _hasMoved = false;
+        _lastClickedBlock = block;
         _dragStartX = GetViewport().GetMousePosition().X;
         _mouseYAccumulator = 0f;
+        _wasCtrlOnDragStart = Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift);
 
-        bool isModifier = Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift);
-
-        if (!isModifier && !SelectedBlocks.Contains(block))
+        if (_wasCtrlOnDragStart)
         {
-            DeselectAll();
+            // Ctrl/Shift: переключаем блок в мультивыделении
+            if (SelectedBlocks.Contains(block))
+                Deselect(block);
+            else
+                Select(block, append: true);
         }
-
-        if (!SelectedBlocks.Contains(block))
+        else if (!SelectedBlocks.Contains(block))
         {
-            Select(block, isModifier);
+            // Клик по невыделенному без модификатора — выделяем только его
+            Select(block, append: false);
         }
+        // Если блок уже выделен без Ctrl — не трогаем, чтобы тащить всю группу
 
         _initialDragTimes.Clear();
         foreach (var sb in SelectedBlocks)
@@ -141,40 +137,51 @@ public partial class TimelineTriggerSelectionManager : Node
         }
     }
 
-	private void ProcessHorizontalMove()
-	{
-		float currentMouseX = GetViewport().GetMousePosition().X;
-		float pixelDiff = currentMouseX - _dragStartX;
-		float pps = timelineController.PixelsPerSecond;
-		if (pps <= 0) return;
-		
-		float timeDiff = pixelDiff / pps;
+    // Аналог FinalizeDrag у объектов
+    private void FinalizeDrag()
+    {
+        if (!_hasMoved && _lastClickedBlock != null)
+        {
+            // Простой клик (без движения, без Ctrl) по блоку внутри группы
+            // → схлопнуть выделение до одного этого блока
+            if (!_wasCtrlOnDragStart
+                && SelectedBlocks.Count > 1
+                && SelectedBlocks.Contains(_lastClickedBlock))
+            {
+                Select(_lastClickedBlock, append: false);
+            }
+        }
 
-		foreach (var kvp in _initialDragTimes)
-		{
-			Trigger trigger = kvp.Key;
+        _isDragging = false;
+        _hasMoved = false;
+        _wasCtrlOnDragStart = false;
+        _lastClickedBlock = null;
+        _initialDragTimes.Clear();
+        _mouseYAccumulator = 0f;
+    }
 
-			trigger.startTime = Mathf.Max(0, kvp.Value + timeDiff);
-		}
-	}
+    private void ProcessHorizontalMove()
+    {
+        float currentMouseX = GetViewport().GetMousePosition().X;
+        float pixelDiff = currentMouseX - _dragStartX;
+        float pps = timelineController.PixelsPerSecond;
+        if (pps <= 0) return;
+
+        float timeDiff = pixelDiff / pps;
+        foreach (var kvp in _initialDragTimes)
+            kvp.Key.startTime = Mathf.Max(0, kvp.Value + timeDiff);
+    }
 
     private void ProcessVerticalMove(float deltaY)
     {
         _mouseYAccumulator += deltaY;
-
-        // Пока накоплено больше порога — двигаем блоки по строкам
         while (Mathf.Abs(_mouseYAccumulator) >= RowThreshold)
         {
             int direction = _mouseYAccumulator > 0 ? 1 : -1;
-            
             if (MoveGroup(direction))
-            {
-                // Вычитаем ровно один шаг из аккумулятора
                 _mouseYAccumulator -= RowThreshold * direction;
-            }
             else
             {
-                // Если уперлись в край, сбрасываем остаток, чтобы не "давить" в стенку
                 _mouseYAccumulator = 0;
                 break;
             }
@@ -186,31 +193,19 @@ public partial class TimelineTriggerSelectionManager : Node
         var rows = triggerController.Rows;
         if (rows == null || rows.Length == 0) return false;
 
-        // 1. Валидация всей группы
         foreach (var block in SelectedBlocks)
         {
-            int currentIndex = Array.IndexOf(rows, block.GetParent());
-            int targetIndex = currentIndex + dir;
-            if (targetIndex < 0 || targetIndex >= rows.Length) return false;
+            int idx = Array.IndexOf(rows, block.GetParent());
+            if (idx + dir < 0 || idx + dir >= rows.Length) return false;
         }
-
-        // 2. Перемещение (теперь выполняется только если валидация прошла для всех)
         foreach (var block in SelectedBlocks)
         {
-            int currentIndex = Array.IndexOf(rows, block.GetParent());
+            int idx = Array.IndexOf(rows, block.GetParent());
             block.GetParent().RemoveChild(block);
-            rows[currentIndex + dir].AddChild(block);
+            rows[idx + dir].AddChild(block);
             block.UpdateBlockVisual();
         }
         return true;
-    }
-
-    private void OnGlobalReleased()
-    {
-        _isDragging = false;
-        _initialDragTimes.Clear();
-        _mouseYAccumulator = 0f;
-        GD.Print("Drag завершен");
     }
 
     public void Select(TriggerBlock block, bool append)
@@ -218,9 +213,9 @@ public partial class TimelineTriggerSelectionManager : Node
         if (!append) DeselectAll();
         if (!SelectedBlocks.Contains(block))
         {
-			LastSelectedTriggerBlock = block;
             SelectedBlocks.Add(block);
             block.IsSelected = true;
+            LastSelectedTriggerBlock = block; // → OnNewBlockSelected → открывает панель
         }
     }
 
@@ -233,25 +228,18 @@ public partial class TimelineTriggerSelectionManager : Node
         }
     }
 
-    private void DeleteSelectedBlocks()
-    {
-        // Клонируем список, так как оригинальный будет изменяться при удалении
-        var blocksToDelete = new List<TriggerBlock>(SelectedBlocks);
-        
-        foreach (var block in blocksToDelete)
-        {
-            // Вызываем удаление в основном контроллере
-            triggerController.DeleteTriggerBlock(block);
-        }
-        
-        // Очищаем список выделения (на всякий случай, хотя DeleteTriggerBlock должен это делать)
-        DeselectAll();
-        GD.Print($"Удалено блоков: {blocksToDelete.Count}");
-    }
-
     public void DeselectAll()
     {
         foreach (var block in SelectedBlocks) block.IsSelected = false;
         SelectedBlocks.Clear();
+        OnAllDeselected?.Invoke(); // → закрывает панель
+    }
+
+    private void DeleteSelectedBlocks()
+    {
+        var blocksToDelete = new List<TriggerBlock>(SelectedBlocks);
+        foreach (var block in blocksToDelete)
+            triggerController.DeleteTriggerBlock(block);
+        DeselectAll();
     }
 }

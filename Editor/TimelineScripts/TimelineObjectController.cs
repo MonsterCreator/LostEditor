@@ -35,6 +35,7 @@ public partial class TimelineObjectController : Node
     private int deselectIndexDebug = 0;
 
     private TimelineBlock _lastClickedBlock = null;
+    private bool _wasCtrlOnDragStart = false;
     public List<TimelineBlock> activeBlocks = new();
 
     public void CreateObjectButtonPressed() => CreateObject();
@@ -134,30 +135,22 @@ public partial class TimelineObjectController : Node
 
     public override void _Input(InputEvent @event)
     {
-        // 1. Если мы уже тащим - нам не нужно искать блоки под мышью.
-        // Мы просто обрабатываем движение.
         if (IsDragging)
-        {
             HandleDragMotion(@event);
-        }
 
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
-            bool mouseInTimeline = scrollContainerHor != null &&
-                scrollContainerHor.GetGlobalRect().HasPoint(GetViewport().GetMousePosition());
+            bool hadMoved = hasMoved;
 
-            if(GetBlockUnderMouse() == null && !hasMoved && mouseInTimeline)
+            if (IsDragging) FinalizeDrag();
+
+            if (!hadMoved && GetBlockUnderMouse() == null && IsMouseOverObjectRows())
             {
                 selectionManager.DeselectAll();
                 workPanel.OpenPanel(WorkPanelType.NoPanel);
             }
-            
-            if (IsDragging) FinalizeDrag();
         }
 
-
-        
-        
         HandleDeletion(@event);
     }
 
@@ -186,10 +179,23 @@ public partial class TimelineObjectController : Node
     public void StartDraggingBlock(TimelineBlock block)
     {
         IsDragging = true;
-        //debugEditorManager.OverrideText(1,"StartDraggingBlock, IsDragging: True (TimelineBlockController,FinalizeDrag)");
         hasMoved = false;
         _lastClickedBlock = block;
         _mouseYAccumulator = 0f;
+        _wasCtrlOnDragStart = Input.IsKeyPressed(Key.Ctrl); // захватываем СЕЙЧАС
+
+        if (_wasCtrlOnDragStart)
+        {
+            // Ctrl: переключаем блок в/из мультивыделения
+            selectionManager.HandleSelection(block, true);
+        }
+        else if (!selectionManager.SelectedBlocks.Contains(block))
+        {
+            // Клик по невыделенному без Ctrl — немедленно выделяем только его
+            selectionManager.SelectBlock(block, clearFirst: true);
+        }
+        // Если блок уже в выделении без Ctrl — не трогаем,
+        // чтобы можно было сразу тащить всю группу
     }
 
     private void ProcessVerticalMove(float deltaY)
@@ -261,29 +267,26 @@ public partial class TimelineObjectController : Node
 
     private void FinalizeDrag()
     {
-        // Если мышь не двигалась, это был просто клик (выделение)
         if (!hasMoved && _lastClickedBlock != null)
         {
-            //debugEditorManager.OverrideText(4,"FinalizeDrag Мышь была просто нажата без перемещения.");
-            bool isCtrl = Input.IsKeyPressed(Key.Ctrl);
-            
-            // Если Ctrl не зажат, и мы кликнули по уже выделенному блоку (без движения),
-            // то по логике UI это должно сбросить остальные выделения и оставить только этот
-            if (!isCtrl && selectionManager.SelectedBlocks.Count > 1 && selectionManager.SelectedBlocks.Contains(_lastClickedBlock))
+            // Простой клик (без движения) по блоку внутри группы без Ctrl →
+            // схлопнуть мультивыделение до одного этого блока
+            if (!_wasCtrlOnDragStart // ← используем сохранённое, не читаем Ctrl снова
+                && selectionManager.SelectedBlocks.Count > 1
+                && selectionManager.SelectedBlocks.Contains(_lastClickedBlock))
             {
-                selectionManager.DeselectAll();
-                selectionManager.HandleSelection(_lastClickedBlock, false);
-                
+                selectionManager.SelectBlock(_lastClickedBlock, clearFirst: true);
             }
-            // Стандартная обработка (Ctrl или клик по невыделенному) уже произошла в StartDraggingBlock,
-            // но можно добавить специфичную логику здесь.
         }
+
         workPanel.OpenPanel(WorkPanelType.ObjectEdit);
 
         IsDragging = false;
+        hasMoved = false;
+        _wasCtrlOnDragStart = false;
         _lastClickedBlock = null;
         _mouseYAccumulator = 0f;
-        UpdateAllBlocks(); // Финальное обновление для выравнивания
+        UpdateAllBlocks();
     }
 
     private bool MoveGroup(int dir)
@@ -317,11 +320,10 @@ public partial class TimelineObjectController : Node
     // Метод обработки удаления (без изменений)
     private bool HandleDeletion(InputEvent @event)
     {
-        bool mouseInTimeline = scrollContainerHor != null &&
-            scrollContainerHor.GetGlobalRect().HasPoint(GetViewport().GetMousePosition());
-
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed 
-            && keyEvent.Keycode == Key.Delete && mouseInTimeline)
+        Vector2 mousePos = GetViewport().GetMousePosition();
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed
+            && keyEvent.Keycode == Key.Delete
+            && IsMouseOverObjectRows())
         {
             if (selectionManager.SelectedBlocks.Count > 0)
             {
@@ -353,6 +355,19 @@ public partial class TimelineObjectController : Node
             }
         return null;
     } 
+
+    private bool IsMouseOverObjectRows()
+    {
+        Vector2 mousePos = GetViewport().GetMousePosition();
+        foreach (var row in Rows)
+        {
+            // IsVisibleInTree() = false когда вкладка объектов неактивна,
+            // даже если GetGlobalRect() геометрически совпадает с триггер-строками
+            if (row.IsVisibleInTree() && row.GetGlobalRect().HasPoint(mousePos))
+                return true;
+        }
+        return false;
+    }
     
     // Остальные вспомогательные методы (HandleBlockSelection, DeleteBlock и т.д.)
     // ... (можно оставить как были в твоем коде) ...

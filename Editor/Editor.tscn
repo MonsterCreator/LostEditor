@@ -241,6 +241,7 @@ rotation = 1.0472
 polygon = PackedVector2Array(43.6148, -17.5429, -5.75831, -16.0263, -12.402, 27.4807, 32.0429, 18.5)
 
 [node name="ColorSelectPopup" parent="." unique_id=823147298 instance=ExtResource("18_tk78w")]
+visible = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=893676870]
 layer = 2
