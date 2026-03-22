@@ -143,7 +143,10 @@ public partial class TimelineObjectController : Node
 
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
-            if(GetBlockUnderMouse() == null && !hasMoved && scrollContainerHor.isMouseHover)
+            bool mouseInTimeline = scrollContainerHor != null &&
+                scrollContainerHor.GetGlobalRect().HasPoint(GetViewport().GetMousePosition());
+
+            if(GetBlockUnderMouse() == null && !hasMoved && mouseInTimeline)
             {
                 selectionManager.DeselectAll();
                 workPanel.OpenPanel(WorkPanelType.NoPanel);
@@ -314,7 +317,11 @@ public partial class TimelineObjectController : Node
     // Метод обработки удаления (без изменений)
     private bool HandleDeletion(InputEvent @event)
     {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Delete && scrollContainerHor.isMouseHover)
+        bool mouseInTimeline = scrollContainerHor != null &&
+            scrollContainerHor.GetGlobalRect().HasPoint(GetViewport().GetMousePosition());
+
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed 
+            && keyEvent.Keycode == Key.Delete && mouseInTimeline)
         {
             if (selectionManager.SelectedBlocks.Count > 0)
             {

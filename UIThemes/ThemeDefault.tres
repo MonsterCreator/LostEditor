@@ -1756,6 +1756,14 @@ bg_color = Color(0.19205922, 0.1974326, 0.24865091, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mnqm7"]
 bg_color = Color(0.3569018, 0.34356967, 0.51063746, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gb0on"]
+bg_color = Color(0.05696795, 0.10205632, 0.13576621, 1)
+border_color = Color(0.5899028, 0.58990294, 0.58990264, 1)
+expand_margin_left = 10.0
+expand_margin_top = 32.0
+expand_margin_right = 10.0
+expand_margin_bottom = 10.0
+
 [resource]
 Button/styles/hover = SubResource("StyleBoxFlat_chq1x")
 Button/styles/normal = SubResource("StyleBoxFlat_gus76")
@@ -1800,3 +1808,4 @@ ScrollContainer/styles/panel = SubResource("StyleBoxFlat_lpxqo")
 TabContainer/styles/panel = SubResource("StyleBoxFlat_rrp76")
 TabContainer/styles/tabbar_background = SubResource("StyleBoxFlat_mnqm7")
 VBoxContainer/constants/separation = 4
+Window/styles/embedded_border = SubResource("StyleBoxFlat_gb0on")

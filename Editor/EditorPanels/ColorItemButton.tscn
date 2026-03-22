@@ -5,11 +5,14 @@
 [ext_resource type="Theme" uid="uid://dq87c6lvwuxx" path="res://UIThemes/ColorItemNotSelected.tres" id="3_jc4oj"]
 
 [node name="ColorItemButton" type="AspectRatioContainer" unique_id=1535556580 node_paths=PackedStringArray("Button")]
-custom_minimum_size = Vector2(20, 0)
+custom_minimum_size = Vector2(35, 0)
 anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 8.0
 grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+alignment_horizontal = 0
 script = ExtResource("1_6c0qe")
 ColorSelectedTheme = ExtResource("1_enyqh")
 ColorNotSelectedTheme = ExtResource("3_jc4oj")

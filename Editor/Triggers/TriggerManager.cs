@@ -7,7 +7,7 @@ namespace LostEditor;
 
 public partial class TriggerManager : Node
 {
-	
+	public event Action OnCacheInvalidated;
     public List<Trigger> triggers = new List<Trigger>();
 
     // Кеш по типам для быстрого поиска
@@ -57,6 +57,8 @@ public partial class TriggerManager : Node
         
         // 4. Пересчитываем сектора для ColorChange триггеров
         RebuildColorChangeCache();
+
+        OnCacheInvalidated?.Invoke();
     }
 
     private void RebuildAdditiveSectors(TriggerType type)

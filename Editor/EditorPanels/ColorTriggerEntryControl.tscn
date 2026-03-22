@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://fre3mut613k1"]
+
+[ext_resource type="Theme" uid="uid://c3o6eodv67u5k" path="res://UIThemes/ThemeDefault.tres" id="1_4wl18"]
+[ext_resource type="Script" uid="uid://deijgt3onnnu" path="res://Editor/EditorPanels/ColorTriggerEntryControl.cs" id="1_tbcir"]
+
+[node name="ColorTriggerEntryControl" type="MarginContainer" unique_id=464635693 node_paths=PackedStringArray("BaseColorPreview", "ColorNameLabel", "TargetColorPreview", "TargetColorPicker", "RemoveButton")]
+custom_minimum_size = Vector2(0, 50)
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+script = ExtResource("1_tbcir")
+BaseColorPreview = NodePath("MarginContainer/AspectRatioContainer/ColorRect")
+ColorNameLabel = NodePath("MarginContainer/Label")
+TargetColorPreview = NodePath("MarginContainer/AspectRatioContainer2/ColorRect")
+TargetColorPicker = NodePath("MarginContainer/AspectRatioContainer3/ColorRect")
+RemoveButton = NodePath("MarginContainer/AspectRatioContainer4/CloseButton")
+
+[node name="MarginContainer" type="HBoxContainer" parent="." unique_id=1586192854]
+layout_mode = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer" unique_id=1545340744]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/AspectRatioContainer" unique_id=1499355136]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer" unique_id=883631131]
+layout_mode = 2
+text = "Color unknown"
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="MarginContainer" unique_id=688133486]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/AspectRatioContainer2" unique_id=1168321146]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+
+[node name="AspectRatioContainer3" type="AspectRatioContainer" parent="MarginContainer" unique_id=887788014]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="ColorRect" type="ColorPickerButton" parent="MarginContainer/AspectRatioContainer3" unique_id=93164154]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+
+[node name="AspectRatioContainer4" type="AspectRatioContainer" parent="MarginContainer" unique_id=1383271249]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="CloseButton" type="Button" parent="MarginContainer/AspectRatioContainer4" unique_id=89111267]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+theme = ExtResource("1_4wl18")
+text = "X"

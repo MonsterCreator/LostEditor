@@ -47,14 +47,15 @@ public partial class ObjectColor : Node
 
     private Color GetFinalColor()
     {
-        Color baseCol = baseLevelColor?.BaseColor ?? new Color(1f, 1f, 1f, 1f);
+        // ИЗМЕНЕНО: берём CurrentColor — он отражает состояние после триггеров.
+        // BaseColor остаётся нетронутым как исходное значение уровня.
+        Color baseCol = baseLevelColor?.CurrentColor ?? new Color(1f, 1f, 1f, 1f);
         baseCol.ToHsv(out float h, out float s, out float v);
     
         h = Mathf.Wrap(h + _HModifier, 0f, 1f);
         s = Mathf.Clamp(s + _SModifier, 0f, 1f);
         v = Mathf.Clamp(v + _VModifier, 0f, 1f);
     
-        // AModifier = множитель: 0.0 → полностью прозрачный, 1.0 → полная альфа базового цвета
         float a = Mathf.Clamp(baseCol.A * _AModifier, 0f, 1f);
     
         return Color.FromHsv(h, s, v, a);

@@ -8,8 +8,10 @@ public partial class ScrollContainerHorController : ScrollContainer
 	public bool isMouseHover = false;
 	public override void _Ready()
 	{
-		// Отключаем стандартную обработку фокуса, чтобы он не прыгал
 		FollowFocus = false;
+		// Подключаем программно — не зависим от сигналов в сцене
+		MouseEntered += OnMouseEnterd;
+		MouseExited += OnMouseExited;
 	}
 
 	// Метод для ручного управления прокруткой

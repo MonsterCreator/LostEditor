@@ -31,6 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://dbpo3l01ne0sv" path="res://Editor/EditorSprites/HammerIcon32.png" id="13_s0arw"]
 [ext_resource type="Texture2D" uid="uid://cvm5m317tsibm" path="res://Editor/EditorSprites/EmptyObjectIcon16.png" id="14_1b133"]
 [ext_resource type="Script" uid="uid://c72j4wp32drty" path="res://Editor/InspectorScripts/EndTypeOptionButton.cs" id="17_55vf2"]
+[ext_resource type="PackedScene" uid="uid://y2s5xio4mbks" path="res://Editor/Triggers/Panels/ColorSelectPopup.tscn" id="18_tk78w"]
 [ext_resource type="Texture2D" uid="uid://cth5m6sg3j343" path="res://Editor/EditorSprites/delete_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.svg" id="20_0g0nj"]
 [ext_resource type="Script" uid="uid://dirhpdg66oy4" path="res://Editor/EditorPanels/AnimationPanel.cs" id="20_5rnho"]
 [ext_resource type="Script" uid="uid://ccywm6hi231kj" path="res://Editor/KeyframeSystem/KeyframeBasePanel.cs" id="21_f2st4"]
@@ -50,12 +51,16 @@
 [ext_resource type="Script" uid="uid://ctrnhsq3m8kb" path="res://Editor/Triggers/Panels/BaseDataTriggerPanel.cs" id="38_3es0i"]
 [ext_resource type="Script" uid="uid://btcooyelfs70i" path="res://Editor/Triggers/Panels/CameraPositionTriggerPanel.cs" id="38_ghixk"]
 [ext_resource type="Script" uid="uid://d05r65g0scc45" path="res://Editor/Triggers/Panels/TriggersPanelManager.cs" id="38_q83ll"]
+[ext_resource type="Theme" uid="uid://cvvcs3date2ig" path="res://UIThemes/WhitePanel.tres" id="38_ro1jv"]
 [ext_resource type="Script" uid="uid://dn37t6tws0vv3" path="res://Editor/MusicController.cs" id="38_slxk5"]
 [ext_resource type="AudioStream" uid="uid://ilwf6gy6jhr8" path="res://Editor/EditorWindows/Kaixo - Exodus (Reimagined).mp3" id="39_gunqa"]
+[ext_resource type="Texture2D" uid="uid://dlu4jd4qw22rm" path="res://Editor/EditorSprites/RGB_64.png" id="39_mfd6f"]
 [ext_resource type="Script" uid="uid://bd5p6p1w10t4" path="res://Editor/TriggerTypeOptionButtonController.cs" id="42_5bqvu"]
 [ext_resource type="Script" uid="uid://crlpa014xlccn" path="res://Editor/Triggers/Panels/CameraZoomTriggerPanel.cs" id="44_1hs5a"]
 [ext_resource type="Script" uid="uid://debdpc5wphifk" path="res://Editor/Triggers/Panels/CameraRotationTriggerPanel.cs" id="45_1abeh"]
 [ext_resource type="Script" uid="uid://dmo3bdpjpb83t" path="res://Editor/Triggers/Panels/CameraShakeTriggerPanel.cs" id="46_cnx87"]
+[ext_resource type="Script" uid="uid://oidx32hb1hfd" path="res://Editor/Triggers/Panels/ColorChangeTriggerPanel.cs" id="53_mfd6f"]
+[ext_resource type="PackedScene" uid="uid://fre3mut613k1" path="res://Editor/EditorPanels/ColorTriggerEntryControl.tscn" id="54_7j1mb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cl0o5"]
 content_margin_left = 0.0
@@ -235,6 +240,8 @@ position = Vector2(-1, -18)
 rotation = 1.0472
 polygon = PackedVector2Array(43.6148, -17.5429, -5.75831, -16.0263, -12.402, 27.4807, 32.0429, 18.5)
 
+[node name="ColorSelectPopup" parent="." unique_id=823147298 instance=ExtResource("18_tk78w")]
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=893676870]
 layer = 2
 
@@ -355,7 +362,7 @@ ignore_rotation = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
-current_tab = 1
+current_tab = 4
 tabs_visible = false
 script = ExtResource("11_1b133")
 
@@ -379,6 +386,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SingleObjectSettingsPanel" type="TabContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel" unique_id=631205277]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
@@ -1514,63 +1522,74 @@ text = ">"
 [node name="ColorPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer" unique_id=734250523 node_paths=PackedStringArray("ColorsContainer", "PreviewRect", "HInput", "SInput", "VInput", "AInput", "EaseTypePanel")]
 layout_mode = 2
 script = ExtResource("36_3al7o")
-ColorsContainer = NodePath("VBoxContainer/HBoxContainer/ScrollContainer/HBoxContainer")
+ColorsContainer = NodePath("MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer")
 ColorItemButtonScene = ExtResource("37_ro1jv")
-PreviewRect = NodePath("VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer4/AspectRatioContainer/ColorRect")
-HInput = NodePath("VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer/HueLineEdit")
-SInput = NodePath("VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer2/SaturationLineEdit")
-VInput = NodePath("VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer3/ValueLineEdit")
-AInput = NodePath("VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer5/AlphaLineEdit")
-EaseTypePanel = NodePath("VBoxContainer/EaseTypePanel")
+PreviewRect = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4/AspectRatioContainer/ColorRect")
+HInput = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HueLineEdit")
+SInput = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/SaturationLineEdit")
+VInput = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3/ValueLineEdit")
+AInput = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5/AlphaLineEdit")
+EaseTypePanel = NodePath("MarginContainer/VBoxContainer/EaseTypePanel")
 metadata/_tab_index = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel" unique_id=1935824423]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer" unique_id=1064604275]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/HBoxContainer" unique_id=492376488]
-layout_mode = 2
-text = "Base color"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/HBoxContainer" unique_id=1818452281]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/HBoxContainer/ScrollContainer" unique_id=1158780154]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer" unique_id=2145494386]
-layout_mode = 2
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel" unique_id=2145494386]
+layout_mode = 0
+offset_right = 841.0
+offset_bottom = 5.0
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 0
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer" unique_id=330636559]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer" unique_id=1935824423]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer" unique_id=1064604275]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1158780154]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1934608149]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Panel" type="Panel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer/AspectRatioContainer" unique_id=2062401171]
+layout_mode = 2
+theme = ExtResource("38_ro1jv")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer/AspectRatioContainer" unique_id=290243333]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="Button" type="TextureButton" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer/AspectRatioContainer/MarginContainer" unique_id=517674468]
+layout_mode = 2
+texture_normal = ExtResource("39_mfd6f")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer" unique_id=330636559]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="VBoxContainer5" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2" unique_id=609387423]
+[node name="VBoxContainer5" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=609387423]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer5" unique_id=1274059264]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5" unique_id=1274059264]
 layout_mode = 2
 text = "Alpha"
 horizontal_alignment = 1
 
-[node name="AlphaLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer5" unique_id=1375847336]
+[node name="AlphaLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer5" unique_id=1375847336]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input alpha"
@@ -1581,16 +1600,16 @@ IsUpLimit = true
 IsDownLimit = true
 UpLimit = 1.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2" unique_id=581366351]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=581366351]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer" unique_id=404428239]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=404428239]
 layout_mode = 2
 text = "Hue"
 horizontal_alignment = 1
 
-[node name="HueLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer" unique_id=1433898205]
+[node name="HueLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=1433898205]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input hue"
@@ -1602,16 +1621,16 @@ IsDownLimit = true
 UpLimit = 1.0
 DownLimit = -1.0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2" unique_id=1797650443]
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1797650443]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer2" unique_id=1677611442]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1677611442]
 layout_mode = 2
 text = "Saturation"
 horizontal_alignment = 1
 
-[node name="SaturationLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer2" unique_id=1192449922]
+[node name="SaturationLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1192449922]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input saturation"
@@ -1623,16 +1642,16 @@ IsDownLimit = true
 UpLimit = 1.0
 DownLimit = -1.0
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2" unique_id=1092589566]
+[node name="VBoxContainer3" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1092589566]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer3" unique_id=1090342953]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3" unique_id=1090342953]
 layout_mode = 2
 text = "Value"
 horizontal_alignment = 1
 
-[node name="ValueLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer3" unique_id=373313199]
+[node name="ValueLineEdit" type="LineEdit" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer3" unique_id=373313199]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Input value"
@@ -1644,24 +1663,24 @@ IsDownLimit = true
 UpLimit = 1.0
 DownLimit = -1.0
 
-[node name="VBoxContainer4" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2" unique_id=1260878459]
+[node name="VBoxContainer4" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1260878459]
 layout_mode = 2
 
-[node name="ResultColor" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer4" unique_id=1752093644]
+[node name="ResultColor" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4" unique_id=1752093644]
 layout_mode = 2
 text = "Result"
 horizontal_alignment = 1
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer4" unique_id=806037605]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4" unique_id=806037605]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ColorRect" type="Panel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer/MarginContainer/HBoxContainer2/VBoxContainer4/AspectRatioContainer" unique_id=136626044]
+[node name="ColorRect" type="Panel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer4/AspectRatioContainer" unique_id=136626044]
 layout_mode = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_3al7o")
 
-[node name="EaseTypePanel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/VBoxContainer" unique_id=28763083 instance=ExtResource("25_pmn2f")]
+[node name="EaseTypePanel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ColorPanel/MarginContainer/VBoxContainer" unique_id=28763083 instance=ExtResource("25_pmn2f")]
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -2147,7 +2166,6 @@ layout_mode = 2
 text = "  Load file  "
 
 [node name="TriggersPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel" unique_id=830060166 node_paths=PackedStringArray("baseDataTriggerPanel", "triggerDataPanels")]
-visible = false
 layout_mode = 2
 script = ExtResource("38_q83ll")
 baseDataTriggerPanel = NodePath("MarginContainer/VBoxContainer/BaseTriggerDataPanel")
@@ -2572,8 +2590,17 @@ offset_right = 40.0
 offset_bottom = 23.0
 text = "Camera shake"
 
-[node name="ColorChangeTriggerPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer" unique_id=1901512057]
+[node name="ColorChangeTriggerPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer" unique_id=1901512057 node_paths=PackedStringArray("BaseDataPanel", "EaseTypePanel", "AddColorButton", "ColorEntriesContainer", "ColorPopup", "LevelColors", "ColorManager")]
 layout_mode = 2
+script = ExtResource("53_mfd6f")
+BaseDataPanel = NodePath("../../BaseTriggerDataPanel")
+EaseTypePanel = NodePath("VBoxContainer/EaseTypePanel")
+AddColorButton = NodePath("VBoxContainer/AddColorButton")
+ColorEntriesContainer = NodePath("VBoxContainer/ColorEntriesContainer")
+ColorTriggerEntryScene = ExtResource("54_7j1mb")
+ColorPopup = NodePath("../../../../../../../../../ColorSelectPopup")
+LevelColors = NodePath("../../../../../../../../../Colors")
+ColorManager = NodePath("../../../../../../../../../ColorManager")
 metadata/_tab_index = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel" unique_id=101289967]
@@ -2589,11 +2616,24 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel/VBoxContainer/HBoxContainer" unique_id=1012940196]
 layout_mode = 2
-text = "Object color"
+text = "Color change"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel/VBoxContainer/HBoxContainer" unique_id=293580370]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="AddColorButton" type="Button" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel/VBoxContainer" unique_id=1447661050]
+layout_mode = 2
+text = "Add a color"
+
+[node name="ColorEntriesContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel/VBoxContainer" unique_id=2031907706]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EaseTypePanel" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/ColorChangeTriggerPanel/VBoxContainer" unique_id=1544675821 instance=ExtResource("25_pmn2f")]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
 
 [node name="TimelineMain" type="VBoxContainer" parent="CanvasLayer/VSplitContainer" unique_id=1067908114 node_paths=PackedStringArray("timelinePanels", "topPanels")]
 clip_contents = true
@@ -2645,12 +2685,11 @@ editable = false
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-current_tab = 1
+current_tab = 0
 clip_tabs = false
 tabs_visible = false
 
 [node name="Control" type="HBoxContainer" parent="CanvasLayer/VSplitContainer/TimelineMain/PanelContainer/MarginContainer/HBoxContainer/TabContainer" unique_id=1451761866]
-visible = false
 z_index = 1
 layout_mode = 2
 metadata/_tab_index = 0
@@ -2670,6 +2709,7 @@ theme = ExtResource("11_ka1pi")
 text = "  Create object  "
 
 [node name="TriggersPanel" type="Control" parent="CanvasLayer/VSplitContainer/TimelineMain/PanelContainer/MarginContainer/HBoxContainer/TabContainer" unique_id=956641886]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -2715,6 +2755,7 @@ offset_top = -1.0
 offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 theme = ExtResource("11_ka1pi")
 theme_override_constants/center_grabber = 1
 step = 0.0
@@ -2748,11 +2789,10 @@ timelineController = NodePath("../../../../../../TimeLineController")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 0
 tabs_visible = false
 
 [node name="TimelineObjects" type="Control" parent="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/ScrollContainerVerObjects/TabBar" unique_id=719655190]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -3008,6 +3048,7 @@ theme = ExtResource("11_ka1pi")
 theme_override_styles/panel = SubResource("StyleBoxFlat_y1sti")
 
 [node name="TimelineTriggers" type="Control" parent="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/ScrollContainerVerObjects/TabBar" unique_id=1760760142]
+visible = false
 layout_mode = 2
 mouse_filter = 1
 metadata/_tab_index = 1
@@ -3301,8 +3342,6 @@ volume_db = -10.915
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/TimelineMain/PanelContainer/MarginContainer/HBoxContainer/TabContainer/Control/CreateObjectButton" to="TimelineObjectController" method="CreateObjectButtonPressed"]
 [connection signal="pressed" from="CanvasLayer/VSplitContainer/TimelineMain/PanelContainer/MarginContainer/HBoxContainer/TabContainer/TriggersPanel/HBoxContainer/Button" to="TimelineTriggerController" method="OnCreateTriggerButtonPressed"]
 [connection signal="gui_input" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" to="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/ScrollContainerVerObjects" method="_GuiInput"]
-[connection signal="mouse_entered" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" to="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" method="OnMouseEntered"]
-[connection signal="mouse_exited" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" to="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" method="OnMouseExited"]
 [connection signal="gui_input" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer" to="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor" method="OnTimelineGuiInput"]
 [connection signal="value_changed" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/Marker/HSlider" to="TimeLineController" method="OnTimeLineSliderChangedValue"]
 [connection signal="gui_input" from="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/ScrollContainerVerObjects" to="CanvasLayer/VSplitContainer/TimelineMain/ScrollContainerHor/TimeLineRawsAndScrollContainer/ScrollContainerVerObjects" method="_GuiInput"]
