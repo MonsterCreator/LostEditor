@@ -280,7 +280,7 @@ namespace LostEditor
             float t      = (localTime - left.Time) / (right.Time - left.Time);
             float easedT = EasingFunctions.Ease(t, right.EasingType);
 
-            return Mathf.LerpAngle(Mathf.DegToRad(left.Value), Mathf.DegToRad(right.Value), easedT);
+            return Mathf.DegToRad(Mathf.Lerp(left.Value, right.Value, easedT));
         }
 
         private Color CalculateColor(GameObject obj, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
