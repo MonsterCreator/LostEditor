@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LostEditor
 {
@@ -54,37 +55,29 @@ namespace LostEditor
 
             DebugProfiler.Begin("Objects.Animation");
 
-            for (int i = 0; i < _sortedByStart.Count; i++)
+            var results = new AnimationResult[_sortedByStart.Count];
+
+            Parallel.For(0, _sortedByStart.Count, i =>
             {
                 var obj = _sortedByStart[i];
 
                 if (obj.startTime > time)
                 {
-                    // Скрываем этот и все последующие объекты в списке —
-                    // они все гарантированно ещё не начались (список отсортирован)
-                    for (int j = i; j < _sortedByStart.Count; j++)
-                    {
-                        var remaining = _sortedByStart[j];
-                        if (remaining.Visible)
-                        {
-                            remaining.Visible = false;
-                            remaining.animCache.IsDirty = true;
-                            objectRenderer?.MarkDirty();
-                        }
-                    }
-                    break;
+                    results[i] = new AnimationResult { ShouldBeVisible = false };
+                    return;
                 }
 
                 float localTime     = time - obj.startTime;
                 float prevLocalTime = _prevTime - obj.startTime;
 
-                DebugProfiler.BeginAccum("Anim.StateUpdate");
-                bool wasVisible = obj.Visible;
-                ObjectStateUpdate(obj);
-                if (wasVisible != obj.Visible) objectRenderer?.MarkDirty();
-                DebugProfiler.EndAccum("Anim.StateUpdate");
+                float globalEnd      = obj.startTime + obj.cachedEndTime;
+                bool shouldBeVisible = time >= obj.startTime && time < globalEnd;
 
-                if (!obj.Visible) continue;
+                if (!shouldBeVisible)
+                {
+                    results[i] = new AnimationResult { ShouldBeVisible = false };
+                    return;
+                }
 
                 var cache = obj.animCache;
 
@@ -95,35 +88,45 @@ namespace LostEditor
                     cache.IsDirty = false;
                 }
 
-                Vector2 prevPos      = obj.Position;
-                Vector2 prevScale    = obj.Scale;
-                float   prevRotation = obj.Rotation;
-                Color   prevColor    = obj.Color;
-
-                DebugProfiler.BeginAccum("Anim.Position");
-                PositionObjectUpdate(obj, localTime, prevLocalTime, cache);
-                DebugProfiler.EndAccum("Anim.Position");
-
-                DebugProfiler.BeginAccum("Anim.Scale");
-                ScaleObjectUpdate(obj, localTime, prevLocalTime, cache);
-                DebugProfiler.EndAccum("Anim.Scale");
-
-                DebugProfiler.BeginAccum("Anim.Rotation");
-                RotationObjectUpdate(obj, localTime, prevLocalTime, cache);
-                DebugProfiler.EndAccum("Anim.Rotation");
-
-                DebugProfiler.BeginAccum("Anim.Color");
-                ColorObjectUpdate(obj, localTime, prevLocalTime, cache);
-                DebugProfiler.EndAccum("Anim.Color");
-
-                if (obj.Position != prevPos      ||
-                    obj.Scale    != prevScale    ||
-                    obj.Rotation != prevRotation ||
-                    obj.Color    != prevColor)
+                results[i] = new AnimationResult
                 {
-                    objectRenderer?.MarkDirty();
+                    ShouldBeVisible = true,
+                    Position        = CalculatePosition(obj, localTime, prevLocalTime, cache),
+                    Scale           = CalculateScale(obj, localTime, prevLocalTime, cache),
+                    Rotation        = CalculateRotation(obj, localTime, prevLocalTime, cache),
+                    Color           = CalculateColor(obj, localTime, prevLocalTime, cache),
+                };
+            });
+
+            bool anyChanged = false;
+            for (int i = 0; i < _sortedByStart.Count; i++)
+            {
+                var obj    = _sortedByStart[i];
+                var result = results[i];
+
+                if (obj.Visible != result.ShouldBeVisible)
+                {
+                    obj.Visible = result.ShouldBeVisible;
+                    if (result.ShouldBeVisible) obj.animCache.IsDirty = true;
+                    anyChanged = true;
+                }
+
+                if (!result.ShouldBeVisible) continue;
+
+                if (obj.Position != result.Position ||
+                    obj.Scale    != result.Scale    ||
+                    obj.Rotation != result.Rotation ||
+                    obj.Color    != result.Color)
+                {
+                    obj.Position = result.Position;
+                    obj.Scale    = result.Scale;
+                    obj.Rotation = result.Rotation;
+                    obj.Color    = result.Color;
+                    anyChanged   = true;
                 }
             }
+
+            if (anyChanged) objectRenderer?.MarkDirty();
 
             DebugProfiler.FlushAccumulated();
             _prevTime = time;
@@ -177,157 +180,139 @@ namespace LostEditor
         }
 
         // ── Position ──────────────────────────────────────────────────────
-        public void PositionObjectUpdate(GameObject gameObject, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
+        private Vector2 CalculatePosition(GameObject obj, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
         {
-            float finalX = gameObject.Position.X;
-            float finalY = gameObject.Position.Y;
+            // Не читаем obj.Position — это свойство Node, запрещено из потока
+            float finalX = 0f;
+            float finalY = 0f;
 
-            if (gameObject.keyframePositionX.Count > 0)
+            if (obj.keyframePositionX.Count > 0)
             {
-                int indexX = GetCurrentIndex(gameObject.keyframePositionX, ref cache.IndexPosX, localTime, prevLocalTime);
-
+                int indexX = GetCurrentIndex(obj.keyframePositionX, ref cache.IndexPosX, localTime, prevLocalTime);
                 if (indexX < 0)
-                    finalX = gameObject.keyframePositionX[0].Value;
-                else if (indexX >= gameObject.keyframePositionX.Count - 1)
-                    finalX = gameObject.keyframePositionX[^1].Value;
+                    finalX = obj.keyframePositionX[0].Value;
+                else if (indexX >= obj.keyframePositionX.Count - 1)
+                    finalX = obj.keyframePositionX[^1].Value;
                 else
                 {
-                    var left  = gameObject.keyframePositionX[indexX];
-                    var right = gameObject.keyframePositionX[indexX + 1];
+                    var left  = obj.keyframePositionX[indexX];
+                    var right = obj.keyframePositionX[indexX + 1];
                     float t   = (localTime - left.Time) / (right.Time - left.Time);
                     finalX    = EasingFunctions.Lerp(left.Value, right.Value, EasingFunctions.Ease(t, right.EasingType));
                 }
             }
 
-            if (gameObject.keyframePositionY.Count > 0)
+            if (obj.keyframePositionY.Count > 0)
             {
-                int indexY = GetCurrentIndex(gameObject.keyframePositionY, ref cache.IndexPosY, localTime, prevLocalTime);
-
+                int indexY = GetCurrentIndex(obj.keyframePositionY, ref cache.IndexPosY, localTime, prevLocalTime);
                 if (indexY < 0)
-                    finalY = gameObject.keyframePositionY[0].Value;
-                else if (indexY >= gameObject.keyframePositionY.Count - 1)
-                    finalY = gameObject.keyframePositionY[^1].Value;
+                    finalY = obj.keyframePositionY[0].Value;
+                else if (indexY >= obj.keyframePositionY.Count - 1)
+                    finalY = obj.keyframePositionY[^1].Value;
                 else
                 {
-                    var left  = gameObject.keyframePositionY[indexY];
-                    var right = gameObject.keyframePositionY[indexY + 1];
+                    var left  = obj.keyframePositionY[indexY];
+                    var right = obj.keyframePositionY[indexY + 1];
                     float t   = (localTime - left.Time) / (right.Time - left.Time);
                     finalY    = EasingFunctions.Lerp(left.Value, right.Value, EasingFunctions.Ease(t, right.EasingType));
                 }
             }
 
-            gameObject.Position = new Vector2(finalX, -finalY);
+            return new Vector2(finalX, -finalY);
         }
 
-        // ── Scale ─────────────────────────────────────────────────────────
-        public void ScaleObjectUpdate(GameObject gameObject, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
+        private Vector2 CalculateScale(GameObject obj, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
         {
-            float finalScaleX = gameObject.Scale.X;
-            float finalScaleY = gameObject.Scale.Y;
+            // Не читаем obj.Scale — запрещено из потока
+            float finalScaleX = 1f;
+            float finalScaleY = 1f;
 
-            if (gameObject.keyframeScaleX.Count > 0)
+            if (obj.keyframeScaleX.Count > 0)
             {
-                int indexX = GetCurrentIndex(gameObject.keyframeScaleX, ref cache.IndexScaleX, localTime, prevLocalTime);
-
+                int indexX = GetCurrentIndex(obj.keyframeScaleX, ref cache.IndexScaleX, localTime, prevLocalTime);
                 if (indexX < 0)
-                    finalScaleX = gameObject.keyframeScaleX[0].Value;
-                else if (indexX >= gameObject.keyframeScaleX.Count - 1)
-                    finalScaleX = gameObject.keyframeScaleX[^1].Value;
+                    finalScaleX = obj.keyframeScaleX[0].Value;
+                else if (indexX >= obj.keyframeScaleX.Count - 1)
+                    finalScaleX = obj.keyframeScaleX[^1].Value;
                 else
                 {
-                    var left    = gameObject.keyframeScaleX[indexX];
-                    var right   = gameObject.keyframeScaleX[indexX + 1];
+                    var left    = obj.keyframeScaleX[indexX];
+                    var right   = obj.keyframeScaleX[indexX + 1];
                     float t     = (localTime - left.Time) / (right.Time - left.Time);
                     finalScaleX = EasingFunctions.Lerp(left.Value, right.Value, EasingFunctions.Ease(t, right.EasingType));
                 }
             }
 
-            if (gameObject.keyframeScaleY.Count > 0)
+            if (obj.keyframeScaleY.Count > 0)
             {
-                int indexY = GetCurrentIndex(gameObject.keyframeScaleY, ref cache.IndexScaleY, localTime, prevLocalTime);
-
+                int indexY = GetCurrentIndex(obj.keyframeScaleY, ref cache.IndexScaleY, localTime, prevLocalTime);
                 if (indexY < 0)
-                    finalScaleY = gameObject.keyframeScaleY[0].Value;
-                else if (indexY >= gameObject.keyframeScaleY.Count - 1)
-                    finalScaleY = gameObject.keyframeScaleY[^1].Value;
+                    finalScaleY = obj.keyframeScaleY[0].Value;
+                else if (indexY >= obj.keyframeScaleY.Count - 1)
+                    finalScaleY = obj.keyframeScaleY[^1].Value;
                 else
                 {
-                    var left    = gameObject.keyframeScaleY[indexY];
-                    var right   = gameObject.keyframeScaleY[indexY + 1];
+                    var left    = obj.keyframeScaleY[indexY];
+                    var right   = obj.keyframeScaleY[indexY + 1];
                     float t     = (localTime - left.Time) / (right.Time - left.Time);
                     finalScaleY = EasingFunctions.Lerp(left.Value, right.Value, EasingFunctions.Ease(t, right.EasingType));
                 }
             }
 
-            gameObject.Scale = new Vector2(finalScaleX, finalScaleY);
+            return new Vector2(finalScaleX, finalScaleY);
         }
 
-        // ── Rotation ──────────────────────────────────────────────────────
-        public void RotationObjectUpdate(GameObject gameObject, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
+        private float CalculateRotation(GameObject obj, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
         {
-            if (gameObject.keyframeRotation.Count == 0) return;
+            // Не читаем obj.Rotation — запрещено из потока
+            if (obj.keyframeRotation.Count == 0) return 0f;
 
-            int index = GetCurrentIndex(gameObject.keyframeRotation, ref cache.IndexRotation, localTime, prevLocalTime);
+            int index = GetCurrentIndex(obj.keyframeRotation, ref cache.IndexRotation, localTime, prevLocalTime);
 
             if (index < 0)
-            {
-                gameObject.RotationDegrees = gameObject.keyframeRotation[0].Value;
-                return;
-            }
+                return Mathf.DegToRad(obj.keyframeRotation[0].Value);
 
-            if (index >= gameObject.keyframeRotation.Count - 1)
-            {
-                gameObject.RotationDegrees = gameObject.keyframeRotation[^1].Value;
-                return;
-            }
+            if (index >= obj.keyframeRotation.Count - 1)
+                return Mathf.DegToRad(obj.keyframeRotation[^1].Value);
 
-            var left     = gameObject.keyframeRotation[index];
-            var right    = gameObject.keyframeRotation[index + 1];
+            var left     = obj.keyframeRotation[index];
+            var right    = obj.keyframeRotation[index + 1];
             float t      = (localTime - left.Time) / (right.Time - left.Time);
             float easedT = EasingFunctions.Ease(t, right.EasingType);
 
-            float startRad = Mathf.DegToRad(left.Value);
-            float endRad   = Mathf.DegToRad(right.Value);
-            gameObject.Rotation = Mathf.LerpAngle(startRad, endRad, easedT);
+            return Mathf.LerpAngle(Mathf.DegToRad(left.Value), Mathf.DegToRad(right.Value), easedT);
         }
 
-        // ── Color ─────────────────────────────────────────────────────────
-        public void ColorObjectUpdate(GameObject gameObject, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
+        private Color CalculateColor(GameObject obj, float localTime, float prevLocalTime, GameObject.AnimationCache cache)
         {
-            if (gameObject.keyframeColor.Count == 0) return;
+            // Не читаем obj.Color — запрещено из потока
+            if (obj.keyframeColor.Count == 0) return Colors.White;
 
-            int index = GetCurrentIndex(gameObject.keyframeColor, ref cache.IndexColor, localTime, prevLocalTime);
-
-            Color finalColor;
+            int index = GetCurrentIndex(obj.keyframeColor, ref cache.IndexColor, localTime, prevLocalTime);
 
             if (index < 0)
             {
-                var first = gameObject.keyframeColor[0].Value;
-                finalColor = first != null ? first.color : Colors.White;
-            }
-            else if (index >= gameObject.keyframeColor.Count - 1)
-            {
-                var last = gameObject.keyframeColor[^1].Value;
-                finalColor = last != null ? last.color : Colors.White;
-            }
-            else
-            {
-                var leftKf  = gameObject.keyframeColor[index];
-                var rightKf = gameObject.keyframeColor[index + 1];
-                var left    = leftKf.Value;
-                var right   = rightKf.Value;
-
-                if (left == null || right == null)
-                    finalColor = left?.color ?? right?.color ?? Colors.White;
-                else
-                {
-                    float t      = (localTime - leftKf.Time) / (rightKf.Time - leftKf.Time);
-                    float easedT = EasingFunctions.Ease(t, rightKf.EasingType);
-                    finalColor   = left.color.Lerp(right.color, easedT);
-                }
+                var first = obj.keyframeColor[0].Value;
+                return first != null ? first.color : Colors.White;
             }
 
-            gameObject.Color = finalColor;
+            if (index >= obj.keyframeColor.Count - 1)
+            {
+                var last = obj.keyframeColor[^1].Value;
+                return last != null ? last.color : Colors.White;
+            }
+
+            var leftKf   = obj.keyframeColor[index];
+            var rightKf  = obj.keyframeColor[index + 1];
+            var leftVal  = leftKf.Value;
+            var rightVal = rightKf.Value;
+
+            if (leftVal == null || rightVal == null)
+                return leftVal?.color ?? rightVal?.color ?? Colors.White;
+
+            float tt     = (localTime - leftKf.Time) / (rightKf.Time - leftKf.Time);
+            float easedT = EasingFunctions.Ease(tt, rightKf.EasingType);
+            return leftVal.color.Lerp(rightVal.color, easedT);
         }
 
         // Вызывать при изменении LevelColorData
@@ -373,6 +358,15 @@ namespace LostEditor
                     ttt += 0.5f;
                 }
             }
+        }
+
+        private struct AnimationResult
+        {
+            public bool    ShouldBeVisible;
+            public Vector2 Position;
+            public Vector2 Scale;
+            public float   Rotation;
+            public Color   Color;
         }
     }
 }
