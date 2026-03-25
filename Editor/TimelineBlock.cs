@@ -57,61 +57,32 @@ public partial class TimelineBlock : Panel
 
     public override void _Ready()
     {
-        // Включаем фильтр мыши, чтобы блок ловил клики
         MouseFilter = MouseFilterEnum.Stop;
         Data.OnEndTimeChanged += UpdateVisual;
-        
-        
+
+        // Pass: Button получает события для hover/press визуалов,
+        // но пропускает их на Panel — там вся логика.
+        // Это надёжно работает даже после RemoveChild/AddChild.
+        if (button != null)
+            button.MouseFilter = MouseFilterEnum.Pass;
     }
 
-    /*
     public override void _GuiInput(InputEvent @event)
     {
         if (editor == null || Data == null) return;
-        
-        if (@event is InputEventMouseButton mouseEvent)
+
+        if (@event is InputEventMouseButton mb
+            && mb.ButtonIndex == MouseButton.Left
+            && mb.Pressed)
         {
-            if (mouseEvent.ButtonIndex == MouseButton.Left)
-            {
-                if (mouseEvent.Pressed)
-                {
-                    // Устанавливаем состояние перетаскивания
-                    editor.timeLineObjectControl.IsDragging = true;
-                    editor.debugEditorManager.OverrideText(1,"перетаскивание: True (TimelineBlock, _GuiInput)");
-                    GetViewport().SetInputAsHandled();
-                }
-                else if (editor.timeLineObjectControl.IsDragging)
-                {
-                    // Не сбрасываем состояние здесь, это сделает TimelineObjectController
-                    GetViewport().SetInputAsHandled();
-                }
-            }
+            _timelineObjController.StartDraggingBlock(this);
+            GetViewport().SetInputAsHandled();
         }
     }
-    */
 
-    private void ButtonPressed() // сигнал pressed
-    {
-        if (editor == null || Data == null) return;
-        // Вся логика выделения в StartDraggingBlock / FinalizeDrag.
-        // Здесь только финальное обновление визуала.
-        UpdateVisual();
-    }
-
-
-
-    private void ButtonDown() // сигнал button_down
-    {
-        _timelineObjController.StartDraggingBlock(this);
-    }
-
-
-    private void ButtonUp() // Сигнал button_up
-    {
-        // Сброс происходит глобально в Controller._Input, 
-        // но можно продублировать для надежности, если мышь была над кнопкой
-        //editor.timeLineObjectControl.IsDragging = false; 
-    }
+    private void ButtonDown() { }
+    private void ButtonPressed() { UpdateVisual(); }
+    private void ButtonUp() { }
 
     public void DeselectBlock()
     {

@@ -107,16 +107,22 @@ public partial class TimelineTriggerSelectionManager : Node
     // Точка входа — аналог StartDraggingBlock у объектов
     private void StartDragging(TriggerBlock block)
     {
+        if (_isDragging) return; // та же защита от повторного вызова
+
         _isDragging = true;
         _hasMoved = false;
         _lastClickedBlock = block;
         _dragStartX = GetViewport().GetMousePosition().X;
         _mouseYAccumulator = 0f;
-        _wasCtrlOnDragStart = Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift);
 
-        if (_wasCtrlOnDragStart)
+        bool isCtrl = Input.IsKeyPressed(Key.Ctrl);
+        // Shift намеренно НЕ входит в _wasCtrlOnDragStart —
+        // он используется только для вертикального движения, не для выделения
+        _wasCtrlOnDragStart = isCtrl;
+
+        if (isCtrl)
         {
-            // Ctrl/Shift: переключаем блок в мультивыделении
+            // Ctrl: переключаем блок в мультивыделении
             if (SelectedBlocks.Contains(block))
                 Deselect(block);
             else
@@ -124,10 +130,11 @@ public partial class TimelineTriggerSelectionManager : Node
         }
         else if (!SelectedBlocks.Contains(block))
         {
-            // Клик по невыделенному без модификатора — выделяем только его
+            // Клик по невыделенному без модификаторов — выделяем только его
             Select(block, append: false);
         }
-        // Если блок уже выделен без Ctrl — не трогаем, чтобы тащить всю группу
+        // Shift + уже выделенный → ничего не меняем (Shift только для вертикального drag)
+        // Без модификаторов + уже выделен → ничего не меняем (групповой drag)
 
         _initialDragTimes.Clear();
         foreach (var sb in SelectedBlocks)
@@ -136,7 +143,6 @@ public partial class TimelineTriggerSelectionManager : Node
             if (data != null) _initialDragTimes[data] = data.startTime;
         }
     }
-
     // Аналог FinalizeDrag у объектов
     private void FinalizeDrag()
     {

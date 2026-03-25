@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvmq3t8c6aq1g" path="res://Editor/Editor.cs" id="1_mauyw"]
 [ext_resource type="Script" uid="uid://nmq08gou7pb2" path="res://Editor/Triggers/TriggerManager.cs" id="2_gunqa"]
+[ext_resource type="Script" uid="uid://0t06tlmmgb1u" path="res://CoreScripts/ObjectRenderer.cs" id="2_i6ue4"]
 [ext_resource type="PackedScene" uid="uid://csj5axmonm7hg" path="res://Editor/GameObject.tscn" id="2_ka1pi"]
 [ext_resource type="Script" uid="uid://ik4fhk8s76ac" path="res://Editor/ColorManager.cs" id="2_pxqop"]
 [ext_resource type="PackedScene" uid="uid://682pe2vcm2wl" path="res://Editor/TimelineBlock.tscn" id="3_0tek8"]
@@ -32,6 +33,7 @@
 [ext_resource type="Texture2D" uid="uid://cvm5m317tsibm" path="res://Editor/EditorSprites/EmptyObjectIcon16.png" id="14_1b133"]
 [ext_resource type="Script" uid="uid://c72j4wp32drty" path="res://Editor/InspectorScripts/EndTypeOptionButton.cs" id="17_55vf2"]
 [ext_resource type="PackedScene" uid="uid://y2s5xio4mbks" path="res://Editor/Triggers/Panels/ColorSelectPopup.tscn" id="18_tk78w"]
+[ext_resource type="PackedScene" uid="uid://b4ogtn18noqrv" path="res://Editor/Debug/DebugWindow.tscn" id="19_hmwqg"]
 [ext_resource type="Texture2D" uid="uid://cth5m6sg3j343" path="res://Editor/EditorSprites/delete_32dp_E3E3E3_FILL0_wght400_GRAD0_opsz40.svg" id="20_0g0nj"]
 [ext_resource type="Script" uid="uid://dirhpdg66oy4" path="res://Editor/EditorPanels/AnimationPanel.cs" id="20_5rnho"]
 [ext_resource type="Script" uid="uid://ccywm6hi231kj" path="res://Editor/KeyframeSystem/KeyframeBasePanel.cs" id="21_f2st4"]
@@ -57,6 +59,7 @@
 [ext_resource type="Texture2D" uid="uid://dlu4jd4qw22rm" path="res://Editor/EditorSprites/RGB_64.png" id="39_mfd6f"]
 [ext_resource type="Script" uid="uid://bd5p6p1w10t4" path="res://Editor/TriggerTypeOptionButtonController.cs" id="42_5bqvu"]
 [ext_resource type="Script" uid="uid://crlpa014xlccn" path="res://Editor/Triggers/Panels/CameraZoomTriggerPanel.cs" id="44_1hs5a"]
+[ext_resource type="Script" uid="uid://yb83bke7ipnq" path="res://Editor/KeyframeScrollContainer.cs" id="44_74cvc"]
 [ext_resource type="Script" uid="uid://debdpc5wphifk" path="res://Editor/Triggers/Panels/CameraRotationTriggerPanel.cs" id="45_1abeh"]
 [ext_resource type="Script" uid="uid://dmo3bdpjpb83t" path="res://Editor/Triggers/Panels/CameraShakeTriggerPanel.cs" id="46_cnx87"]
 [ext_resource type="Script" uid="uid://oidx32hb1hfd" path="res://Editor/Triggers/Panels/ColorChangeTriggerPanel.cs" id="53_mfd6f"]
@@ -80,7 +83,7 @@ Panel/styles/panel = SubResource("StyleBoxFlat_cl0o5")
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1sti"]
 bg_color = Color(0.40141687, 0.4259123, 0.56270486, 1)
 
-[node name="Editor" type="Control" unique_id=1265540934 node_paths=PackedStringArray("subviewportContainer", "subviewport", "ViewportPlace", "editorCanvas")]
+[node name="Editor" type="Control" unique_id=1265540934 node_paths=PackedStringArray("subviewportContainer", "subviewport", "ViewportPlace", "editorCanvas", "debugWindow")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,6 +95,7 @@ subviewportContainer = NodePath("CanvasLayer/VSplitContainer/EditorRaw2/VBoxCont
 subviewport = NodePath("CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport")
 ViewportPlace = NodePath("CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer")
 editorCanvas = NodePath("CanvasLayer")
+debugWindow = NodePath("DebugWindow")
 
 [node name="ColorManager" type="Node" parent="." unique_id=1137787854 node_paths=PackedStringArray("TriggerManager", "LevelColors", "TimelineController")]
 script = ExtResource("2_pxqop")
@@ -223,12 +227,13 @@ layout_mode = 2
 
 [node name="Node2D" type="Node2D" parent="." unique_id=682820773]
 
-[node name="ObjectManager" parent="." unique_id=327823781 node_paths=PackedStringArray("LevelColorData", "timelineController", "polygonObject", "collisionPlygonObject", "debugEditorManager") instance=ExtResource("3_lsqqn")]
+[node name="ObjectManager" parent="." unique_id=327823781 node_paths=PackedStringArray("LevelColorData", "timelineController", "polygonObject", "collisionPlygonObject", "debugEditorManager", "objectRenderer") instance=ExtResource("3_lsqqn")]
 LevelColorData = NodePath("../Colors")
 timelineController = NodePath("../TimeLineController")
 polygonObject = NodePath("Polygon2D")
 collisionPlygonObject = NodePath("CollisionPolygon2D")
 debugEditorManager = NodePath("../DebugEditorManager")
+objectRenderer = NodePath("../CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport/ObjectRender")
 
 [node name="Polygon2D" type="Polygon2D" parent="ObjectManager" unique_id=1425208072]
 visible = false
@@ -243,10 +248,15 @@ polygon = PackedVector2Array(43.6148, -17.5429, -5.75831, -16.0263, -12.402, 27.
 [node name="ColorSelectPopup" parent="." unique_id=823147298 instance=ExtResource("18_tk78w")]
 visible = false
 
+[node name="DebugWindow" parent="." unique_id=1704026208 node_paths=PackedStringArray("objectManager") instance=ExtResource("19_hmwqg")]
+size = Vector2i(300, 300)
+objectManager = NodePath("../ObjectManager")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=893676870]
 layer = 2
 
 [node name="FpsCounter" type="Control" parent="CanvasLayer" unique_id=774287974 node_paths=PackedStringArray("fpsLabel")]
+z_index = 10
 custom_minimum_size = Vector2(130.24, 55.78)
 layout_mode = 3
 anchors_preset = 0
@@ -261,6 +271,7 @@ fpsLabel = NodePath("Label")
 layout_mode = 0
 offset_right = 97.0
 offset_bottom = 57.0
+text = "рр"
 
 [node name="DebugLabel" type="Label" parent="CanvasLayer/FpsCounter" unique_id=1958534940]
 layout_mode = 0
@@ -359,11 +370,15 @@ ignore_rotation = false
 
 [node name="Node" type="Node" parent="CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport" unique_id=253277194]
 
+[node name="ObjectRender" type="MeshInstance2D" parent="CanvasLayer/VSplitContainer/EditorRaw2/VBoxContainer/SubViewportContainer/SubViewport" unique_id=244099964 node_paths=PackedStringArray("objectManager")]
+script = ExtResource("2_i6ue4")
+objectManager = NodePath("../../../../../../../ObjectManager")
+
 [node name="WorkPanel" type="TabContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2" unique_id=544719813]
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
-current_tab = 4
+current_tab = 1
 tabs_visible = false
 script = ExtResource("11_1b133")
 
@@ -387,7 +402,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SingleObjectSettingsPanel" type="TabContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel" unique_id=631205277]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("11_ka1pi")
@@ -1693,10 +1707,10 @@ script = ExtResource("22_qh3f8")
 animationPanel = NodePath("..")
 timelineController = NodePath("../../../../../../../../TimeLineController")
 inspector = NodePath("../../../Inspector")
-RawsPanel = NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer")
-RawsDarkPanel = NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control")
-slider = NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/HSlider")
-keyframeLines = [NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX/PosXRaw"), NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY/PosYRaw"), NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX/ScaXRaw"), NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY/ScaYRaw"), NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation/RotRaw"), NodePath("VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color/ColRaw")]
+RawsPanel = NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer")
+RawsDarkPanel = NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control")
+slider = NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/HSlider")
+keyframeLines = [NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX/PosXRaw"), NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY/PosYRaw"), NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX/ScaXRaw"), NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY/ScaYRaw"), NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation/RotRaw"), NodePath("VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color/ColRaw")]
 keyframePoint = ExtResource("23_ho80k")
 levelColorData = NodePath("../../../../../../../../Colors")
 timelineKeyframeControl = NodePath("TimelineKeyframeControlSystem")
@@ -1720,7 +1734,7 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="KeyframesScrollContainer" type="ScrollContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control" unique_id=574789086]
+[node name="KeyframeScrollContainer" type="ScrollContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control" unique_id=574789086 node_paths=PackedStringArray("keyframesPanel")]
 clip_contents = false
 custom_minimum_size = Vector2(0, 175)
 layout_mode = 1
@@ -1730,30 +1744,33 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+script = ExtResource("44_74cvc")
+keyframesPanel = NodePath("../../..")
 
-[node name="Control" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer" unique_id=326000190]
+[node name="Control" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer" unique_id=326000190]
 z_index = 2
 custom_minimum_size = Vector2(691.425, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="KeyframeRawsVBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control" unique_id=92922302]
+[node name="KeyframeRawsVBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control" unique_id=92922302]
 layout_mode = 0
 offset_right = 200.0
 offset_bottom = 208.0
 size_flags_vertical = 3
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=906627407]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=906627407]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 0)
 
-[node name="PositionX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=261453137]
+[node name="PositionX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=261453137]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/PositionX" unique_id=1058987742]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/PositionX" unique_id=1058987742]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1762,7 +1779,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 0, 0.116666794, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/PositionX" unique_id=2121995400]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/PositionX" unique_id=2121995400]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1770,11 +1787,11 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Position X"
 
-[node name="PositionY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=42082825]
+[node name="PositionY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=42082825]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/PositionY" unique_id=1506417646]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/PositionY" unique_id=1506417646]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1783,7 +1800,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 0, 0.11764706, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/PositionY" unique_id=1513709617]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/PositionY" unique_id=1513709617]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1791,11 +1808,11 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Position Y"
 
-[node name="ScaleX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=716139988]
+[node name="ScaleX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=716139988]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleX" unique_id=593262370]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleX" unique_id=593262370]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1804,7 +1821,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.6452087, 0.27746376, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleX" unique_id=1716642548]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleX" unique_id=1716642548]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1812,11 +1829,11 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Scale X"
 
-[node name="ScaleY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=1478315582]
+[node name="ScaleY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=1478315582]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleY" unique_id=1104156834]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleY" unique_id=1104156834]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1825,7 +1842,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.64705884, 0.2784314, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleY" unique_id=1668455079]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/ScaleY" unique_id=1668455079]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1833,11 +1850,11 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Scale Y"
 
-[node name="Rotation" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=1470765050]
+[node name="Rotation" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=1470765050]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/Rotation" unique_id=1660406957]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/Rotation" unique_id=1660406957]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1846,7 +1863,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1.347661e-06, 0.5639732, 0.88308877, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/Rotation" unique_id=176949419]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/Rotation" unique_id=176949419]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1854,11 +1871,11 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Rotation"
 
-[node name="Color" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=958056019]
+[node name="Color" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer" unique_id=958056019]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/Color" unique_id=1584235405]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/Color" unique_id=1584235405]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1867,7 +1884,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.66065973, 0.5176228, 0, 0.23529412)
 
-[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeRawsVBoxContainer/Color" unique_id=120547766]
+[node name="Label" type="Label" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeRawsVBoxContainer/Color" unique_id=120547766]
 modulate = Color(0.55, 0.539275, 0.4785, 0.38039216)
 layout_mode = 0
 offset_left = 3.505
@@ -1875,7 +1892,7 @@ offset_right = 80.505
 offset_bottom = 23.0
 text = "Color"
 
-[node name="KeyframeDarkRawsVBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control" unique_id=757354624]
+[node name="KeyframeDarkRawsVBoxContainer" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control" unique_id=757354624]
 z_index = -1
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
@@ -1888,28 +1905,36 @@ size_flags_vertical = 3
 mouse_filter = 2
 mouse_behavior_recursive = 2
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer" unique_id=1147646606]
+[node name="HSlider" type="HSlider" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer" unique_id=1147646606 node_paths=PackedStringArray("line")]
 z_index = 3
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 step = 0.0
+script = ExtResource("7_ef05v")
+line = NodePath("ColorRect")
 
-[node name="KeyframeLineRawsPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer" unique_id=1604681923 node_paths=PackedStringArray("timelineKeyframeControl", "keyframesPanelMain")]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/HSlider" unique_id=1694330475]
+layout_mode = 1
+anchors_preset = -1
+offset_top = 2.0
+offset_right = 1.664999
+offset_bottom = 402.0
+scale = Vector2(0.48000002, 0.48000002)
+mouse_filter = 2
+
+[node name="KeyframeLineRawsPanel" type="VBoxContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer" unique_id=2080170925 node_paths=PackedStringArray("timelineKeyframeControl", "keyframesPanelMain")]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 1
 script = ExtResource("28_lh10m")
 timelineKeyframeControl = NodePath("../../../../../../TimelineKeyframeControlSystem")
 keyframesPanelMain = NodePath("../../../../../..")
 
-[node name="PositionX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=663124520]
+[node name="PositionX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=663124520]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 4.0
-offset_right = 691.0
-offset_bottom = 29.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX" unique_id=2141580434]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX" unique_id=2141580434]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -1920,7 +1945,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.00999999, 0.1584996, 0.13725491)
 
-[node name="PosXRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX" unique_id=698383409 node_paths=PackedStringArray("controlSystem")]
+[node name="PosXRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionX" unique_id=698383409 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1931,15 +1956,12 @@ mouse_filter = 1
 script = ExtResource("28_rrcw3")
 controlSystem = NodePath("../../../../../../../../TimelineKeyframeControlSystem")
 
-[node name="PositionY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=1734998148]
+[node name="PositionY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=1734998148]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 33.0
-offset_right = 691.0
-offset_bottom = 58.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY" unique_id=452951341]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY" unique_id=452951341]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -1950,7 +1972,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.011764706, 0.15686275, 0.13725491)
 
-[node name="PosYRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY" unique_id=312693230 node_paths=PackedStringArray("controlSystem")]
+[node name="PosYRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/PositionY" unique_id=312693230 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1962,15 +1984,12 @@ script = ExtResource("28_rrcw3")
 rowType = 1
 controlSystem = NodePath("../../../../../../../../TimelineKeyframeControlSystem")
 
-[node name="ScaleX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=677096725]
+[node name="ScaleX" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=677096725]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 62.0
-offset_right = 691.0
-offset_bottom = 87.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX" unique_id=286695749]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX" unique_id=286695749]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -1981,7 +2000,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0.64664024, 0.28284383, 0.13725491)
 
-[node name="ScaXRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX" unique_id=2147248686 node_paths=PackedStringArray("controlSystem")]
+[node name="ScaXRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleX" unique_id=2147248686 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1993,15 +2012,12 @@ script = ExtResource("28_rrcw3")
 rowType = 2
 controlSystem = NodePath("../../../../../../../../TimelineKeyframeControlSystem")
 
-[node name="ScaleY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=693604512]
+[node name="ScaleY" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=693604512]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 91.0
-offset_right = 691.0
-offset_bottom = 116.0
+layout_mode = 2
 mouse_filter = 1
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY" unique_id=514493707]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY" unique_id=514493707]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -2012,7 +2028,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0.64705884, 0.28235295, 0.13725491)
 
-[node name="ScaYRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY" unique_id=524843208 node_paths=PackedStringArray("controlSystem")]
+[node name="ScaYRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/ScaleY" unique_id=524843208 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2023,15 +2039,12 @@ script = ExtResource("28_rrcw3")
 rowType = 3
 controlSystem = NodePath("../../../../../../../../TimelineKeyframeControlSystem")
 
-[node name="Rotation" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=505524290]
+[node name="Rotation" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=505524290]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 120.0
-offset_right = 691.0
-offset_bottom = 145.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation" unique_id=1299251184]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation" unique_id=1299251184]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -2042,7 +2055,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0.5716814, 0.8528558, 0.13725491)
 
-[node name="RotRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation" unique_id=2100745976 node_paths=PackedStringArray("controlSystem")]
+[node name="RotRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Rotation" unique_id=2100745976 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2054,15 +2067,12 @@ script = ExtResource("28_rrcw3")
 rowType = 4
 controlSystem = NodePath("../../../../../../../../TimelineKeyframeControlSystem")
 
-[node name="Color" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=1922344144]
+[node name="Color" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel" unique_id=1922344144]
 custom_minimum_size = Vector2(0, 25)
-anchors_preset = 0
-offset_top = 149.0
-offset_right = 691.0
-offset_bottom = 174.0
+layout_mode = 2
 mouse_filter = 2
 
-[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color" unique_id=741783693]
+[node name="ColorRectBG" type="ColorRect" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color" unique_id=741783693]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 1
 anchors_preset = 15
@@ -2073,7 +2083,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.65886, 0.51882, 0, 0.13725491)
 
-[node name="ColRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color" unique_id=1068894032 node_paths=PackedStringArray("controlSystem")]
+[node name="ColRaw" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/KeyframeLineRawsPanel/Color" unique_id=1068894032 node_paths=PackedStringArray("controlSystem")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2167,6 +2177,7 @@ layout_mode = 2
 text = "  Load file  "
 
 [node name="TriggersPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel" unique_id=830060166 node_paths=PackedStringArray("baseDataTriggerPanel", "triggerDataPanels")]
+visible = false
 layout_mode = 2
 script = ExtResource("38_q83ll")
 baseDataTriggerPanel = NodePath("MarginContainer/VBoxContainer/BaseTriggerDataPanel")
@@ -2668,6 +2679,7 @@ layout_mode = 2
 layout_mode = 2
 focus_mode = 1
 theme = ExtResource("11_ka1pi")
+toggle_mode = false
 selected = 0
 item_count = 2
 popup/item_0/text = "Objects"
@@ -3329,7 +3341,7 @@ volume_db = -10.915
 [connection signal="text_submitted" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ScaleYPanel/HBoxContainer/VBoxContainer/VBoxContainer4/PositionYHBox/PositionYLineEdit" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/ScaleYPanel" method="OnValueLineEditorTextChanged"]
 [connection signal="DataChanged" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/RotationPanel/HBoxContainer/VBoxContainer/VBoxContainer4/PositionYHBox/PositionYLineEdit" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/RotationPanel" method="OnValueLineEditorTextChanged"]
 [connection signal="text_submitted" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/RotationPanel/HBoxContainer/VBoxContainer/VBoxContainer4/PositionYHBox/PositionYLineEdit" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer/RotationPanel" method="OnValueLineEditorTextChanged"]
-[connection signal="value_changed" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframesScrollContainer/Control/KeyframeDarkRawsVBoxContainer/HSlider" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain" method="OnSliderValueChanged"]
+[connection signal="value_changed" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain/VBoxContainer/Control/KeyframeScrollContainer/Control/KeyframeDarkRawsVBoxContainer/HSlider" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/KeyframesPanelMain" method="OnSliderValueChanged"]
 [connection signal="TriggerTypeSelected" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/BaseTriggerDataPanel/MarginContainer/HBoxContainer/VBoxContainer3/InputLineEdit2" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel" method="OnTriggerTypeSelected"]
 [connection signal="DataChanged" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel/HBoxContainer/VBoxContainer/HBoxContainer/InputLineEdit" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel" method="OnCamPosXChanged"]
 [connection signal="toggled" from="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel/HBoxContainer/VBoxContainer/HBoxContainer/CheckButton" to="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/TriggersPanel/MarginContainer/VBoxContainer/TabContainer/CameraPositionTriggerPanel" method="OnCamPosXActiveToggled"]

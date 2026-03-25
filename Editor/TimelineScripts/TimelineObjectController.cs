@@ -138,6 +138,7 @@ public partial class TimelineObjectController : Node
         if (IsDragging)
             HandleDragMotion(@event);
 
+        // ← ЭТОТ БЛОК ПОТЕРЯЛСЯ — он завершает перетаскивание
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left && !mb.Pressed)
         {
             bool hadMoved = hasMoved;
@@ -148,6 +149,34 @@ public partial class TimelineObjectController : Node
             {
                 selectionManager.DeselectAll();
                 workPanel.OpenPanel(WorkPanelType.NoPanel);
+            }
+        }
+
+        if (@event is InputEventKey ek && ek.Pressed && IsMouseOverObjectRows())
+        {
+            bool ctrl = Input.IsKeyPressed(Key.Ctrl);
+            if (ctrl)
+            {
+                if (ek.Keycode == Key.C)
+                {
+                    CopySelectedObjects();
+                    GetViewport().SetInputAsHandled();
+                    return;
+                }
+                else if (ek.Keycode == Key.X)
+                {
+                    CopySelectedObjects();
+                    var toDelete = new List<TimelineBlock>(selectionManager.SelectedBlocks);
+                    foreach (var block in toDelete) DeleteBlock(block);
+                    GetViewport().SetInputAsHandled();
+                    return;
+                }
+                else if (ek.Keycode == Key.V)
+                {
+                    PasteObjects();
+                    GetViewport().SetInputAsHandled();
+                    return;
+                }
             }
         }
 
@@ -178,24 +207,22 @@ public partial class TimelineObjectController : Node
     // Это точка ВХОДА в режим перетаскивания
     public void StartDraggingBlock(TimelineBlock block)
     {
+        if (IsDragging) return;
+
         IsDragging = true;
         hasMoved = false;
         _lastClickedBlock = block;
         _mouseYAccumulator = 0f;
-        _wasCtrlOnDragStart = Input.IsKeyPressed(Key.Ctrl); // захватываем СЕЙЧАС
+        _wasCtrlOnDragStart = Input.IsKeyPressed(Key.Ctrl);
 
         if (_wasCtrlOnDragStart)
         {
-            // Ctrl: переключаем блок в/из мультивыделения
             selectionManager.HandleSelection(block, true);
         }
         else if (!selectionManager.SelectedBlocks.Contains(block))
         {
-            // Клик по невыделенному без Ctrl — немедленно выделяем только его
             selectionManager.SelectBlock(block, clearFirst: true);
         }
-        // Если блок уже в выделении без Ctrl — не трогаем,
-        // чтобы можно было сразу тащить всю группу
     }
 
     private void ProcessVerticalMove(float deltaY)
@@ -336,6 +363,127 @@ public partial class TimelineObjectController : Node
         return false;
     }
 
+    // ───── Копирование ────────────────────────────────────────────────────────
+    private void CopySelectedObjects()
+    {
+        if (selectionManager.SelectedBlocks.Count == 0) return;
+
+        _objectClipboard.Clear();
+
+        foreach (var block in selectionManager.SelectedBlocks)
+        {
+            var obj = block.Data;
+            var entry = new ObjectClipboardEntry
+            {
+                Name              = obj.name,
+                OriginalStartTime = obj.startTime,
+                EndTime           = obj.endTime,
+                EndTimeOffset     = obj.endTimeOffset,
+                EndTimeMode       = obj.endTimeMode,
+                ObjColor          = obj.objectColor?.Clone(),
+            };
+
+            // Глубокое копирование float-кейфреймов
+            static Keyframe<float> CloneFloat(Keyframe<float> kf) =>
+                new Keyframe<float> { kType = kf.kType, Time = kf.Time, Value = kf.Value, EasingType = kf.EasingType };
+
+            foreach (var kf in obj.keyframePositionX) entry.KeyframePositionX.Add(CloneFloat(kf));
+            foreach (var kf in obj.keyframePositionY) entry.KeyframePositionY.Add(CloneFloat(kf));
+            foreach (var kf in obj.keyframeScaleX)    entry.KeyframeScaleX.Add(CloneFloat(kf));
+            foreach (var kf in obj.keyframeScaleY)    entry.KeyframeScaleY.Add(CloneFloat(kf));
+            foreach (var kf in obj.keyframeRotation)  entry.KeyframeRotation.Add(CloneFloat(kf));
+
+            foreach (var kf in obj.keyframeColor)
+                entry.KeyframeColor.Add(new Keyframe<ObjectColor>
+                {
+                    kType      = kf.kType,
+                    Time       = kf.Time,
+                    Value      = kf.Value?.Clone(), // глубокая копия ObjectColor
+                    EasingType = kf.EasingType
+                });
+
+            _objectClipboard.Add(entry);
+        }
+
+        GD.Print($"[ObjectClipboard] Скопировано {_objectClipboard.Count} объектов.");
+    }
+
+    // ───── Вставка ────────────────────────────────────────────────────────────
+    private void PasteObjects()
+    {
+        if (_objectClipboard.Count == 0) return;
+
+        // Самый ранний startTime в буфере — он встаёт точно на курсор таймлайна
+        float minTime = float.MaxValue;
+        foreach (var entry in _objectClipboard)
+            if (entry.OriginalStartTime < minTime) minTime = entry.OriginalStartTime;
+
+        float pasteTime = timelineController.timelineTime;
+
+        var pastedBlocks = new List<TimelineBlock>();
+
+        foreach (var entry in _objectClipboard)
+        {
+            float newStartTime = pasteTime + (entry.OriginalStartTime - minTime);
+
+            // 1. Создаём новый GameObject
+            var newObj = GameObjectScene.Instantiate<GameObject>();
+
+            // Сначала заполняем кейфреймы — до установки startTime,
+            // чтобы RecalculateEndTime работала правильно
+            static Keyframe<float> CloneFloat(Keyframe<float> kf) =>
+                new Keyframe<float> { kType = kf.kType, Time = kf.Time, Value = kf.Value, EasingType = kf.EasingType };
+
+            foreach (var kf in entry.KeyframePositionX) newObj.keyframePositionX.Add(CloneFloat(kf));
+            foreach (var kf in entry.KeyframePositionY) newObj.keyframePositionY.Add(CloneFloat(kf));
+            foreach (var kf in entry.KeyframeScaleX)    newObj.keyframeScaleX.Add(CloneFloat(kf));
+            foreach (var kf in entry.KeyframeScaleY)    newObj.keyframeScaleY.Add(CloneFloat(kf));
+            foreach (var kf in entry.KeyframeRotation)  newObj.keyframeRotation.Add(CloneFloat(kf));
+
+            foreach (var kf in entry.KeyframeColor)
+                newObj.keyframeColor.Add(new Keyframe<ObjectColor>
+                {
+                    kType      = kf.kType,
+                    Time       = kf.Time,
+                    Value      = kf.Value?.Clone(),
+                    EasingType = kf.EasingType
+                });
+
+            // 2. Устанавливаем базовые свойства
+            newObj.name         = entry.Name + " (copy)";
+            newObj.startTime    = newStartTime;
+            newObj.endTimeMode  = entry.EndTimeMode;
+            newObj.endTime      = entry.EndTime;
+            newObj.endTimeOffset = entry.EndTimeOffset;
+            if (entry.ObjColor != null) newObj.objectColor = entry.ObjColor.Clone();
+
+            newObj.RecalculateEndTime();
+
+            // 3. Добавляем в сцену и регистрируем
+            ViewportObj.AddChild(newObj);
+            objectManager.RegisterObject(newObj);
+
+            // 4. Создаём визуальный блок
+            var block = TimelineBlockScene.Instantiate<TimelineBlock>();
+            block.Setup(newObj, timelineController, this, selectionManager);
+            block.Data   = newObj;
+            block.editor = editor;
+
+            Rows[0].AddChild(block);
+            activeBlocks.Add(block);
+            block.UpdateVisual();
+
+            pastedBlocks.Add(block);
+        }
+
+        // 5. Выделяем вставленные блоки (сначала сброс, потом мультивыделение)
+        selectionManager.DeselectAll();
+        foreach (var block in pastedBlocks)
+            selectionManager.HandleSelection(block, true);
+
+        GD.Print($"[ObjectClipboard] Вставлено {pastedBlocks.Count} объектов на время {pasteTime:F3}.");
+    }
+
     public TimelineBlock GetBlockUnderMouse()
     {
         Vector2 mouseGlobalPos = GetViewport().GetMousePosition();
@@ -381,4 +529,25 @@ public partial class TimelineObjectController : Node
     }
     public void UpdateAllBlocks() => activeBlocks.ForEach(b => b.UpdateVisual());
     public void HandleBlockSelection(TimelineBlock block, bool isCtrl) => selectionManager.HandleSelection(block, isCtrl);
+
+    private class ObjectClipboardEntry
+    {
+        public string Name;
+        public float OriginalStartTime; // для расчёта смещения при вставке
+        public float EndTime;
+        public float EndTimeOffset;
+        public EndTimeMode EndTimeMode;
+        public ObjectColor ObjColor;
+
+        // Глубокие копии всех кейфрейм-списков
+        public List<Keyframe<float>> KeyframePositionX = new();
+        public List<Keyframe<float>> KeyframePositionY = new();
+        public List<Keyframe<float>> KeyframeScaleX    = new();
+        public List<Keyframe<float>> KeyframeScaleY    = new();
+        public List<Keyframe<float>> KeyframeRotation  = new();
+        public List<Keyframe<ObjectColor>> KeyframeColor = new();
+    }
+
+    private readonly List<ObjectClipboardEntry> _objectClipboard = new();
 }
+

@@ -22,7 +22,7 @@ public partial class Editor : Control
     [Export] public SubViewport subviewport;
     [Export] public Control ViewportPlace;
     [Export] public CanvasLayer editorCanvas;
-    
+    [Export] public DebugWindow debugWindow;
 
     public ObjectController Controller;
     private bool _isPreviewMode = false;
@@ -50,6 +50,8 @@ public partial class Editor : Control
                 _isPreviewMode = !_isPreviewMode;
             }
         }
+        else if (@event is InputEventKey ek2 && ek2.Pressed && ek2.Keycode == Key.F9)
+        debugWindow.Toggle();
     }
 
 }

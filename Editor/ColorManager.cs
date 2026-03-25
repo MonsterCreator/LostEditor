@@ -41,10 +41,12 @@ public partial class ColorManager : Node
 
     public override void _Process(double delta)
     {
-        if (TriggerManager == null || LevelColors == null || TimelineController == null)
-            return;
-
-        UpdateColors((float)TimelineController.timelineTime);
+        DebugProfiler.Begin("Triggers.Color");
+        
+        if (TriggerManager != null && LevelColors != null && TimelineController != null)
+            UpdateColors((float)TimelineController.timelineTime);
+        
+        DebugProfiler.End("Triggers.Color"); // вызовется всегда
     }
 
     // -------------------------------------------------------------------------

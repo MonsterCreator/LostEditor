@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 namespace LostEditor;
-public partial class KeyframeLineRawsPanel : Control
+public partial class KeyframeLineRawsPanel : VBoxContainer
 {
 	[Export] TimelineKeyframeControlSystem timelineKeyframeControl;
 	[Export] KeyframesPanelMain keyframesPanelMain;

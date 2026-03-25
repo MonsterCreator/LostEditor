@@ -11,7 +11,7 @@ public partial class KeyframesPanelMain : Control
 	[Export] InspectorPanel inspector;
 	[Export] Control RawsPanel;
 	[Export] Control RawsDarkPanel;
-	[Export] HSlider slider;
+	[Export] public TimelineSlider slider;
 	[Export] public Control[] keyframeLines;
 	[Export] public PackedScene keyframePoint;
 	[Export] public LevelColorData levelColorData;
@@ -186,12 +186,51 @@ public partial class KeyframesPanelMain : Control
 
 
 
-	private void UpdateSliderPosition(float newTime) //Updatign current slider value for sync with the timeline
+	private void UpdateSliderPosition(float newTime)
 	{
 		if (_currentObj == null) return;
 
-        float localTime = newTime - _currentObj.startTime;
+		float localTime = newTime - _currentObj.startTime;
 		slider.Value = localTime;
+		
+		// Линия двигается по той же логике что и на главном таймлайне
+		if (slider.line != null)
+			slider.line.Position = new Vector2(localTime * PixelsPerSecond, 0);
+	}
+
+	public void ApplyZoom(float factor, ScrollContainer horScroll)
+	{
+		float mouseScreenX = horScroll.GetLocalMousePosition().X;
+		float mouseContentX = mouseScreenX + horScroll.ScrollHorizontal;
+		float timeAtMouse = mouseContentX / PixelsPerSecond;
+
+		PixelsPerSecond = Mathf.Clamp(PixelsPerSecond * factor, 10f, 2000f);
+		timelineKeyframeControl.SetPixelsPerSecond(PixelsPerSecond);
+
+		if (_currentObj != null) UpdatePanelWidth(_currentObj);
+		RepositionAllKeyframePoints();
+
+		// Обновляем линию слайдера под новый PPS
+		if (slider?.line != null)
+		{
+			float localTime = (float)slider.Value;
+			slider.line.Position = new Vector2(localTime * PixelsPerSecond, 0);
+		}
+
+		float newScrollX = timeAtMouse * PixelsPerSecond - mouseScreenX;
+		horScroll.ScrollHorizontal = (int)Mathf.Max(0f, newScrollX);
+	}
+
+	private void RepositionAllKeyframePoints()
+	{
+		foreach (var line in keyframeLines)
+		{
+			foreach (Node child in line.GetChildren())
+			{
+				if (child is KeyframePoint point)
+					point.Position = new Vector2(point.KeyframeData.Time * PixelsPerSecond, point.Position.Y);
+			}
+		}
 	}
 
 	public List<KeyframePoint> GetAllKeyframePoints()

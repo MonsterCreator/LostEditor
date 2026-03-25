@@ -140,7 +140,7 @@ public partial class TimelineKeyframeControlSystem : Node
                     Time = time, 
                     kType = type,
                     // Если есть предыдущий — берем его значение, иначе 0 (или текущее X объекта)
-                    Value = prevPX != null ? prevPX.Value : obj.shapeObj.Position.X, 
+                    Value = prevPX != null ? prevPX.Value : obj.Position.X, 
                     EasingType = prevPX != null ? prevPX.EasingType : EasingType.Linear 
                 };
                 obj.keyframePositionX.Add(kfPX);
@@ -152,7 +152,7 @@ public partial class TimelineKeyframeControlSystem : Node
                 var prevPY = GetPreviousKeyframe(obj.keyframePositionY, time);
                 var kfPY = new Keyframe<float> { 
                     Time = time, kType = type,
-                    Value = prevPY != null ? prevPY.Value : obj.shapeObj.Position.Y,
+                    Value = prevPY != null ? prevPY.Value : obj.Position.Y,
                     EasingType = prevPY != null ? prevPY.EasingType : EasingType.Linear 
                 };
                 obj.keyframePositionY.Add(kfPY);
@@ -164,7 +164,7 @@ public partial class TimelineKeyframeControlSystem : Node
                 var prevSX = GetPreviousKeyframe(obj.keyframeScaleX, time);
                 var kfSX = new Keyframe<float> { 
                     Time = time, kType = type,
-                    Value = prevSX != null ? prevSX.Value : obj.shapeObj.Scale.X,
+                    Value = prevSX != null ? prevSX.Value : obj.Scale.X,
                     EasingType = prevSX != null ? prevSX.EasingType : EasingType.Linear 
                 };
                 obj.keyframeScaleX.Add(kfSX);
@@ -176,7 +176,7 @@ public partial class TimelineKeyframeControlSystem : Node
                 var prevSY = GetPreviousKeyframe(obj.keyframeScaleY, time);
                 var kfSY = new Keyframe<float> { 
                     Time = time, kType = type,
-                    Value = prevSY != null ? prevSY.Value : obj.shapeObj.Scale.Y,
+                    Value = prevSY != null ? prevSY.Value : obj.Scale.Y,
                     EasingType = prevSY != null ? prevSY.EasingType : EasingType.Linear 
                 };
                 obj.keyframeScaleY.Add(kfSY);
@@ -189,7 +189,7 @@ public partial class TimelineKeyframeControlSystem : Node
                 var kfR = new Keyframe<float> { 
                     Time = time, kType = type,
                     // Важно: если используем градусы, берем RotationDegrees
-                    Value = prevR != null ? prevR.Value : obj.shapeObj.RotationDegrees,
+                    Value = prevR != null ? prevR.Value : obj.RotationDegrees,
                     EasingType = prevR != null ? prevR.EasingType : EasingType.Linear 
                 };
                 obj.keyframeRotation.Add(kfR);
@@ -221,13 +221,10 @@ public partial class TimelineKeyframeControlSystem : Node
 
         if (newKeyframeData == null) return;
 
-        // --- 2. ОБНОВЛЕНИЕ ОБЪЕКТА И UI ---
         obj.RecalculateEndTime();
-        
-        // Сбрасываем старое выделение перед созданием нового
-        DeselectAll(); 
+        obj.animCache.IsDirty = true; // ← ДОБАВИТЬ
 
-        // Пересоздаем все KeyframePoint на панели
+        DeselectAll();
         keyframesPanel.LoadKeyframesToPanel(obj);
 
         // --- 3. АВТО-ВЫДЕЛЕНИЕ НОВОГО КЛЮЧА ---
@@ -243,7 +240,6 @@ public partial class TimelineKeyframeControlSystem : Node
                 break;
             }
         }
-
         GD.Print($"Создан ключ {type} на времени {time}, данные унаследованы.");
     }
 
@@ -329,15 +325,12 @@ public partial class TimelineKeyframeControlSystem : Node
         var currentObj = keyframesPanel.GetCurrentObject();
         if (currentObj == null || _selectedItems.Count == 0) return;
 
-        // 1. Запоминаем данные выделенных ключей
         HashSet<IKeyframe> selectedData = new();
-        foreach (var point in _selectedItems) 
+        foreach (var point in _selectedItems)
             selectedData.Add(point.KeyframeData);
-        
-        // Сбрасываем список визуальных элементов
+
         _selectedItems.Clear();
 
-        // 2. Сортировка данных
         SortAndFixList(currentObj.keyframePositionX);
         SortAndFixList(currentObj.keyframePositionY);
         SortAndFixList(currentObj.keyframeScaleX);
@@ -346,28 +339,19 @@ public partial class TimelineKeyframeControlSystem : Node
         SortAndFixList(currentObj.keyframeColor);
 
         currentObj.RecalculateEndTime();
+        currentObj.animCache.IsDirty = true; // ← ДОБАВИТЬ
 
-        // 3. ПЕРЕСТРОЙКА UI (Выполняем СТРОГО один раз здесь)
         keyframesPanel.LoadKeyframesToPanel(currentObj);
 
-        // 4. ВОССТАНОВЛЕНИЕ ВЫДЕЛЕНИЯ
         var newPoints = keyframesPanel.GetAllKeyframePoints();
         foreach (var point in newPoints)
         {
             if (selectedData.Contains(point.KeyframeData))
-            {
-                Select(point); 
-            }
+                Select(point);
         }
 
-        // 5. СИНХРОНИЗАЦИЯ ИНСПЕКТОРА
-        // Если мы что-то выделили заново, нужно обновить текстовые поля в инспекторе
         if (_selectedItems.Count > 0)
-        {
-            // Берем первый попавшийся из выделенных и обновляем панель параметров
             keyframesPanel.UpdateKeyframeData(_selectedItems[0].KeyframeData);
-        }
-        // Удалите отсюда повторный вызов LoadKeyframesToPanel, если он там был!
 
         GD.Print("Drag finished. Selection and Inspector synced.");
     }
@@ -422,26 +406,192 @@ public partial class TimelineKeyframeControlSystem : Node
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        // Проверяем нажатие клавиши Delete или Backspace
-        if (@event is InputEventKey ek && ek.Pressed)
+        if (@event is not InputEventKey ek || !ek.Pressed) return;
+
+        bool ctrl = Input.IsKeyPressed(Key.Ctrl);
+
+        // Delete / Backspace — без проверки зоны (как было)
+        if (ek.Keycode == Key.Delete || ek.Keycode == Key.Backspace)
         {
-            if (ek.Keycode == Key.Delete || ek.Keycode == Key.Backspace)
+            if (_selectedItems.Count > 0)
             {
                 DeleteSelected();
-                // Помечаем ввод как обработанный, чтобы он не ушел дальше
                 GetViewport().SetInputAsHandled();
             }
+            return;
         }
+
+        // Ctrl+C / Ctrl+X / Ctrl+V — только если панель активна
+        if (!ctrl || !IsKeyframePanelActive()) return;
+
+        if (ek.Keycode == Key.C)
+        {
+            CopySelected();
+            GetViewport().SetInputAsHandled();
+        }
+        else if (ek.Keycode == Key.X)
+        {
+            CopySelected();
+            DeleteSelected(); // вырезка = копия + немедленное удаление
+            GetViewport().SetInputAsHandled();
+        }
+        else if (ek.Keycode == Key.V)
+        {
+            PasteFromClipboard();
+            GetViewport().SetInputAsHandled();
+        }
+    }
+
+    private bool IsKeyframePanelActive()
+    {
+        return keyframesPanel != null &&
+            keyframesPanel.GetGlobalRect().HasPoint(GetViewport().GetMousePosition());
+    }
+
+    // ───── Копирование ───────────────────────────────────────────────────
+    private void CopySelected()
+    {
+        if (_selectedItems.Count == 0) return;
+
+        _clipboard.Clear();
+
+        foreach (var point in _selectedItems)
+        {
+            var data = point.KeyframeData;
+            var entry = new ClipboardEntry
+            {
+                Type        = data.kType,
+                OriginalTime = data.Time,
+                EasingType  = data.EasingType,
+            };
+
+            if (data is Keyframe<float> floatKf)
+                entry.FloatValue = floatKf.Value;
+            else if (data is Keyframe<ObjectColor> colorKf)
+                entry.ColorValue = colorKf.Value?.Clone(); // глубокая копия
+
+            _clipboard.Add(entry);
+        }
+
+        GD.Print($"[Clipboard] Скопировано {_clipboard.Count} кейфреймов.");
+    }
+
+    // ───── Вставка ───────────────────────────────────────────────────────
+    private void PasteFromClipboard()
+    {
+        if (_clipboard.Count == 0) return;
+
+        var currentObj = keyframesPanel.GetCurrentObject();
+        if (currentObj == null) return;
+
+        // Время маркера в локальном времени объекта (то, что показывает слайдер)
+        float pasteTime = (float)keyframesPanel.slider.Value;
+
+        // Находим самый ранний ключ в буфере — он встанет ровно на pasteTime
+        float minTime = float.MaxValue;
+        foreach (var entry in _clipboard)
+            if (entry.OriginalTime < minTime) minTime = entry.OriginalTime;
+
+        // Создаём новые кейфреймы со смещёнными временами
+        var pastedData = new List<IKeyframe>();
+
+        foreach (var entry in _clipboard)
+        {
+            float newTime = pasteTime + (entry.OriginalTime - minTime);
+
+            switch (entry.Type)
+            {
+                case KeyframeType.PositionX:
+                {
+                    var kf = new Keyframe<float>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.FloatValue, EasingType = entry.EasingType };
+                    currentObj.keyframePositionX.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+                case KeyframeType.PositionY:
+                {
+                    var kf = new Keyframe<float>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.FloatValue, EasingType = entry.EasingType };
+                    currentObj.keyframePositionY.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+                case KeyframeType.ScaleX:
+                {
+                    var kf = new Keyframe<float>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.FloatValue, EasingType = entry.EasingType };
+                    currentObj.keyframeScaleX.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+                case KeyframeType.ScaleY:
+                {
+                    var kf = new Keyframe<float>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.FloatValue, EasingType = entry.EasingType };
+                    currentObj.keyframeScaleY.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+                case KeyframeType.Rotation:
+                {
+                    var kf = new Keyframe<float>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.FloatValue, EasingType = entry.EasingType };
+                    currentObj.keyframeRotation.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+                case KeyframeType.Color:
+                {
+                    var kf = new Keyframe<ObjectColor>
+                        { kType = entry.Type, Time = newTime,
+                        Value = entry.ColorValue?.Clone(), EasingType = entry.EasingType };
+                    currentObj.keyframeColor.Add(kf);
+                    pastedData.Add(kf);
+                    break;
+                }
+            }
+        }
+
+        // Сортируем все списки после добавления
+        SortAndFixList(currentObj.keyframePositionX);
+        SortAndFixList(currentObj.keyframePositionY);
+        SortAndFixList(currentObj.keyframeScaleX);
+        SortAndFixList(currentObj.keyframeScaleY);
+        SortAndFixList(currentObj.keyframeRotation);
+        SortAndFixList(currentObj.keyframeColor);
+
+        currentObj.RecalculateEndTime();
+
+        // Перезагружаем UI
+        DeselectAll();
+        keyframesPanel.LoadKeyframesToPanel(currentObj);
+
+        // Выделяем вставленные кейфреймы
+        var pastedSet = new HashSet<IKeyframe>(pastedData);
+        foreach (var point in keyframesPanel.GetAllKeyframePoints())
+        {
+            if (pastedSet.Contains(point.KeyframeData))
+                Select(point);
+        }
+
+        // Обновляем инспектор первым из вставленных
+        if (_selectedItems.Count > 0)
+            keyframesPanel.UpdateKeyframeData(_selectedItems[0].KeyframeData);
+
+        GD.Print($"[Clipboard] Вставлено {pastedData.Count} кейфреймов на время {pasteTime:F3}.");
     }
 
 	public void DeleteSelected()
     {
-        // 1. Получаем текущий объект
         var currentObj = keyframesPanel.GetCurrentObject();
         if (currentObj == null || _selectedItems.Count == 0) return;
 
-        // Используем .ToArray(), чтобы создать статичную копию списка для перебора.
-        // Это предотвращает ошибку "Collection was modified".
         var itemsToDelete = _selectedItems.ToArray();
 
         foreach (var item in itemsToDelete)
@@ -450,7 +600,6 @@ public partial class TimelineKeyframeControlSystem : Node
 
             var data = item.KeyframeData;
 
-            // 2. УДАЛЯЕМ ДАННЫЕ из списков GameObject
             switch (data.kType)
             {
                 case KeyframeType.PositionX:
@@ -469,25 +618,31 @@ public partial class TimelineKeyframeControlSystem : Node
                     if (data is Keyframe<float> kfR) currentObj.keyframeRotation.Remove(kfR);
                     break;
                 case KeyframeType.Color:
-                    // Исправлено: удаляем из keyframeColor, а не Rotation
                     if (data is Keyframe<ObjectColor> kfC) currentObj.keyframeColor.Remove(kfC);
                     break;
             }
 
-            // 3. Удаляем визуальную ноду
             item.QueueFree();
         }
 
-        // --- ВЫНОСИМ ИЗ ЦИКЛА ---
-
-        // 4. Очищаем список выделения (один раз после удаления всех элементов)
         _selectedItems.Clear();
-
-        // 5. [FIX] Пересчитываем EndTime объекта. 
-        // Т.к. данные удалены, метод найдет новый "последний" ключ и обновит ширину TimelineBlock через событие.
         currentObj.RecalculateEndTime();
+        currentObj.animCache.IsDirty = true; // ← ДОБАВИТЬ
 
-        // 6. Синхронизируем UI панели ключей
         keyframesPanel.LoadKeyframesToPanel(currentObj);
     }
+
+    private struct ClipboardEntry
+    {
+        public KeyframeType Type;
+        public float OriginalTime; // время в момент копирования — для расчёта смещений
+        public float FloatValue;
+        public ObjectColor ColorValue; // глубокая копия для Color-кейфреймов
+        public EasingType EasingType;
+    }
+
+    private readonly List<ClipboardEntry> _clipboard = new();
 }
+
+
+

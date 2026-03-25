@@ -6,10 +6,13 @@ namespace LostEditor
 {
     public partial class GameObject : Node2D
     {
-        [Export] public Polygon2D shapeObj;
-        [Export] public CollisionPolygon2D collisionShapeObj;
-
+        public ShapeType ShapeType = ShapeType.Square;
+        // Используется только если ShapeType == Custom
+        public Vector2[] CustomPolygon = System.Array.Empty<Vector2>();
         public ObjectColor objectColor = new ObjectColor();
+        public int CircleSegments = 32;
+
+        public Color Color = Colors.White;
 
         public event Action OnDataChanged;
         public event Action OnEndTimeChanged;
@@ -102,13 +105,13 @@ namespace LostEditor
             // Принудительно пересчитываем время окончания при старте,
             // чтобы убедиться, что все ключи учтены.
             RecalculateEndTime();
+
         }
 
         // Вызываем этот метод всякий раз, когда меняются списки ключей или режим времени
         public void RecalculateEndTime()
         {
             float maxKeyTime = GetMaxKeyframeTime();
-            GD.Print(maxKeyTime);
             cachedEndTime = _endTimeMode switch
             {
                 EndTimeMode.NoEndTime => float.MaxValue,
@@ -152,6 +155,19 @@ namespace LostEditor
         public List<Keyframe<float>> keyframeScaleY { get; set; } = new();
         public List<Keyframe<float>> keyframeRotation { get; set; } = new();
         public List<Keyframe<ObjectColor>> keyframeColor { get; set; } = new();
+
+        public class AnimationCache
+        {
+            public int   IndexPosX     = 0;
+            public int   IndexPosY     = 0;
+            public int   IndexScaleX   = 0;
+            public int   IndexScaleY   = 0;
+            public int   IndexRotation = 0;
+            public int   IndexColor    = 0;
+            public bool  IsDirty       = true;
+        }
+
+        public AnimationCache animCache = new();
     }
     
     public enum EndTimeMode {
@@ -162,4 +178,7 @@ namespace LostEditor
         GlobalTime          
     }
 
+    
+
 }
+
