@@ -6,9 +6,9 @@ namespace LostEditor;
 public partial class PositionXPanel : Control, IDataPanel
 {
 	[Export] public TimelineKeyframeControlSystem timelineKeyframeControl {get; set;}
-	[Export] public LineEdit ValueLineEdit {get; set;}
-	[Export] public LineEdit ValueRandomLineEdit {get; set;}
-	[Export] public LineEdit ValueRandomStepLineEdit {get; set;}
+	[Export] public InputLineEdit ValueLineEdit {get; set;}
+	[Export] public InputLineEdit ValueRandomLineEdit {get; set;}
+	[Export] public InputLineEdit ValueRandomStepLineEdit {get; set;}
 	[Export] public CheckBox RelativeModeCkeckBox {get; set;}
 	[Export] public OptionButton KeyframeRandomType {get; set;}
 

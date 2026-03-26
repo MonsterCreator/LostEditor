@@ -301,23 +301,49 @@ public partial class TimelineKeyframeControlSystem : Node
     {
         float mouseDiffX = currentMouseX - _startDragMouseX;
         float timeOffset = mouseDiffX / _pixelsPerSecond;
-        GD.Print($"cmX: {currentMouseX} sdmX: {_startDragMouseX} mdX: {mouseDiffX} toffset: {timeOffset}");
-    
+
         foreach (var item in _selectedItems)
         {
             if (_startKeyframeTimes.TryGetValue(item, out float startTime))
             {
                 float newTime = Math.Max(0, startTime + timeOffset);
-    
-                // ИСПРАВЛЕНО: обновляем через IKeyframe — работает для ЛЮБОГО типа кейфрейма
                 item.KeyframeData.Time = newTime;
-    
-                // Обновляем визуал
                 item.Position = new Vector2(newTime * _pixelsPerSecond, item.Position.Y);
             }
         }
-    
+
         var currentObj = keyframesPanel.GetCurrentObject();
+        if (currentObj == null) return;
+
+        // Определяем какие списки затронуты и сортируем их,
+        // чтобы инкрементальный поиск GetCurrentIndex работал корректно
+        bool sortPosX = false, sortPosY = false;
+        bool sortScaX = false, sortScaY = false;
+        bool sortRot  = false, sortCol  = false;
+
+        foreach (var item in _selectedItems)
+        {
+            switch (item.KeyframeData.kType)
+            {
+                case KeyframeType.PositionX: sortPosX = true; break;
+                case KeyframeType.PositionY: sortPosY = true; break;
+                case KeyframeType.ScaleX:    sortScaX = true; break;
+                case KeyframeType.ScaleY:    sortScaY = true; break;
+                case KeyframeType.Rotation:  sortRot  = true; break;
+                case KeyframeType.Color:     sortCol  = true; break;
+            }
+        }
+
+        if (sortPosX) currentObj.keyframePositionX.Sort((a, b) => a.Time.CompareTo(b.Time));
+        if (sortPosY) currentObj.keyframePositionY.Sort((a, b) => a.Time.CompareTo(b.Time));
+        if (sortScaX) currentObj.keyframeScaleX.Sort((a, b)    => a.Time.CompareTo(b.Time));
+        if (sortScaY) currentObj.keyframeScaleY.Sort((a, b)    => a.Time.CompareTo(b.Time));
+        if (sortRot)  currentObj.keyframeRotation.Sort((a, b)  => a.Time.CompareTo(b.Time));
+        if (sortCol)  currentObj.keyframeColor.Sort((a, b)     => a.Time.CompareTo(b.Time));
+
+        // Сбрасываем кэш индексов — список изменил порядок,
+        // инкрементальный поиск должен стартовать заново
+        currentObj.animCache.IsDirty = true;
     }
 
 	private void FinalizeDrag()

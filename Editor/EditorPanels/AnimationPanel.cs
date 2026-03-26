@@ -30,9 +30,9 @@ public partial class AnimationPanel : VBoxContainer
 public interface IDataPanel
 {
 	TimelineKeyframeControlSystem timelineKeyframeControl {get; set;}
-	LineEdit ValueLineEdit {get; set;}
-	LineEdit ValueRandomLineEdit {get; set;}
-	LineEdit ValueRandomStepLineEdit {get; set;}
+	InputLineEdit ValueLineEdit {get; set;}
+	InputLineEdit ValueRandomLineEdit {get; set;}
+	InputLineEdit ValueRandomStepLineEdit {get; set;}
 	CheckBox RelativeModeCkeckBox {get; set;}
 	OptionButton KeyframeRandomType {get; set;}
 

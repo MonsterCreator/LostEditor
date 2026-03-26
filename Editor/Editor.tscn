@@ -827,7 +827,7 @@ size_flags_horizontal = 3
 [node name="KeyframeDataEditTabContainer" type="TabContainer" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2" unique_id=883242774]
 clip_contents = true
 layout_mode = 2
-current_tab = 6
+current_tab = 1
 tabs_visible = false
 
 [node name="NoKeyframeSelectedPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer" unique_id=271207933]
@@ -847,7 +847,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PositionXPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer" unique_id=163523973 node_paths=PackedStringArray("timelineKeyframeControl", "ValueLineEdit", "easeTypePanel")]
-visible = false
 layout_mode = 2
 script = ExtResource("24_pmn2f")
 timelineKeyframeControl = NodePath("../../../../../KeyframesPanelMain/TimelineKeyframeControlSystem")
@@ -1535,6 +1534,7 @@ layout_mode = 2
 text = ">"
 
 [node name="ColorPanel" type="Control" parent="CanvasLayer/VSplitContainer/EditorRaw2/WorkPanel/SingleObjectSettingsPanel/Animation/AnimationVBox/VBoxContainer/HBoxContainer/MarginContainer2/KeyframeDataEditTabContainer" unique_id=734250523 node_paths=PackedStringArray("ColorsContainer", "PreviewRect", "HInput", "SInput", "VInput", "AInput", "EaseTypePanel")]
+visible = false
 layout_mode = 2
 script = ExtResource("36_3al7o")
 ColorsContainer = NodePath("MarginContainer/VBoxContainer/HBoxContainer/HBoxContainer")
